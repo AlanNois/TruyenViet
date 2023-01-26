@@ -207,7 +207,7 @@ export class Baotangtruyentranh extends Source {
 
         //New Updates
         let request = createRequestObject({
-            url: 'https://baotangtruyennet.com/?page=1&typegroup=0',
+            url: 'https://baotangtruyennet.com/home?page=1&typegroup=0',
             method: "GET",
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -253,7 +253,7 @@ export class Baotangtruyentranh extends Source {
 
         //trans
         request = createRequestObject({
-            url: 'https://baotangtruyennet.com/?page=1&typegroup=1',
+            url: 'https://baotangtruyennet.com/home?page=1&typegroup=1',
             method: "GET",
         });
         let transItems: MangaTile[] = [];
@@ -281,11 +281,11 @@ export class Baotangtruyentranh extends Source {
         let select = 1;
         switch (homepageSectionId) {
             case "new_updated":
-                url = `https://baotangtruyennet.com/?page=${page}&typegroup=0`;
+                url = `https://baotangtruyennet.com/home?page=${page}&typegroup=0`;
                 select = 1;
                 break;
             case "trans":
-                url = `https://baotangtruyennet.com/?page=${page}&typegroup=1`;
+                url = `https://baotangtruyennet.com/home?page=${page}&typegroup=1`;
                 select = 1;
                 break;
             default:
