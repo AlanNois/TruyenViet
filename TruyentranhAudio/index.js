@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.TruyentranhAudioInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -444,7 +444,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `${DOMAIN}truyen-tranh/${mangaId}`;
+            const url = `${DOMAIN}${mangaId}`;
             const request = createRequestObject({
                 url: url,
                 method: "GET",
@@ -583,7 +583,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             viewest.items = this.parser.parsePopularSection($);
             sectionCallback(viewest);
             //Hot
-            url = `${DOMAIN}hot`;
+            url = `${DOMAIN}hot/1`;
             request = createRequestObject({
                 url: url,
                 method: "GET",
@@ -613,7 +613,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             newAdded.items = this.parser.parseNewAddedSection($);
             sectionCallback(newAdded);
             //Full
-            url = `${DOMAIN}truyen-full`;
+            url = `${DOMAIN}tim-truyen/&status=1`;
             request = createRequestObject({
                 url: url,
                 method: "GET",
@@ -772,7 +772,7 @@ class Parser {
             }));
         }
         const creator = $('ul.list-info > li.author > p.col-xs-8').text();
-        const image = 'http:' + $('div.col-image > img').attr('src');
+        const image = $('div.col-image > img').attr('src');
         return createManga({
             id: mangaId,
             author: creator,
@@ -902,7 +902,7 @@ class Parser {
         for (let manga of $('div.item', 'div.altcontent1').toArray()) {
             const title = $('.slide-caption > h3 > a', manga).text();
             const id = (_a = $('a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
-            const image = $('a > img.lazyOwl', manga).attr('data-src');
+            const image = $('a > img.lazyOwl', manga).attr('src');
             const subtitle = $('.slide-caption > a', manga).text().trim() + ' - ' + $('.slide-caption > .time', manga).text().trim();
             if (!id || !title)
                 continue;
