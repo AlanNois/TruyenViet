@@ -52,7 +52,7 @@ export class Parser {
         }
 
         const creator = $('ul.list-info > li.author > p.col-xs-8').text();
-        const image = 'http:' + $('div.col-image > img').attr('src');
+        const image = $('div.col-image > img').attr('src');
         return createManga({
             id: mangaId,
             author: creator,
@@ -180,7 +180,7 @@ export class Parser {
         for (let manga of $('div.item', 'div.altcontent1').toArray()) {
             const title = $('.slide-caption > h3 > a', manga).text();
             const id = $('a', manga).attr('href')?.split('/').pop();
-            const image = $('a > img.lazyOwl', manga).attr('data-src');
+            const image = $('a > img.lazyOwl', manga).attr('src');
             const subtitle = $('.slide-caption > a', manga).text().trim() + ' - ' + $('.slide-caption > .time', manga).text().trim();
             if (!id || !title) continue;
             featuredItems.push(createMangaTile({
