@@ -232,7 +232,7 @@ export class TruyentranhAudio extends Source {
         sectionCallback(viewest);
 
         //Hot
-        url = `${DOMAIN}hot`
+        url = `${DOMAIN}hot/1`
         request = createRequestObject({
             url: url,
             method: "GET",
@@ -268,7 +268,7 @@ export class TruyentranhAudio extends Source {
         sectionCallback(newAdded);
 
         //Full
-        url = `${DOMAIN}truyen-full`
+        url = `${DOMAIN}tim-truyen/&status=1`
         request = createRequestObject({
             url: url,
             method: "GET",
