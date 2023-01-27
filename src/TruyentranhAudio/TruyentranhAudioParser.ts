@@ -71,7 +71,7 @@ export class Parser {
         const chapters: Chapter[] = [];
         for (let obj of $('div.list-chapter > nav > ul > li.row:not(.heading)').toArray()) {
             let time = $('div.col-xs-4', obj).text();
-            let group = $('div.col-xs-3', obj).text();
+            let group = $('div.col-xs-2', obj).text();
             let name = $('div.chapter a', obj).text();
             let chapNum = parseFloat($('div.chapter a', obj).text().split(' ')[1]);
             let timeFinal = this.convertTime(time);
