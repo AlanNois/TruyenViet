@@ -2621,7 +2621,7 @@ const ThienhatruyenParser_1 = require("./ThienhatruyenParser");
 const DOMAIN = 'https://thienhatruyen.com/';
 const method = 'GET';
 exports.ThienhatruyenInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'Thienhatruyen',
     icon: 'icon.png',
     author: 'AlanNois',

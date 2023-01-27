@@ -600,7 +600,7 @@ const HentaiVLParser_1 = require("./HentaiVLParser");
 const DOMAIN = 'https://hentaivlv.com/';
 const method = 'GET';
 exports.HentaiVLInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'HentaiVL',
     icon: 'icon.png',
     author: 'AlanNois',

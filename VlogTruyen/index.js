@@ -599,7 +599,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const VlogTruyenParser_1 = require("./VlogTruyenParser");
 const method = 'GET';
 exports.VlogTruyenInfo = {
-    version: '2.6.1',
+    version: '1.0.0',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',

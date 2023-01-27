@@ -7438,7 +7438,7 @@ const CMangaParser_1 = require("./CMangaParser");
 exports.DOMAIN = 'https://cmangaac.com/';
 const method = 'GET';
 exports.CMangaInfo = {
-    version: '2.1.1',
+    version: '1.0.0',
     name: 'CManga',
     icon: 'icon.png',
     author: 'AlanNois',

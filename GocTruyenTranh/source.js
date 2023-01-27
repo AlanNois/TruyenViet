@@ -600,7 +600,7 @@ const GocTruyenTranhParser_1 = require("./GocTruyenTranhParser");
 const DOMAIN = 'https://goctruyentranhvui.com/';
 const method = 'GET';
 exports.GocTruyenTranhInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'GocTruyenTranh',
     icon: 'icon.png',
     author: 'AlanNois',

@@ -600,7 +600,7 @@ const BlogtruyenParser_1 = require("./BlogtruyenParser");
 const DOMAIN = 'https://blogtruyen.vn';
 const method = 'GET';
 exports.BlogtruyenInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'Blogtruyen',
     icon: 'icon.png',
     author: 'AlanNois',

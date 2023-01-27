@@ -7437,7 +7437,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const VcomycsParser_1 = require("./VcomycsParser");
 const method = 'GET';
 exports.VcomycsInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'Vcomycs',
     icon: 'icon.png',
     author: 'AlanNois',

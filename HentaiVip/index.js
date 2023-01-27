@@ -599,7 +599,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const HentaiVipParser_1 = require("./HentaiVipParser");
 const method = 'GET';
 exports.HentaiVipInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'HentaiVip',
     icon: 'icon.png',
     author: 'AlanNois',

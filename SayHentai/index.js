@@ -604,7 +604,7 @@ const SayHentaiParser_1 = require("./SayHentaiParser");
 const DOMAIN = 'https://sayhentai.me/';
 const method = 'GET';
 exports.SayHentaiInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'SayHentai',
     icon: 'icon.png',
     author: 'AlanNois',

@@ -602,7 +602,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.HorrorFCInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'HorrorFC',
     icon: 'icon.png',
     author: 'AlanNois',

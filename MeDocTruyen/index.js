@@ -599,7 +599,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const MeDocTruyenParser_1 = require("./MeDocTruyenParser");
 const method = 'GET';
 exports.MeDocTruyenInfo = {
-    version: '2.5.1',
+    version: '1.0.0',
     name: 'MeDocTruyen',
     icon: 'icon.png',
     author: 'AlanNois',

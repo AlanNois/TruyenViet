@@ -600,7 +600,7 @@ const SayTruyenParser_1 = require("./SayTruyenParser");
 const DOMAIN = 'https://saytruyenvip.net/';
 const method = 'GET';
 exports.SayTruyenInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'SayTruyen',
     icon: 'icon.png',
     author: 'AlanNois',

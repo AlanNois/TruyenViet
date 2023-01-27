@@ -600,7 +600,7 @@ const TruyentranhLHParser_1 = require("./TruyentranhLHParser");
 const DOMAIN = 'https://truyentranhlh.net/';
 const method = 'GET';
 exports.TruyentranhLHInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'TruyentranhLH',
     icon: 'icon.png',
     author: 'AlanNois',

@@ -2621,7 +2621,7 @@ const VcomicParser_1 = require("./VcomicParser");
 const DOMAIN = 'https://vcomic.net/';
 const method = 'GET';
 exports.VcomicInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'Vcomic',
     icon: 'icon.png',
     author: 'AlanNois',

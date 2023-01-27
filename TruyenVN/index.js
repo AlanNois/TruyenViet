@@ -600,7 +600,7 @@ const TruyenVNParser_1 = require("./TruyenVNParser");
 const DOMAIN = 'https://truyenvnhot.net/';
 const method = 'GET';
 exports.TruyenVNInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'TruyenVN',
     icon: 'icon.png',
     author: 'AlanNois',

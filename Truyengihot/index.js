@@ -600,7 +600,7 @@ const TruyengihotParser_1 = require("./TruyengihotParser");
 const DOMAIN = 'https://truyengihotne.net/';
 const method = 'GET';
 exports.TruyengihotInfo = {
-    version: '1.5.1',
+    version: '1.0.0',
     name: 'Truyengihot',
     icon: 'icon.png',
     author: 'AlanNois',

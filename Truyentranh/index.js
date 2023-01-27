@@ -600,7 +600,7 @@ const TruyentranhParser_1 = require("./TruyentranhParser");
 const DOMAIN = 'https://truyentranh.net/';
 const method = 'GET';
 exports.TruyentranhInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'Truyentranh',
     icon: 'icon.png',
     author: 'AlanNois',

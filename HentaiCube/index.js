@@ -600,7 +600,7 @@ const HentaiCubeParser_1 = require("./HentaiCubeParser");
 const DOMAIN = 'https://hentaicb.xyz/';
 const method = 'GET';
 exports.HentaiCubeInfo = {
-    version: '2.7.1',
+    version: '1.0.0',
     name: 'HentaiCube',
     icon: 'icon.png',
     author: 'AlanNois',

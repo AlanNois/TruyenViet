@@ -2621,7 +2621,7 @@ const Truyen86Parser_1 = require("./Truyen86Parser");
 const DOMAIN = 'https://truyen86.com/';
 const method = 'GET';
 exports.Truyen86Info = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'Truyen86',
     icon: 'icon.png',
     author: 'AlanNois',

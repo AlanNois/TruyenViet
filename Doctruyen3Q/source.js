@@ -600,7 +600,7 @@ const Doctruyen3QParser_1 = require("./Doctruyen3QParser");
 const DOMAIN = 'https://doctruyen3q.site/';
 const method = 'GET';
 exports.Doctruyen3QInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'Doctruyen3Q',
     icon: 'icon.png',
     author: 'AlanNois',

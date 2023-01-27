@@ -600,7 +600,7 @@ const TruyenQQParser_1 = require("./TruyenQQParser");
 const DOMAIN = 'http://truyenqqhot.com/';
 const method = 'GET';
 exports.TruyenQQInfo = {
-    version: '3.0.1',
+    version: '1.0.0',
     name: 'TruyenQQ',
     icon: 'icon.png',
     author: 'AlanNois',

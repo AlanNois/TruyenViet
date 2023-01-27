@@ -600,7 +600,7 @@ const TruyendocParser_1 = require("./TruyendocParser");
 const DOMAIN = 'http://truyendoc.info/';
 const method = 'GET';
 exports.TruyendocInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'Truyendoc',
     icon: 'icon.png',
     author: 'AlanNois',

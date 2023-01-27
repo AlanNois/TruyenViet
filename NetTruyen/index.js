@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.NetTruyenInfo = {
-    version: '3.0.2',
+    version: '1.0.0',
     name: 'NetTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
