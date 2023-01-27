@@ -374,7 +374,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NetTruyen = exports.TruyenTranhAudioInfo = exports.isLastPage = void 0;
+exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://truyentranhaudio.com/';
@@ -387,13 +387,13 @@ exports.isLastPage = ($) => {
     }
     return true;
 };
-exports.TruyenTranhAudioInfo = {
+exports.TruyentranhAudioInfo = {
     version: '1.0.0',
-    name: 'TruyenTranhAudio',
+    name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
     authorWebsite: 'https://github.com/AlanNois/',
-    description: 'Extension that pulls manga from TruyenTranhAudio.',
+    description: 'Extension that pulls manga from TruyentranhAudio.',
     websiteBaseURL: DOMAIN,
     contentRating: paperback_extensions_common_1.ContentRating.MATURE,
     sourceTags: [
@@ -407,7 +407,7 @@ exports.TruyenTranhAudioInfo = {
         }
     ]
 };
-class NetTruyen extends paperback_extensions_common_1.Source {
+class TruyentranhAudio extends paperback_extensions_common_1.Source {
     constructor() {
         super(...arguments);
         this.parser = new TruyentranhAudioParser_1.Parser();
@@ -716,7 +716,7 @@ class NetTruyen extends paperback_extensions_common_1.Source {
         });
     }
 }
-exports.NetTruyen = NetTruyen;
+exports.TruyentranhAudio = TruyentranhAudio;
 
 },{"./TruyentranhAudioParser":49,"paperback-extensions-common":4}],49:[function(require,module,exports){
 "use strict";
