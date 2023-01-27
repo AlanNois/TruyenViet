@@ -413,7 +413,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
         this.parser = new TruyentranhAudioParser_1.Parser();
         this.requestManager = createRequestManager({
             requestsPerSecond: 5,
-            requestTimeout: 20000,
+            requestTimeout: 200000,
             interceptor: {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
@@ -573,7 +573,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             featured.items = this.parser.parseFeaturedSection($);
             sectionCallback(featured);
             //View
-            url = `${DOMAIN}tim-truyen?status=-1&sort=10`;
+            url = `${DOMAIN}tim-truyen/&sort=10`;
             request = createRequestObject({
                 url: url,
                 method: "GET",
@@ -603,7 +603,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             newUpdated.items = this.parser.parseNewUpdatedSection($);
             sectionCallback(newUpdated);
             //New added
-            url = `${DOMAIN}tim-truyen?status=-1&sort=15`;
+            url = `${DOMAIN}tim-truyen/&sort=15`;
             request = createRequestObject({
                 url: url,
                 method: "GET",
@@ -632,24 +632,24 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             let url = "";
             switch (homepageSectionId) {
                 case "viewest":
-                    param = `?status=-1&sort=10&page=${page}`;
-                    url = `${DOMAIN}tim-truyen`;
+                    param = `&sort=10&page=${page}`;
+                    url = `${DOMAIN}tim-truyen/`;
                     break;
                 case "hot":
                     param = `?page=${page}`;
-                    url = `${DOMAIN}hot`;
+                    url = `${DOMAIN}hot/hot`;
                     break;
                 case "new_updated":
-                    param = `?page=${page}`;
+                    param = `&page=${page}`;
                     url = DOMAIN;
                     break;
                 case "new_added":
-                    param = `?status=-1&sort=15&page=${page}`;
-                    url = `${DOMAIN}tim-truyen`;
+                    param = `&sort=15&page=${page}`;
+                    url = `${DOMAIN}tim-truyen/`;
                     break;
                 case "full":
-                    param = `?page=${page}`;
-                    url = `${DOMAIN}truyen-full`;
+                    param = `&page=${page}`;
+                    url = `${DOMAIN}tim-truyen/&status=1`;
                     break;
                 default:
                     throw new Error("Requested to getViewMoreItems for a section ID which doesn't exist");
@@ -790,7 +790,7 @@ class Parser {
         const chapters = [];
         for (let obj of $('div.list-chapter > nav > ul > li.row:not(.heading)').toArray()) {
             let time = $('div.col-xs-4', obj).text();
-            let group = $('div.col-xs-3', obj).text();
+            let group = $('div.col-xs-2', obj).text();
             let name = $('div.chapter a', obj).text();
             let chapNum = parseFloat($('div.chapter a', obj).text().split(' ')[1]);
             let timeFinal = this.convertTime(time);
