@@ -62,7 +62,8 @@ export class TruyentranhAudio extends Source {
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'referer': DOMAIN
+                        'referer': DOMAIN,
+                        'User-Agent': 'Mozilla/5.0'
                     }
                 }
 
@@ -99,7 +100,7 @@ export class TruyentranhAudio extends Source {
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
-            url: chapterId,
+            url: `${DOMAIN}${chapterId}`,
             method: "GET",
         });
         const data = await this.requestManager.schedule(request, 1);
