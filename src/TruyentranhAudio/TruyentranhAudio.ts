@@ -220,7 +220,7 @@ export class TruyentranhAudio extends Source {
         sectionCallback(featured);
 
         //View
-        url = `${DOMAIN}tim-truyen?status=-1&sort=10`
+        url = `${DOMAIN}tim-truyen/&sort=10`
         request = createRequestObject({
             url: url,
             method: "GET",
@@ -286,24 +286,24 @@ export class TruyentranhAudio extends Source {
         let url = "";
         switch (homepageSectionId) {
             case "viewest":
-                param = `?status=-1&sort=10&page=${page}`;
-                url = `${DOMAIN}tim-truyen`;
+                param = `&sort=10&page=${page}`;
+                url = `${DOMAIN}tim-truyen/`;
                 break;
             case "hot":
-                param = `?page=${page}`;
-                url = `${DOMAIN}hot`;
+                param = `&page=${page}`;
+                url = `${DOMAIN}hot/1`;
                 break;
             case "new_updated":
-                param = `?page=${page}`;
+                param = `&page=${page}`;
                 url = DOMAIN;
                 break;
             case "new_added":
-                param = `?status=-1&sort=15&page=${page}`;
-                url = `${DOMAIN}tim-truyen`;
+                param = `&sort=15&page=${page}`;
+                url = `${DOMAIN}tim-truyen/`;
                 break;
             case "full":
-                param = `?page=${page}`;
-                url = `${DOMAIN}truyen-full`;
+                param = `&page=${page}`;
+                url = `${DOMAIN}tim-truyen/&status=1`;
                 break;
             default:
                 throw new Error("Requested to getViewMoreItems for a section ID which doesn't exist");
