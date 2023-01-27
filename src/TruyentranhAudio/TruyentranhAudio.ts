@@ -29,7 +29,7 @@ export const isLastPage = ($: CheerioStatic): boolean => {
     return true;
 }
 
-export const NetTruyenInfo: SourceInfo = {
+export const TruyenTranhAudioInfo: SourceInfo = {
     version: '1.0.0',
     name: 'TruyenTranhAudio',
     icon: 'icon.png',
