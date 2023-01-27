@@ -25,7 +25,7 @@ const DOMAIN = 'http://truyenqqhot.com/'
 const method = 'GET'
 
 export const TruyenQQInfo: SourceInfo = {
-    version: '3.0.1',
+    version: '1.0.0',
     name: 'TruyenQQ',
     icon: 'icon.png',
     author: 'AlanNois',

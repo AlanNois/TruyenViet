@@ -24,7 +24,7 @@ const DOMAIN = 'https://doctruyen3q.site/'
 const method = 'GET'
 
 export const Doctruyen3QInfo: SourceInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'Doctruyen3Q',
     icon: 'icon.png',
     author: 'AlanNois',

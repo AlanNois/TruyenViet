@@ -25,7 +25,7 @@ const DOMAIN = 'https://sayhentai.me/'
 const method = 'GET'
 
 export const SayHentaiInfo: SourceInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'SayHentai',
     icon: 'icon.png',
     author: 'AlanNois',

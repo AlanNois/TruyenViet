@@ -35,7 +35,7 @@ const DOMAIN = `https://hentaivn.tv/`;
 const method = 'GET';
 
 export const HentaiVNInfo: SourceInfo = {
-    version: '2.8.1',
+    version: '1.0.0',
     name: 'HentaiVN',
     icon: 'icon.png',
     author: 'AlanNois',

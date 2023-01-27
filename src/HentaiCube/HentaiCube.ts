@@ -23,7 +23,7 @@ const DOMAIN = 'https://hentaicb.xyz/'
 const method = 'GET'
 
 export const HentaiCubeInfo: SourceInfo = {
-    version: '2.7.1',
+    version: '1.0.0',
     name: 'HentaiCube',
     icon: 'icon.png',
     author: 'AlanNois',

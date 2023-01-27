@@ -25,7 +25,7 @@ const DOMAIN = 'http://truyentuan.com/'
 const method = 'GET'
 
 export const TruyentranhtuanInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'Truyentranhtuan',
     icon: 'icon.png',
     author: 'AlanNois',

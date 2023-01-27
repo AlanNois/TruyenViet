@@ -23,7 +23,7 @@ const DOMAIN = 'https://truyentranhlh.net/'
 const method = 'GET'
 
 export const TruyentranhLHInfo: SourceInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'TruyentranhLH',
     icon: 'icon.png',
     author: 'AlanNois',

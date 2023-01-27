@@ -25,7 +25,7 @@ const DOMAIN = 'https://manhuarock.net/'
 const method = 'GET'
 
 export const ManhuaRockInfo: SourceInfo = {
-    version: '1.5.1',
+    version: '1.0.0',
     name: 'ManhuaRock',
     icon: 'icon.png',
     author: 'AlanNois',

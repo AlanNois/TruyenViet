@@ -24,7 +24,7 @@ const DOMAIN = 'https://mangaxy.com/'
 const method = 'GET'
 
 export const MangaXYInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'MangaXY (TT8)',
     icon: 'icon.png',
     author: 'AlanNois',

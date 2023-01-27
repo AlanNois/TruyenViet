@@ -25,7 +25,7 @@ const DOMAIN = 'https://truyendep.net/'
 const method = 'GET'
 
 export const TruyendepInfo: SourceInfo = {
-    version: '2.4.1',
+    version: '1.0.0',
     name: 'Truyendep',
     icon: 'icon.png',
     author: 'AlanNois',

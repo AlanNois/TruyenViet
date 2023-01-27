@@ -25,7 +25,7 @@ import { parseSearch, parseViewMore, isLastPage, ChangeToSlug } from "./MeDocTru
 const method = 'GET'
 
 export const MeDocTruyenInfo: SourceInfo = {
-    version: '2.5.1',
+    version: '1.0.0',
     name: 'MeDocTruyen',
     icon: 'icon.png',
     author: 'AlanNois',

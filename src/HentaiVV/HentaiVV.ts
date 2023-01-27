@@ -23,7 +23,7 @@ const DOMAIN = 'https://hentaivv1.com/';
 const method = 'GET';
 
 export const HentaiVVInfo: SourceInfo = {
-    version: '2.5.1',
+    version: '1.0.0',
     name: 'HentaiVV',
     icon: 'icon.png',
     author: 'AlanNois',

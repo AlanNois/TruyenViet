@@ -23,7 +23,7 @@ const DOMAIN = 'https://blogtruyen.vn'
 const method = 'GET'
 
 export const BlogtruyenInfo: SourceInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'Blogtruyen',
     icon: 'icon.png',
     author: 'AlanNois',

@@ -23,7 +23,7 @@ const DOMAIN = 'https://thienhatruyen.com/'
 const method = 'GET'
 
 export const ThienhatruyenInfo: SourceInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'Thienhatruyen',
     icon: 'icon.png',
     author: 'AlanNois',

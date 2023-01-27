@@ -22,7 +22,7 @@ import { parseSearch, parseViewMore, isLastPage } from "./HentaiVipParser"
 const method = 'GET'
 
 export const HentaiVipInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'HentaiVip',
     icon: 'icon.png',
     author: 'AlanNois',

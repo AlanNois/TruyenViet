@@ -23,7 +23,7 @@ import { parseSearch, parseViewMore, isLastPage } from "./VlogTruyenParser"
 const method = 'GET'
 
 export const VlogTruyenInfo: SourceInfo = {
-    version: '2.6.1',
+    version: '1.0.0',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',

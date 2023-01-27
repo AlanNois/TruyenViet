@@ -23,7 +23,7 @@ export const DOMAIN = 'https://cmangaac.com/'
 const method = 'GET'
 
 export const CMangaInfo: SourceInfo = {
-    version: '2.1.1',
+    version: '1.0.0',
     name: 'CManga',
     icon: 'icon.png',
     author: 'AlanNois',

@@ -25,7 +25,7 @@ const DOMAIN = 'https://lxmanga.net/'
 const method = 'GET'
 
 export const LXHentaiInfo: SourceInfo = {
-    version: '2.0.2',
+    version: '1.0.0',
     name: 'LXHentai',
     icon: 'icon.png',
     author: 'AlanNois',

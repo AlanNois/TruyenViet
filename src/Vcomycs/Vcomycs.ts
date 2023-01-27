@@ -23,7 +23,7 @@ import { parseSearch, parseViewMore, decryptImages, decodeHTMLEntity } from "./V
 const method = 'GET'
 
 export const VcomycsInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'Vcomycs',
     icon: 'icon.png',
     author: 'AlanNois',

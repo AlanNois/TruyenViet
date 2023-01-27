@@ -23,7 +23,7 @@ export const isLastPage = ($: CheerioStatic): boolean => {
 }
 
 export const HorrorFCInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'HorrorFC',
     icon: 'icon.png',
     author: 'AlanNois',

@@ -22,7 +22,7 @@ const DOMAIN = 'https://saytruyenvip.net/'
 const method = 'GET'
 
 export const SayTruyenInfo: SourceInfo = {
-    version: '2.0.1',
+    version: '1.0.0',
     name: 'SayTruyen',
     icon: 'icon.png',
     author: 'AlanNois',

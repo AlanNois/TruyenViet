@@ -22,7 +22,7 @@ const DOMAIN = 'https://hentaivlv.com/'
 const method = 'GET'
 
 export const HentaiVLInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'HentaiVL',
     icon: 'icon.png',
     author: 'AlanNois',
