@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.TruyentranhAudioInfo = {
-    version: '1.0.1',
+    version: '1.1.0',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
