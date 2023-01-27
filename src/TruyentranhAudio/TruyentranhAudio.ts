@@ -256,7 +256,7 @@ export class TruyentranhAudio extends Source {
         sectionCallback(newUpdated);
 
         //New added
-        url = `${DOMAIN}tim-truyen?status=-1&sort=15`
+        url = `${DOMAIN}tim-truyen/&sort=15`
         request = createRequestObject({
             url: url,
             method: "GET",
