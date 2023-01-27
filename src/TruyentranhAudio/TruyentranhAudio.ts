@@ -87,7 +87,7 @@ export class TruyentranhAudio extends Source {
     }
 
     async getChapters(mangaId: string): Promise<Chapter[]> {
-        const url = `${DOMAIN}truyen-tranh/${mangaId}`;
+        const url = `${DOMAIN}${mangaId}`;
         const request = createRequestObject({
             url: url,
             method: "GET",
