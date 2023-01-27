@@ -290,7 +290,7 @@ export class TruyentranhAudio extends Source {
                 url = `${DOMAIN}tim-truyen/`;
                 break;
             case "hot":
-                param = `&page=${page}`;
+                param = `?page=${page}`;
                 url = `${DOMAIN}hot/hot`;
                 break;
             case "new_updated":
