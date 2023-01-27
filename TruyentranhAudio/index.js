@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.TruyentranhAudioInfo = {
-    version: '1.1.0',
+    version: '1.1.1',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -418,7 +418,8 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), {
-                        'referer': DOMAIN
+                        'referer': DOMAIN,
+                        'User-Agent': 'Mozilla/5.0'
                     });
                     return request;
                 }),
@@ -457,7 +458,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: chapterId,
+                url: `${DOMAIN}${chapterId}`,
                 method: "GET",
             });
             const data = yield this.requestManager.schedule(request, 1);
@@ -809,9 +810,9 @@ class Parser {
     parseChapterDetails($) {
         const pages = [];
         for (let obj of $('div.reading-detail > div.page-chapter > img').toArray()) {
-            if (!obj.attribs['data-original'])
+            if (!obj.attribs['src'])
                 continue;
-            let link = obj.attribs['data-original'];
+            let link = obj.attribs['src'];
             if (link.indexOf('http') === -1) { //nếu link ko có 'http'
                 pages.push('http:' + obj.attribs['data-original']);
             }
