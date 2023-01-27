@@ -55,7 +55,7 @@ export class TruyentranhAudio extends Source {
     getMangaShareUrl(mangaId: string): string { return `${DOMAIN}${mangaId}` };
     requestManager = createRequestManager({
         requestsPerSecond: 5,
-        requestTimeout: 20000,
+        requestTimeout: 200000,
         interceptor: {
             interceptRequest: async (request: Request): Promise<Request> => {
 
@@ -291,7 +291,7 @@ export class TruyentranhAudio extends Source {
                 break;
             case "hot":
                 param = `&page=${page}`;
-                url = `${DOMAIN}hot/1`;
+                url = `${DOMAIN}hot/hot`;
                 break;
             case "new_updated":
                 param = `&page=${page}`;
