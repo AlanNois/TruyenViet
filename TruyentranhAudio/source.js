@@ -374,7 +374,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NetTruyen = exports.NetTruyenInfo = exports.isLastPage = void 0;
+exports.NetTruyen = exports.TruyenTranhAudioInfo = exports.isLastPage = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://truyentranhaudio.com/';
@@ -387,7 +387,7 @@ exports.isLastPage = ($) => {
     }
     return true;
 };
-exports.NetTruyenInfo = {
+exports.TruyenTranhAudioInfo = {
     version: '1.0.0',
     name: 'TruyenTranhAudio',
     icon: 'icon.png',
