@@ -29,13 +29,13 @@ export const isLastPage = ($: CheerioStatic): boolean => {
     return true;
 }
 
-export const TruyenTranhAudioInfo: SourceInfo = {
+export const TruyentranhAudioInfo: SourceInfo = {
     version: '1.0.0',
-    name: 'TruyenTranhAudio',
+    name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
     authorWebsite: 'https://github.com/AlanNois/',
-    description: 'Extension that pulls manga from TruyenTranhAudio.',
+    description: 'Extension that pulls manga from TruyentranhAudio.',
     websiteBaseURL: DOMAIN,
     contentRating: ContentRating.MATURE,
     sourceTags: [
@@ -50,7 +50,7 @@ export const TruyenTranhAudioInfo: SourceInfo = {
     ]
 }
 
-export class NetTruyen extends Source {
+export class TruyentranhAudio extends Source {
     parser = new Parser();
     getMangaShareUrl(mangaId: string): string { return `${DOMAIN}${mangaId}` };
     requestManager = createRequestManager({
