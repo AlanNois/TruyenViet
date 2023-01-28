@@ -95,7 +95,7 @@ export class Parser {
             if (!obj.attribs['src']) continue;
             let link = obj.attribs['src'];
             if (link.indexOf('http') === -1) {//nếu link ko có 'http'
-                pages.push('http:' + obj.attribs['data-original']);
+                pages.push('http:' + obj.attribs['src']);
             } else {
                 pages.push(link);
             }
