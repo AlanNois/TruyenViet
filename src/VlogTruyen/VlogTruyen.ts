@@ -22,7 +22,7 @@ import { parseSearch, parseViewMore, isLastPage } from "./VlogTruyenParser"
 const method = 'GET'
 
 export const VlogTruyenInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -138,6 +138,7 @@ export class VlogTruyen extends Source {
             i++;
             let id = $('a', obj).first().attr('href');
             let chapNum = Number($('a', obj).first().attr('title')?.split(' ')[1]);
+            let group = $('span.chapter-view', obj).text();
             let name = $('a', obj).first().attr('title');
             let time = $('span:nth-child(4)', obj).text().trim().split('-');
             chapters.push(createChapter(<Chapter>{
@@ -145,6 +146,7 @@ export class VlogTruyen extends Source {
                 chapNum: isNaN(chapNum) ? i : chapNum,
                 name,
                 mangaId: mangaId,
+                group: group + " lượt xem",
                 langCode: LanguageCode.VIETNAMESE,
                 time: new Date(time[1] + '/' + time[0] + '/' + time[2])
             }));
