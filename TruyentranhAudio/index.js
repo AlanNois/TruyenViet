@@ -811,11 +811,11 @@ class Parser {
         var _a;
         const pages = [];
         for (let obj of $('div.reading-detail > div.page-chapter > img').toArray()) {
-            if (!obj.attribs['data-original'])
+            if (!obj.attribs['src'])
                 continue;
-            let link = (_a = obj.attribs['data-original']) === null || _a === void 0 ? void 0 : _a.replace(/(\r\n|\n|\r)/gm, "");
+            let link = (_a = obj.attribs['src']) === null || _a === void 0 ? void 0 : _a.replace(/(\r\n|\n|\r)/gm, "");
             if (link.indexOf('http') === -1) { //nếu link ko có 'http'
-                pages.push('http:' + obj.attribs['data-original']);
+                pages.push('http:' + obj.attribs['src']);
             }
             else {
                 pages.push(link);
@@ -829,7 +829,7 @@ class Parser {
         for (const manga of $('div.item', 'div.row').toArray()) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
             const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
                 image = 'http:' + images;
@@ -939,7 +939,7 @@ class Parser {
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split("\n").pop();
             const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
                 image = 'http:' + images;
@@ -965,7 +965,7 @@ class Parser {
         for (const manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
             const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
                 image = 'http:' + images;
@@ -992,7 +992,7 @@ class Parser {
             const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split('\n').pop();
             ;
             const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
                 image = 'http:' + images;
@@ -1018,7 +1018,7 @@ class Parser {
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split('\n').pop();
             const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
                 image = 'http:' + images;
@@ -1044,7 +1044,7 @@ class Parser {
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split('\n').pop();
             const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
                 image = 'http:' + images;
@@ -1071,7 +1071,7 @@ class Parser {
         for (const manga of $('div.item', 'div.row').toArray()) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
             const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
                 image = 'http:' + images;
