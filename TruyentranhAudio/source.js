@@ -641,7 +641,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                     url = `${DOMAIN}hot/hot`;
                     break;
                 case "new_updated":
-                    param = `&page=${page}`;
+                    param = `?page=${page}`;
                     url = `${DOMAIN}tim-truyen/}`;
                     break;
                 case "new_added":
