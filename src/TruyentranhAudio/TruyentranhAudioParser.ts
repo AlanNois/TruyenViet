@@ -92,10 +92,10 @@ export class Parser {
     parseChapterDetails($: any): string[] {
         const pages: string[] = [];
         for (let obj of $('div.reading-detail > div.page-chapter > img').toArray()) {
-            if (!obj.attribs['data-original']) continue;
-            let link = obj.attribs['data-original']?.replace(/(\r\n|\n|\r)/gm, "");
+            if (!obj.attribs['src']) continue;
+            let link = obj.attribs['src']?.replace(/(\r\n|\n|\r)/gm, "");
             if (link.indexOf('http') === -1) {//nếu link ko có 'http'
-                pages.push('http:' + obj.attribs['data-original']);
+                pages.push('http:' + obj.attribs['src']);
             } else {
                 pages.push(link);
             }
@@ -109,7 +109,7 @@ export class Parser {
         for (const manga of $('div.item', 'div.row').toArray()) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) {//nếu link ko có 'http'
                 image = 'http:' + images;
@@ -214,7 +214,7 @@ export class Parser {
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text()?.split("\n").pop();
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) {//nếu link ko có 'http'
                 image = 'http:' + images;
@@ -239,7 +239,7 @@ export class Parser {
         for (const manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) {//nếu link ko có 'http'
                 image = 'http:' + images;
@@ -264,7 +264,7 @@ export class Parser {
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text()?.split('\n').pop();;
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) {//nếu link ko có 'http'
                 image = 'http:' + images;
@@ -289,7 +289,7 @@ export class Parser {
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text()?.split('\n').pop();
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) {//nếu link ko có 'http'
                 image = 'http:' + images;
@@ -314,7 +314,7 @@ export class Parser {
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text()?.split('\n').pop();
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) {//nếu link ko có 'http'
                 image = 'http:' + images;
@@ -340,7 +340,7 @@ export class Parser {
         for (const manga of $('div.item', 'div.row').toArray()) {
             const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
-            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
+            const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) {//nếu link ko có 'http'
                 image = 'http:' + images;
