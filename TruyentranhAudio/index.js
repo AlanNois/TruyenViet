@@ -808,13 +808,14 @@ class Parser {
         return chapters;
     }
     parseChapterDetails($) {
+        var _a;
         const pages = [];
         for (let obj of $('div.reading-detail > div.page-chapter > img').toArray()) {
-            if (!obj.attribs['src'])
+            if (!obj.attribs['data-original'])
                 continue;
-            let link = obj.attribs['src'];
+            let link = (_a = obj.attribs['data-original']) === null || _a === void 0 ? void 0 : _a.replace(/(\r\n|\n|\r)/gm, "");
             if (link.indexOf('http') === -1) { //nếu link ko có 'http'
-                pages.push('http:' + obj.attribs['src']);
+                pages.push('http:' + obj.attribs['data-original']);
             }
             else {
                 pages.push(link);
