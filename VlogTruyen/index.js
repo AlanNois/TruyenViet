@@ -599,7 +599,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const VlogTruyenParser_1 = require("./VlogTruyenParser");
 const method = 'GET';
 exports.VlogTruyenInfo = {
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -710,6 +710,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
                 i++;
                 let id = $('a', obj).first().attr('href');
                 let chapNum = Number((_a = $('a', obj).first().attr('title')) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
+                let group = $('span.chapter-view', obj).text();
                 let name = $('a', obj).first().attr('title');
                 let time = $('span:nth-child(4)', obj).text().trim().split('-');
                 chapters.push(createChapter({
@@ -717,6 +718,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
                     chapNum: isNaN(chapNum) ? i : chapNum,
                     name,
                     mangaId: mangaId,
+                    group: group + " lượt xem",
                     langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
                     time: new Date(time[1] + '/' + time[0] + '/' + time[2])
                 }));
