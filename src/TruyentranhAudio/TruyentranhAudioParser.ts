@@ -238,7 +238,7 @@ export class Parser {
     parseNewUpdatedSection($: any): MangaTile[] {
         let newUpdatedItems: MangaTile[] = [];
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
+            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text()?.split('\n').pop();;
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
