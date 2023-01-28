@@ -599,7 +599,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const VlogTruyenParser_1 = require("./VlogTruyenParser");
 const method = 'GET';
 exports.VlogTruyenInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -625,6 +625,23 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
                     var _a;
                     request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), {
                         'referer': 'https://vlogtruyen2.net/'
+                    });
+                    return request;
+                }),
+                interceptResponse: (response) => __awaiter(this, void 0, void 0, function* () {
+                    return response;
+                })
+            }
+        });
+        this.requestManager2 = createRequestManager({
+            requestsPerSecond: 5,
+            requestTimeout: 20000,
+            interceptor: {
+                interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
+                    var _b;
+                    request.headers = Object.assign(Object.assign({}, ((_b = request.headers) !== null && _b !== void 0 ? _b : {})), {
+                        'referer': 'https://vlogtruyen2.net/',
+                        'x-requested-with': 'XMLHttpRequest'
                     });
                     return request;
                 }),
@@ -679,10 +696,17 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
                 method,
             });
             let data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
+            let $1 = this.cheerio.load(data.data);
+            let value = $1('input[name=manga_id]').attr('value');
+            const request2 = createRequestObject({
+                url: `https://vlogtruyen2.net/thong-tin-ca-nhan?manga_id=${value}`,
+                method
+            });
+            let data2 = yield this.requestManager2.schedule(request2, 1);
+            let $ = this.cheerio.load(JSON.parse(data2.data)['data']['chaptersHtml']);
             const chapters = [];
             var i = 0;
-            for (const obj of $('.ul-list-chaper-detail-commic > li').toArray().reverse()) {
+            for (const obj of $('li').toArray().reverse()) {
                 i++;
                 let id = $('a', obj).first().attr('href');
                 let chapNum = Number((_a = $('a', obj).first().attr('title')) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
