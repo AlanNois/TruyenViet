@@ -1065,12 +1065,12 @@ class Parser {
         return fullItems;
     }
     parseViewMoreItems($) {
-        var _a;
+        var _a, _b;
         const mangas = [];
         const collectedIds = [];
         for (const manga of $('div.item', 'div.row').toArray()) {
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
-            const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
+            const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split('\n').pop();
+            const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
             const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
             if (images.indexOf('http') === -1) { //nếu link ko có 'http'
