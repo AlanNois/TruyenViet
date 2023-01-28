@@ -92,10 +92,10 @@ export class Parser {
     parseChapterDetails($: any): string[] {
         const pages: string[] = [];
         for (let obj of $('div.reading-detail > div.page-chapter > img').toArray()) {
-            if (!obj.attribs['src']) continue;
-            let link = obj.attribs['src'];
+            if (!obj.attribs['data-original']) continue;
+            let link = obj.attribs['data-original']?.replace(/(\r\n|\n|\r)/gm, "");
             if (link.indexOf('http') === -1) {//nếu link ko có 'http'
-                pages.push('http:' + obj.attribs['src']);
+                pages.push('http:' + obj.attribs['data-original']);
             } else {
                 pages.push(link);
             }
