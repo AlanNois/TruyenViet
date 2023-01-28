@@ -30,7 +30,7 @@ export const isLastPage = ($: CheerioStatic): boolean => {
 }
 
 export const TruyentranhAudioInfo: SourceInfo = {
-    version: '1.1.1',
+    version: '1.1.2',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -245,7 +245,7 @@ export class TruyentranhAudio extends Source {
         sectionCallback(hot);
 
         //New Updates
-        url = `${DOMAIN}`
+        url = `${DOMAIN}tim-truyen/`
         request = createRequestObject({
             url: url,
             method: "GET",
@@ -296,7 +296,7 @@ export class TruyentranhAudio extends Source {
                 break;
             case "new_updated":
                 param = `&page=${page}`;
-                url = DOMAIN;
+                url = `${DOMAIN}tim-truyen/}`;
                 break;
             case "new_added":
                 param = `&sort=15&page=${page}`;

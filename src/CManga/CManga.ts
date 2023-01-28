@@ -204,7 +204,7 @@ export class CManga extends Source {
         let newAddItems: MangaTile[] = [];
         data = await this.requestManager.schedule(request, 1);
         json = JSON.parse(decrypt_data(JSON.parse(data.data)));
-        console.log(json);
+        // console.log(json);
 
         for (var i of Object.keys(json)) {
             var item = json[i];
