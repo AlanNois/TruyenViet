@@ -7615,7 +7615,7 @@ class CManga extends paperback_extensions_common_1.Source {
             let newAddItems = [];
             data = yield this.requestManager.schedule(request, 1);
             json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data.data)));
-            console.log(json);
+            // console.log(json);
             for (var i of Object.keys(json)) {
                 var item = json[i];
                 if (!item.name)

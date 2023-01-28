@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.TruyentranhAudioInfo = {
-    version: '1.1.1',
+    version: '1.1.2',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -594,7 +594,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             hot.items = this.parser.parseHotSection($);
             sectionCallback(hot);
             //New Updates
-            url = `${DOMAIN}`;
+            url = `${DOMAIN}tim-truyen/`;
             request = createRequestObject({
                 url: url,
                 method: "GET",
@@ -642,7 +642,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                     break;
                 case "new_updated":
                     param = `&page=${page}`;
-                    url = DOMAIN;
+                    url = `${DOMAIN}tim-truyen/}`;
                     break;
                 case "new_added":
                     param = `&sort=15&page=${page}`;
@@ -814,7 +814,7 @@ class Parser {
                 continue;
             let link = obj.attribs['src'];
             if (link.indexOf('http') === -1) { //nếu link ko có 'http'
-                pages.push('http:' + obj.attribs['data-original']);
+                pages.push('http:' + obj.attribs['src']);
             }
             else {
                 pages.push(link);
@@ -834,7 +834,7 @@ class Parser {
                 continue;
             tiles.push(createMangaTile({
                 id: id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -909,7 +909,7 @@ class Parser {
                 continue;
             featuredItems.push(createMangaTile({
                 id: id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({
                     text: subtitle,
@@ -919,18 +919,18 @@ class Parser {
         return featuredItems;
     }
     parsePopularSection($) {
-        var _a;
+        var _a, _b;
         let viewestItems = [];
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
-            const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
+            const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split("\n").pop();
+            const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
             if (!id || !title)
                 continue;
             viewestItems.push(createMangaTile({
                 id: id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -949,8 +949,8 @@ class Parser {
                 continue;
             TopWeek.push(createMangaTile({
                 id: id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
-                title: createIconText({ text: title }),
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
+                title: createIconText({ text: String(title).trim() }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
         }
@@ -968,7 +968,7 @@ class Parser {
                 continue;
             newUpdatedItems.push(createMangaTile({
                 id: id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -976,18 +976,18 @@ class Parser {
         return newUpdatedItems;
     }
     parseNewAddedSection($) {
-        var _a;
+        var _a, _b;
         let newAddedItems = [];
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
-            const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
+            const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split('\n').pop();
+            const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
             if (!id || !title)
                 continue;
             newAddedItems.push(createMangaTile({
                 id: id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -995,18 +995,18 @@ class Parser {
         return newAddedItems;
     }
     parseFullSection($) {
-        var _a;
+        var _a, _b;
         let fullItems = [];
         for (let manga of $('div.item', 'div.row').toArray().splice(0, 20)) {
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
-            const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
+            const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split('\n').pop();
+            const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
             if (!id || !title)
                 continue;
             fullItems.push(createMangaTile({
                 id: id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -1027,7 +1027,7 @@ class Parser {
             if (!collectedIds.includes(id)) { //ko push truyện trùng nhau
                 mangas.push(createMangaTile({
                     id: id,
-                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : image,
                     title: createIconText({ text: title }),
                     subtitleText: createIconText({ text: subtitle }),
                 }));
