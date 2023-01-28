@@ -17,13 +17,12 @@ import {
     Response,
     Request
 } from "paperback-extensions-common"
-
 import { parseSearch, parseViewMore, isLastPage } from "./VlogTruyenParser"
 
 const method = 'GET'
 
 export const VlogTruyenInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -51,6 +50,29 @@ export class VlogTruyen extends Source {
                     ...(request.headers ?? {}),
                     ...{
                         'referer': 'https://vlogtruyen2.net/'
+                    }
+                }
+
+                return request
+            },
+
+            interceptResponse: async (response: Response): Promise<Response> => {
+                return response
+            }
+        }
+    })
+    
+    requestManager2 = createRequestManager({
+        requestsPerSecond: 5,
+        requestTimeout: 20000,
+        interceptor: {
+            interceptRequest: async (request: Request): Promise<Request> => {
+
+                request.headers = {
+                    ...(request.headers ?? {}),
+                    ...{
+                        'referer': 'https://vlogtruyen2.net/',
+                        'x-requested-with': 'XMLHttpRequest'
                     }
                 }
 
@@ -102,10 +124,17 @@ export class VlogTruyen extends Source {
             method,
         });
         let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
+        let $1 = this.cheerio.load(data.data);
+        let value = $1('input[name=manga_id]').attr('value');
+        const request2 = createRequestObject({
+            url: `https://vlogtruyen2.net/thong-tin-ca-nhan?manga_id=${value}`,
+            method
+        });
+        let data2 = await this.requestManager2.schedule(request2, 1);
+        let $ = this.cheerio.load(JSON.parse(data2.data)['data']['chaptersHtml']);
         const chapters: Chapter[] = [];
         var i = 0;
-        for (const obj of $('.ul-list-chaper-detail-commic > li').toArray().reverse()) {
+        for (const obj of $('li').toArray().reverse()) {
             i++;
             let id = $('a', obj).first().attr('href');
             let chapNum = Number($('a', obj).first().attr('title')?.split(' ')[1]);
