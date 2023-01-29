@@ -118,6 +118,7 @@ export class Thienhatruyen extends Source {
         // const collectedIds: any = [];
         for (const obj of $("li").toArray().reverse()) {
             const getTime = $('span.name > span.views', obj).text().replace(/\s+/g, ' ').split(' ');
+            console.log(getTime);
             const time = {
                 date: getTime[1],
                 time: getTime[2],
@@ -139,7 +140,6 @@ export class Thienhatruyen extends Source {
             }));
         }
 
-        console.log(chapters);
         return chapters;
     }
 
