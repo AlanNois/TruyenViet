@@ -2716,6 +2716,7 @@ class Thienhatruyen extends paperback_extensions_common_1.Source {
             // const collectedIds: any = [];
             for (const obj of $("li").toArray().reverse()) {
                 const getTime = $('span.name > span.views', obj).text().replace(/\s+/g, ' ').split(' ');
+                console.log(getTime);
                 const time = {
                     date: getTime[1],
                     time: getTime[2],
@@ -2736,7 +2737,6 @@ class Thienhatruyen extends paperback_extensions_common_1.Source {
                     group: time.group + ' luợt xem'
                 }));
             }
-            console.log(chapters);
             return chapters;
         });
     }
