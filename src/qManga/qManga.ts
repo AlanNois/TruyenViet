@@ -169,6 +169,7 @@ export class qManga extends Source {
         });
 
         ///Get the section data
+        sectionCallback(featured);
         sectionCallback(newUpdated);
         sectionCallback(hot);
         sectionCallback(view);
@@ -244,22 +245,25 @@ export class qManga extends Source {
 
         //featured
         request = createRequestObject({
-            url: 'https://qmanga5.net/',
+            url: 'https://qmanga5.net/ajax-data/pho-bien/xem-nhieu',
             method: "GET",
+            headers: {
+                "x-requested-with": "XMLHttpRequest"
+            }
         });
         let featuredItems: MangaTile[] = [];
         data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-        for (const element of $('a', '.top-new').toArray()) {
-            let title = $('img', element).attr('title');
-            let image = $('img', element).attr('data-src') ?? $('img', element).attr('src');
-            let id = $(element).attr('href');
-            // let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
+        let datas = JSON.parse(data.data);
+        for (const element of datas["data"].splice(0, 15)) {
+            let title = element["name"];
+            let id = "https://qmanga5.net/"+element["slug"];
+            let image = "https://qmanga5.net/"+element["image"];
+            let subtitle = element["chapters_latest"]["name"];
             featuredItems.push(createMangaTile({
                 id: id ?? "",
                 image: decodeHTMLEntity(encodeURI(image ?? "https://qmanga5.net/image/defaul-load.png")),
                 title: createIconText({ text: title ?? "" }),
-                // subtitleText: createIconText({ text: subtitle }),
+                subtitleText: createIconText({ text: subtitle }),
             }))
         }
         featured.items = featuredItems;
