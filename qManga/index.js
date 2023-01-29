@@ -599,7 +599,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const qMangaParser_1 = require("./qMangaParser");
 const method = 'GET';
 exports.qMangaInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'qManga',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -724,7 +724,7 @@ class qManga extends paperback_extensions_common_1.Source {
         });
     }
     getHomePageSections(sectionCallback) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             let featured = createHomeSection({
                 id: 'featured',
@@ -747,6 +747,7 @@ class qManga extends paperback_extensions_common_1.Source {
                 view_more: true,
             });
             ///Get the section data
+            sectionCallback(featured);
             sectionCallback(newUpdated);
             sectionCallback(hot);
             sectionCallback(view);
@@ -818,21 +819,25 @@ class qManga extends paperback_extensions_common_1.Source {
             sectionCallback(view);
             //featured
             request = createRequestObject({
-                url: 'https://qmanga5.net/',
+                url: 'https://qmanga5.net/ajax-data/pho-bien/xem-nhieu',
                 method: "GET",
+                headers: {
+                    "x-requested-with": "XMLHttpRequest"
+                }
             });
             let featuredItems = [];
             data = yield this.requestManager.schedule(request, 1);
-            $ = this.cheerio.load(data.data);
-            for (const element of $('a', '.top-new').toArray()) {
-                let title = $('img', element).attr('title');
-                let image = (_d = $('img', element).attr('data-src')) !== null && _d !== void 0 ? _d : $('img', element).attr('src');
-                let id = $(element).attr('href');
-                // let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
+            let datas = JSON.parse(data.data);
+            for (const element of datas["data"].splice(0, 15)) {
+                let title = element["name"];
+                let id = "https://qmanga5.net/" + element["slug"];
+                let image = "https://qmanga5.net/" + element["image"];
+                let subtitle = element["chapters_latest"]["name"];
                 featuredItems.push(createMangaTile({
                     id: id !== null && id !== void 0 ? id : "",
                     image: qMangaParser_1.decodeHTMLEntity(encodeURI(image !== null && image !== void 0 ? image : "https://qmanga5.net/image/defaul-load.png")),
                     title: createIconText({ text: title !== null && title !== void 0 ? title : "" }),
+                    subtitleText: createIconText({ text: subtitle }),
                 }));
             }
             featured.items = featuredItems;
