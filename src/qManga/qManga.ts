@@ -24,7 +24,7 @@ import { parseSearch, parseViewMore, isLastPage, decodeHTMLEntity } from "./qMan
 const method = 'GET'
 
 export const qMangaInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'qManga',
     icon: 'icon.png',
     author: 'AlanNois',
