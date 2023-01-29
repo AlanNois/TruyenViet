@@ -26,7 +26,7 @@ const DOMAIN = 'https://truyennhanh1.com/'
 const method = 'GET'
 
 export const Truyentranh24Info: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Truyentranh24',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -78,7 +78,7 @@ export class Truyentranh24 extends Source {
         let creator = '';
         let statusFinal = 1;
         creator = $('.manga-author > span').text().trim();
-        let dataId = $('.container').attr('data-id');
+        // let dataId = $('.container').attr('data-id');
         // for (const t of $('a', test).toArray()) {
         //     const genre = $(t).text().trim();
         //     const id = $(t).attr('href') ?? genre;
@@ -90,7 +90,7 @@ export class Truyentranh24 extends Source {
         let desc = $(".manga-content").text();
         const image = $('.manga-thumbnail > img').attr("data-src") ?? "";
         return createManga({
-            id: mangaId + "::" + dataId, //=> id là mangaId mới
+            id: mangaId, //=> id là mangaId mới
             author: creator,
             artist: creator,
             desc: desc,
@@ -104,8 +104,15 @@ export class Truyentranh24 extends Source {
 
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
+        const req = createRequestObject({
+            url: DOMAIN+mangaId,
+            method: "GET",
+        });
+        let datas = await this.requestManager.schedule(req, 1);
+        let $ = this.cheerio.load(datas.data);
+        let dataId = $('.container').attr('data-id');
         const request = createRequestObject({
-            url: 'https://truyennhanh1.com/api/mangas/' + mangaId.split("::")[1] + '/chapters?offset=0&limit=0',
+            url: 'https://truyennhanh1.com/api/mangas/' + dataId + '/chapters?offset=0&limit=0',
             method,
             headers: {
                 'x-requested-with': 'XMLHttpRequest',
@@ -118,11 +125,11 @@ export class Truyentranh24 extends Source {
         for (const obj of json.chapters) {
             let chapNum = obj.slug.split('-')[1];
             let name = obj.views.toLocaleString() + ' lượt đọc';
-            let time = obj.created_at.split(' ');
+            let time = obj.created_at.split('T');
             let d = time[0].split('-');
             let t = time[1].split(':');
             chapters.push(createChapter(<Chapter>{
-                id: DOMAIN + mangaId.split("::")[0] + '/' + obj.slug, //chapterId
+                id: DOMAIN + mangaId + '/' + obj.slug, //chapterId
                 chapNum: Number(chapNum),
                 name,
                 mangaId: mangaId,
