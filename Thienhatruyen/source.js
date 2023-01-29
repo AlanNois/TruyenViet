@@ -2621,7 +2621,7 @@ const ThienhatruyenParser_1 = require("./ThienhatruyenParser");
 const DOMAIN = 'https://thienhatruyen.com/';
 const method = 'GET';
 exports.ThienhatruyenInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Thienhatruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -2700,40 +2700,43 @@ class Thienhatruyen extends paperback_extensions_common_1.Source {
         });
     }
     getChapters(mangaId) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: `${DOMAIN}${mangaId}`,
+                url: `${DOMAIN}thong-tin-ca-nhan?manga_id=${(_a = mangaId.split('-').pop()) === null || _a === void 0 ? void 0 : _a.replace('.html', '')}`,
                 method,
+                headers: {
+                    'x-requested-with': 'XMLHttpRequest'
+                }
             });
             var i = 0;
             const response = yield this.requestManager.schedule(request, 1);
-            let html = Buffer.from(createByteArray(response.rawData)).toString();
-            let $ = this.cheerio.load(html);
+            let $ = this.cheerio.load(JSON.parse(response.data).data.chaptersHtml);
             const chapters = [];
             // const collectedIds: any = [];
-            for (const obj of $("#scrollbar a").toArray().reverse()) {
-                const getTime = $('span.name > span.views', obj).text().trim().split(' ');
+            for (const obj of $("li").toArray().reverse()) {
+                const getTime = $('span.name > span.views', obj).text().replace(/\s+/g, ' ').split(' ');
                 const time = {
-                    date: getTime[0],
-                    time: getTime[1].split('-')[0].trim()
+                    date: getTime[1],
+                    time: getTime[2],
+                    group: getTime[4]
                 };
                 const arrDate = time.date.split(/\-/);
                 const fixDate = [arrDate[1], arrDate[0], arrDate[2]].join('/');
                 const finalTime = new Date(fixDate + ' ' + time.time);
                 let chapNum = parseFloat($('span.name > span.titleComic', obj).text().trim().split(" ")[1]); //a:,a-b,a
-                // if (!collectedIds.includes(chapNum)) {
                 i++;
                 chapters.push(createChapter({
-                    id: $(obj).attr('href'),
+                    id: $('a', obj).first().attr('href'),
                     chapNum: isNaN(chapNum) ? i : chapNum,
-                    name: $('span.name > span.titleComic', obj).text().trim(),
+                    name: $('span.name > span.titleComic', obj).text().replace(/\s+/g, ' ').trim(),
                     mangaId: mangaId,
                     langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
-                    time: finalTime
+                    time: finalTime,
+                    group: time.group + ' luợt xem'
                 }));
-                //     collectedIds.push(chapNum);
-                // }
             }
+            console.log(chapters);
             return chapters;
         });
     }
