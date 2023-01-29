@@ -329,7 +329,7 @@ export class TruyentranhAudio extends Source {
     }
 
     async getSearchTags(): Promise<TagSection[]> {
-        const url = `${DOMAIN}tim-truyen/`
+        const url = `${DOMAIN}tim-truyen-nang-cao`
         const request = createRequestObject({
             url: url,
             method: "GET",
