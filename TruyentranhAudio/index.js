@@ -826,7 +826,7 @@ class Parser {
         var _a, _b;
         const tiles = [];
         for (const manga of $('div.item', 'div.row').toArray()) {
-            const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.replace('\n').pop();
+            const title = (_a = $('figure.clearfix > figcaption > h3 > a', manga).first().text()) === null || _a === void 0 ? void 0 : _a.split('\n').pop();
             const id = (_b = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop();
             const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
