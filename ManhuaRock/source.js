@@ -2618,10 +2618,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ManhuaRock = exports.ManhuaRockInfo = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const ManhuaRockParser_1 = require("./ManhuaRockParser");
-const DOMAIN = 'https://manhuarock.net/';
+const DOMAIN = 'https://manhuarocktop.com/';
 const method = 'GET';
 exports.ManhuaRockInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'ManhuaRock',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -2790,7 +2790,7 @@ class ManhuaRock extends paperback_extensions_common_1.Source {
                     pages.push(encodeURI(link.replace(/\n/g, '')));
                 }
                 else {
-                    pages.push(encodeURI('https://manhuarock.net/' + link.replace(/\n/g, '')));
+                    pages.push(encodeURI('https://manhuarocktop.com/' + link.replace(/\n/g, '')));
                 }
             }
             const chapterDetails = createChapterDetails({
@@ -2842,7 +2842,7 @@ class ManhuaRock extends paperback_extensions_common_1.Source {
                 // if (!id || !title) continue;
                 popular.push(createMangaTile({
                     id: id,
-                    image: (bg === null || bg === void 0 ? void 0 : bg.includes('http')) ? (bg) : ("https://manhuarock.net" + bg),
+                    image: (bg === null || bg === void 0 ? void 0 : bg.includes('http')) ? (bg) : ("https://manhuarocktop.com" + bg),
                     title: createIconText({ text: title }),
                     subtitleText: createIconText({ text: sub.replace('Chap', 'Chương') }),
                 }));
@@ -2876,7 +2876,7 @@ class ManhuaRock extends paperback_extensions_common_1.Source {
                 let title = $('.series-title > a', element).text().trim();
                 let image = $('.a6-ratio > .img-in-ratio', element).attr("data-bg");
                 if (!(image === null || image === void 0 ? void 0 : image.includes('http'))) {
-                    image = 'https://manhuarock.net' + image;
+                    image = 'https://manhuarocktop.com' + image;
                 }
                 else {
                     image = image;
@@ -2904,7 +2904,7 @@ class ManhuaRock extends paperback_extensions_common_1.Source {
                 let title = $('.series-title > a', manga).text().trim();
                 let image = $('.a6-ratio > .img-in-ratio', manga).attr("data-bg");
                 if (!(image === null || image === void 0 ? void 0 : image.includes('http'))) {
-                    image = 'https://manhuarock.net' + image;
+                    image = 'https://manhuarocktop.com' + image;
                 }
                 else {
                     image = image;

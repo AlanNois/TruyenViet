@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.TruyentranhAudioInfo = {
-    version: '1.1.3',
+    version: '1.1.4',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -477,9 +477,9 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             let page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const search = {
-                genres: '',
+                // genres: '',
                 gender: "-1",
-                status: "-1",
+                status: "",
                 minchapter: "1",
                 sort: "0"
             };
@@ -506,12 +506,12 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                     }
                 }
             });
-            search.genres = (genres !== null && genres !== void 0 ? genres : []).join(",");
+            // search.genres = (genres ?? []).join(",");
             const url = `${DOMAIN}`;
             const request = createRequestObject({
-                url: query.title ? (url + '/tim-truyen') : (url + '/tim-truyen-nang-cao'),
+                url: query.title ? (url + '/tim-truyen/') : (url + '/tim-truyen-nang-cao/'),
                 method: "GET",
-                param: encodeURI(`?keyword=${(_d = query.title) !== null && _d !== void 0 ? _d : ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`)
+                param: encodeURI(`?keyword=${(_d = query.title) !== null && _d !== void 0 ? _d : ''}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`)
             });
             const data = yield this.requestManager.schedule(request, 1);
             let $ = this.cheerio.load(data.data);
@@ -850,25 +850,24 @@ class Parser {
         return tiles;
     }
     parseTags($) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d;
         //id tag đéo đc trùng nhau
-        const arrayTags = [];
+        // const arrayTags: Tag[] = [];
         const arrayTags2 = [];
         const arrayTags3 = [];
         const arrayTags4 = [];
         const arrayTags5 = [];
         //The loai
-        for (const tag of $('div.col-md-3.col-sm-4.col-xs-6.mrb10', 'div.col-sm-10 > div.row').toArray()) {
-            const label = $('div.genre-item', tag).text().trim();
-            const id = (_a = $('div.genre-item > span', tag).attr('data-id')) !== null && _a !== void 0 ? _a : label;
-            if (!id || !label)
-                continue;
-            arrayTags.push({ id: id, label: label });
-        }
+        // for (const tag of $('div.col-md-3.col-sm-4.col-xs-6.mrb10', 'div.col-sm-10 > div.row').toArray()) {
+        //     const label = $('div.genre-item', tag).text().trim();
+        //     const id = $('div.genre-item > span', tag).attr('data-id') ?? label;
+        //     if (!id || !label) continue;
+        //     arrayTags.push({ id: id, label: label });
+        // }
         //Số lượng chapter
         for (const tag of $('option', 'select.select-minchapter').toArray()) {
             const label = $(tag).text().trim();
-            const id = (_b = 'minchapter.' + $(tag).attr('value')) !== null && _b !== void 0 ? _b : label;
+            const id = (_a = 'minchapter.' + $(tag).attr('value')) !== null && _a !== void 0 ? _a : label;
             if (!id || !label)
                 continue;
             arrayTags2.push({ id: id, label: label });
@@ -876,7 +875,7 @@ class Parser {
         //Tình trạng
         for (const tag of $('option', '.select-status').toArray()) {
             const label = $(tag).text().trim();
-            const id = (_c = 'status.' + $(tag).attr('value')) !== null && _c !== void 0 ? _c : label;
+            const id = (_b = 'status.' + $(tag).attr('value')) !== null && _b !== void 0 ? _b : label;
             if (!id || !label)
                 continue;
             arrayTags3.push({ id: id, label: label });
@@ -884,7 +883,7 @@ class Parser {
         //Dành cho
         for (const tag of $('option', '.select-gender').toArray()) {
             const label = $(tag).text().trim();
-            const id = (_d = 'gender.' + $(tag).attr('value')) !== null && _d !== void 0 ? _d : label;
+            const id = (_c = 'gender.' + $(tag).attr('value')) !== null && _c !== void 0 ? _c : label;
             if (!id || !label)
                 continue;
             arrayTags4.push({ id: id, label: label });
@@ -892,12 +891,13 @@ class Parser {
         //Sắp xếp theo
         for (const tag of $('option', '.select-sort').toArray()) {
             const label = $(tag).text().trim();
-            const id = (_e = 'sort.' + $(tag).attr('value')) !== null && _e !== void 0 ? _e : label;
+            const id = (_d = 'sort.' + $(tag).attr('value')) !== null && _d !== void 0 ? _d : label;
             if (!id || !label)
                 continue;
             arrayTags5.push({ id: id, label: label });
         }
-        const tagSections = [createTagSection({ id: '0', label: 'Thể Loại (Có thể chọn nhiều hơn 1)', tags: arrayTags.map(x => createTag(x)) }),
+        const tagSections = [
+            // createTagSection({ id: '0', label: 'Thể Loại (Có thể chọn nhiều hơn 1)', tags: arrayTags.map(x => createTag(x)) }),
             createTagSection({ id: '1', label: 'Số Lượng Chapter (Chỉ chọn 1)', tags: arrayTags2.map(x => createTag(x)) }),
             createTagSection({ id: '2', label: 'Tình Trạng (Chỉ chọn 1)', tags: arrayTags3.map(x => createTag(x)) }),
             createTagSection({ id: '3', label: 'Dành Cho (Chỉ chọn 1)', tags: arrayTags4.map(x => createTag(x)) }),
