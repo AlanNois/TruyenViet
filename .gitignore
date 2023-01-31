@@ -3,3 +3,4 @@
 /bundles
 /non-test
 *.test.ts
+/dist
