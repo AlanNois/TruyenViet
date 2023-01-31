@@ -4,3 +4,4 @@
 /non-test
 *.test.ts
 /dist
+/temp_build
