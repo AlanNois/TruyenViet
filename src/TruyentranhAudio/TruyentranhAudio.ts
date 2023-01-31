@@ -119,7 +119,7 @@ export class TruyentranhAudio extends Source {
 
         const search = {
             // genres: '',
-            gender: "-1",
+            gender: "",
             status: "",
             minchapter: "1",
             sort: "0"
@@ -128,9 +128,9 @@ export class TruyentranhAudio extends Source {
         const tags = query.includedTags?.map(tag => tag.id) ?? [];
         const genres: string[] = [];
         tags.map((value) => {
-            if (value.indexOf('.') === -1) {
-                genres.push(value)
-            } else {
+            // if (value.indexOf('.') === -1) {
+            //     genres.push(value)
+            // } else {
                 switch (value.split(".")[0]) {
                     case 'minchapter':
                         search.minchapter = (value.split(".")[1]);
@@ -144,7 +144,7 @@ export class TruyentranhAudio extends Source {
                     case 'status':
                         search.status = (value.split(".")[1]);
                         break
-                }
+                // }
             }
         })
         // search.genres = (genres ?? []).join(",");
