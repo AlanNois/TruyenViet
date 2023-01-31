@@ -478,7 +478,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             let page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const search = {
                 // genres: '',
-                gender: "-1",
+                gender: "",
                 status: "",
                 minchapter: "1",
                 sort: "0"
@@ -486,24 +486,23 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             const tags = (_c = (_b = query.includedTags) === null || _b === void 0 ? void 0 : _b.map(tag => tag.id)) !== null && _c !== void 0 ? _c : [];
             const genres = [];
             tags.map((value) => {
-                if (value.indexOf('.') === -1) {
-                    genres.push(value);
-                }
-                else {
-                    switch (value.split(".")[0]) {
-                        case 'minchapter':
-                            search.minchapter = (value.split(".")[1]);
-                            break;
-                        case 'gender':
-                            search.gender = (value.split(".")[1]);
-                            break;
-                        case 'sort':
-                            search.sort = (value.split(".")[1]);
-                            break;
-                        case 'status':
-                            search.status = (value.split(".")[1]);
-                            break;
-                    }
+                // if (value.indexOf('.') === -1) {
+                //     genres.push(value)
+                // } else {
+                switch (value.split(".")[0]) {
+                    case 'minchapter':
+                        search.minchapter = (value.split(".")[1]);
+                        break;
+                    case 'gender':
+                        search.gender = (value.split(".")[1]);
+                        break;
+                    case 'sort':
+                        search.sort = (value.split(".")[1]);
+                        break;
+                    case 'status':
+                        search.status = (value.split(".")[1]);
+                        break;
+                    // }
                 }
             });
             // search.genres = (genres ?? []).join(",");
