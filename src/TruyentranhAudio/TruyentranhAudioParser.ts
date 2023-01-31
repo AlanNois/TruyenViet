@@ -107,7 +107,7 @@ export class Parser {
         const tiles: MangaTile[] = [];
 
         for (const manga of $('div.item', 'div.row').toArray()) {
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text()?.replace('\n').pop();
+            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text()?.split('\n').pop();
             const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
             const images = $('figure.clearfix > div.image > a > img', manga).first().attr('src');
             let image = '';
