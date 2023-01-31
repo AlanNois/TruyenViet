@@ -42,6 +42,6 @@
     "nyc": "^15.1.0",
     "typedoc": "^0.17.6"
   },
-  "baseURL":"https://alannois.github.io/TruyenViet/",
-  "repositoryName":"AlanNois"
+  "baseURL": "https://alannois.github.io/TruyenViet/",
+  "repositoryName": "AlanNois"
 }

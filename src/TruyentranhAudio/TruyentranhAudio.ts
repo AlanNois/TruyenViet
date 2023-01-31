@@ -30,7 +30,7 @@ export const isLastPage = ($: CheerioStatic): boolean => {
 }
 
 export const TruyentranhAudioInfo: SourceInfo = {
-    version: '1.1.3',
+    version: '1.1.4',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -118,9 +118,9 @@ export class TruyentranhAudio extends Source {
         let page = metadata?.page ?? 1;
 
         const search = {
-            genres: '',
+            // genres: '',
             gender: "-1",
-            status: "-1",
+            status: "",
             minchapter: "1",
             sort: "0"
         };
@@ -147,12 +147,12 @@ export class TruyentranhAudio extends Source {
                 }
             }
         })
-        search.genres = (genres ?? []).join(",");
+        // search.genres = (genres ?? []).join(",");
         const url = `${DOMAIN}`
         const request = createRequestObject({
-            url: query.title ? (url + '/tim-truyen') : (url + '/tim-truyen-nang-cao'),
+            url: query.title ? (url + '/tim-truyen/') : (url + '/tim-truyen-nang-cao/'),
             method: "GET",
-            param: encodeURI(`?keyword=${query.title ?? ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`)
+            param: encodeURI(`?keyword=${query.title ?? ''}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`)
         });
 
         const data = await this.requestManager.schedule(request, 1);

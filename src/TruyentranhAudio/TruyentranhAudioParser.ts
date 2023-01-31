@@ -130,19 +130,19 @@ export class Parser {
 
     parseTags($: any): TagSection[] {
         //id tag đéo đc trùng nhau
-        const arrayTags: Tag[] = [];
+        // const arrayTags: Tag[] = [];
         const arrayTags2: Tag[] = [];
         const arrayTags3: Tag[] = [];
         const arrayTags4: Tag[] = [];
         const arrayTags5: Tag[] = [];
 
         //The loai
-        for (const tag of $('div.col-md-3.col-sm-4.col-xs-6.mrb10', 'div.col-sm-10 > div.row').toArray()) {
-            const label = $('div.genre-item', tag).text().trim();
-            const id = $('div.genre-item > span', tag).attr('data-id') ?? label;
-            if (!id || !label) continue;
-            arrayTags.push({ id: id, label: label });
-        }
+        // for (const tag of $('div.col-md-3.col-sm-4.col-xs-6.mrb10', 'div.col-sm-10 > div.row').toArray()) {
+        //     const label = $('div.genre-item', tag).text().trim();
+        //     const id = $('div.genre-item > span', tag).attr('data-id') ?? label;
+        //     if (!id || !label) continue;
+        //     arrayTags.push({ id: id, label: label });
+        // }
         //Số lượng chapter
         for (const tag of $('option', 'select.select-minchapter').toArray()) {
             const label = $(tag).text().trim();
@@ -171,7 +171,8 @@ export class Parser {
             if (!id || !label) continue;
             arrayTags5.push({ id: id, label: label });
         }
-        const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'Thể Loại (Có thể chọn nhiều hơn 1)', tags: arrayTags.map(x => createTag(x)) }),
+        const tagSections: TagSection[] = [
+        // createTagSection({ id: '0', label: 'Thể Loại (Có thể chọn nhiều hơn 1)', tags: arrayTags.map(x => createTag(x)) }),
         createTagSection({ id: '1', label: 'Số Lượng Chapter (Chỉ chọn 1)', tags: arrayTags2.map(x => createTag(x)) }),
         createTagSection({ id: '2', label: 'Tình Trạng (Chỉ chọn 1)', tags: arrayTags3.map(x => createTag(x)) }),
         createTagSection({ id: '3', label: 'Dành Cho (Chỉ chọn 1)', tags: arrayTags4.map(x => createTag(x)) }),

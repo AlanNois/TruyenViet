@@ -21,11 +21,11 @@ import {
 
 import { parseSearch, parseViewMore, isLastPage } from "./ManhuaRockParser"
 
-const DOMAIN = 'https://manhuarock.net/'
+const DOMAIN = 'https://manhuarocktop.com/'
 const method = 'GET'
 
 export const ManhuaRockInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'ManhuaRock',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -186,7 +186,7 @@ export class ManhuaRock extends Source {
             if (link.includes('http')) {
                 pages.push(encodeURI(link.replace(/\n/g, '')));
             } else {
-                pages.push(encodeURI('https://manhuarock.net/' + link.replace(/\n/g, '')));
+                pages.push(encodeURI('https://manhuarocktop.com/' + link.replace(/\n/g, '')));
             }
         }
         const chapterDetails = createChapterDetails({
@@ -239,7 +239,7 @@ export class ManhuaRock extends Source {
             // if (!id || !title) continue;
             popular.push(createMangaTile(<MangaTile>{
                 id: id,
-                image: bg?.includes('http') ? (bg) : ("https://manhuarock.net" + bg),
+                image: bg?.includes('http') ? (bg) : ("https://manhuarocktop.com" + bg),
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: sub.replace('Chap', 'Chương') }),
             }));
@@ -278,7 +278,7 @@ export class ManhuaRock extends Source {
             let title = $('.series-title > a', element).text().trim();
             let image = $('.a6-ratio > .img-in-ratio', element).attr("data-bg");
             if (!image?.includes('http')) {
-                image = 'https://manhuarock.net' + image;
+                image = 'https://manhuarocktop.com' + image;
             } else {
                 image = image;
             }
@@ -306,7 +306,7 @@ export class ManhuaRock extends Source {
             let title = $('.series-title > a', manga).text().trim();
             let image = $('.a6-ratio > .img-in-ratio', manga).attr("data-bg");
             if (!image?.includes('http')) {
-                image = 'https://manhuarock.net' + image;
+                image = 'https://manhuarocktop.com' + image;
             } else {
                 image = image;
             }
