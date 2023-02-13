@@ -2439,7 +2439,7 @@ class LXHentai extends paperback_extensions_common_1.Source {
     getMangaShareUrl(mangaId) { return `${mangaId}`; }
     ;
     getMangaDetails(mangaId) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
                 url: `${mangaId}`,
@@ -2448,49 +2448,49 @@ class LXHentai extends paperback_extensions_common_1.Source {
             const data = yield this.requestManager.schedule(request, 10);
             let $ = this.cheerio.load(data.data);
             let tags = [];
-            let creator = $('.pb-4 > div.grow > .mt-2:nth-child(3) > span > a').text().trim();
-            let status = $('.pb-4 > div.grow > .mt-2:nth-child(4) > a > span').text().trim().toLowerCase().includes("đã") ? 0 : 1; //completed, 1 = Ongoing
+            let image = (_b = (_a = $('div.relative.mx-auto.my-0 > div > div').attr('style')) === null || _a === void 0 ? void 0 : _a.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '')) !== null && _b !== void 0 ? _b : "";
+            let creator = '';
+            let status = 1; //completed, 1 = Ongoing
             // let artist = '';
-            let desc = $('.detail-content > p').text();
-            for (const t of $('.pb-4 > div.grow > .mt-2:nth-child(2) > span > a').toArray()) {
-                const genre = $(t).text().trim();
-                const id = `https://lxmanga.net${(_a = $(t).attr('href')) !== null && _a !== void 0 ? _a : genre}`;
-                tags.push(createTag({ label: genre, id }));
+            var i = 1;
+            let desc = (_c = $('.py-4.border-t.border-gray-200 > p').text()) !== null && _c !== void 0 ? _c : "";
+            for (const a of $('div.grow > div > span:nth-child(1)').toArray()) {
+                // console.log($(a).text().trim())
+                switch ($(a).text().trim()) {
+                    case "Tác giả:":
+                        // console.log('true')
+                        creator = $(`div.grow > div:nth-child(${i}) > span:nth-child(2) > a`).text().trim();
+                        break;
+                    case "Tình trạng:":
+                        // console.log('true')
+                        status = $(`div.grow > div:nth-child(${i}) > span:nth-child(2) > a`).text().trim().toLowerCase().includes("đã") ? 0 : 1;
+                        break;
+                    case "Thể loại:":
+                        // console.log('true')
+                        for (const t of $('a', $(`div.grow > div:nth-child(${i}) > span:nth-child(2)`)).toArray()) {
+                            const genre = $(t).text().trim();
+                            const id = `https://lxmanga.net${(_d = $(t).attr('href')) !== null && _d !== void 0 ? _d : genre}`;
+                            tags.push(createTag({ label: genre, id }));
+                        }
+                        break;
+                }
+                i++;
             }
-            // for (const a of $('.row.mt-2 > .col-4.py-1').toArray()) {
-            //     switch ($(a).text().trim()) {
-            //         case "Tác giả":
-            //             creator = $(a).next().text();
-            //             break;
-            //         case "Tình trạng":
-            //             status = $(a).next().text().toLowerCase().includes("đã") ? 0 : 1;
-            //             break;
-            //         case "Thể loại":
-            //             for (const t of $('a', $(a).next()).toArray()) {
-            //                 const genre = $(t).text().trim()
-            //                 const id = $(t).attr('href') ?? genre
-            //                 tags.push(createTag({ label: genre, id }));
-            //             }
-            //             break;
-            //         // case "Thực hiện":
-            //         //     artist = $(a).next().text();
-            //         //     break;
-            //     }
-            // }
-            let image = (_c = (_b = $('div.relative.mx-auto.my-0 > div > div').attr('style')) === null || _b === void 0 ? void 0 : _b.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '')) !== null && _c !== void 0 ? _c : "";
-            console.log(image);
-            return createManga({
+            // console.log(tags, image, status, creator, desc)
+            const item = createManga({
                 id: mangaId,
                 author: creator,
                 // artist: artist,
                 desc: desc,
-                titles: [$('div.flex.flex-row.truncate.mb-4 > span').text()],
+                titles: [$('div:nth-child(1) > div.flex.flex-row.truncate.mb-4 > span').text()],
                 image: image,
                 status: status,
                 // rating: parseFloat($('span[itemprop="ratingValue"]').text()),
                 hentai: true,
                 tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
             });
+            // console.log(item, tags);
+            return item;
         });
     }
     getChapters(mangaId) {
@@ -2505,16 +2505,16 @@ class LXHentai extends paperback_extensions_common_1.Source {
             var i = 0;
             for (const obj of $(".overflow-y-auto.overflow-x-hidden").toArray().reverse()) {
                 i++;
-                let time = $('a > li > div.hidden > span.timeago', obj).text();
+                // let time = $('a > li > div.hidden > span.timeago', obj).text();
                 chapters.push(createChapter({
                     id: 'https://lxmanga.net' + $('a', obj).attr('href'),
                     chapNum: i,
-                    name: $('a > li > div > span', obj).text(),
+                    name: $('a > li > div > span.text-ellipsis', obj).text(),
                     mangaId: mangaId,
                     langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
-                    time: time
                 }));
             }
+            console.log(chapters);
             return chapters;
         });
     }
