@@ -25,7 +25,7 @@ const DOMAIN = 'https://lxmanga.net/'
 const method = 'GET'
 
 export const LXHentaiInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.1.0',
     name: 'LXHentai',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -120,18 +120,16 @@ export class LXHentai extends Source {
         const $ = this.cheerio.load(response.data);
         const chapters: Chapter[] = [];
         var i = 0;
-        for (const obj of $("#listChuong > ul > .row:not(:first-child) > div.col-5").toArray().reverse()) {
+        for (const obj of $(".overflow-y-auto.overflow-x-hidden").toArray().reverse()) {
             i++;
-            let time = $($(obj).next()).text().trim().split(' ');
-            let day = time[1].split('/');
-            let h = time[0];
+            let time = $('a > li > div.hidden > span.timeago', obj).text();
             chapters.push(createChapter(<Chapter>{
                 id: 'https://lxmanga.net' + $('a', obj).attr('href'),
                 chapNum: i,
-                name: $('a', obj).text(),
+                name: $('a > li > div > span', obj).text(),
                 mangaId: mangaId,
                 langCode: LanguageCode.VIETNAMESE,
-                time: new Date(day[1] + '/' + day[0] + '/' + day[2] + ' ' + h)
+                time: time
             }));
         }
 
@@ -147,10 +145,11 @@ export class LXHentai extends Source {
         const response = await this.requestManager.schedule(request, 1);
         let $ = this.cheerio.load(response.data);
         const pages: string[] = [];
-        const list = $('#content_chap p img').toArray().length === 0 ? $('#content_chap div:not(.text-center) img').toArray()
-            : $('#content_chap p img').toArray();
+        // const list = $('#content_chap p img').toArray().length === 0 ? $('#content_chap div:not(.text-center) img').toArray()
+            // : $('#content_chap p img').toArray();
+        const list = $('.max-w-7xl.mx-auto.px-3.w-full.mt-6 img').toArray()
         for (let obj of list) {
-            let link = obj.attribs['src'].includes('http') ? obj.attribs['src'] : 'https:' + obj.attribs['src'];
+            let link = obj.attribs['src'];
             pages.push(encodeURI(link));
         }
 
@@ -164,11 +163,11 @@ export class LXHentai extends Source {
     }
 
     async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-        let featured: HomeSection = createHomeSection({
-            id: 'featured',
-            title: "Truyện Đề Cử",
-            type: HomeSectionType.featured
-        });
+        // let featured: HomeSection = createHomeSection({
+        //     id: 'featured',
+        //     title: "Truyện Đề Cử",
+        //     type: HomeSectionType.featured
+        // });
         let newUpdated: HomeSection = createHomeSection({
             id: 'new_updated',
             title: "Mới cập nhật",
@@ -183,19 +182,19 @@ export class LXHentai extends Source {
         sectionCallback(hot);
         //New Updates
         let request = createRequestObject({
-            url: 'https://lxmanga.net/story/index.php',
+            url: 'https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bstatus%5D=2,1',
             method: "GET",
         });
         let newUpdatedItems: MangaTile[] = [];
         let data = await this.requestManager.schedule(request, 1);
         let html = Buffer.from(createByteArray(data.rawData)).toString()
         let $ = this.cheerio.load(html);
-        for (let manga of $('div.col-md-3', '.main .col-md-8 > .row').toArray().splice(0, 15)) {
-            const title = $('a', manga).last().text().trim();
-            const id = $('a', manga).last().attr('href') ?? title;
-            const image = $('div', manga).first().css('background');
+        for (let manga of $('div.w-full.relative', 'div.mt-4.grid').toArray().splice(0, 15)) {
+            const title = $('a.text-ellipsis', manga).last().text().trim();
+            const id = $('a.text-ellipsis', manga).last().attr('href') ?? title;
+            const image = $('div.border > div > a > div > div', manga).first().css('background');
             const bg = image?.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
-            const sub = $('a', manga).first().text().trim();
+            const sub = $('div.border > div > div > a', manga).first().text().trim();
             newUpdatedItems.push(createMangaTile({
                 id: 'https://lxmanga.net' + id,
                 image: 'https://lxmanga.net' + bg,
@@ -212,19 +211,19 @@ export class LXHentai extends Source {
 
         //Hot
         request = createRequestObject({
-            url: 'https://lxmanga.net/story/index.php?hot',
+            url: 'https://lxmanga.net/',
             method: "GET",
         });
         let hotItems: MangaTile[] = [];
         data = await this.requestManager.schedule(request, 1);
         html = Buffer.from(createByteArray(data.rawData)).toString()
         $ = this.cheerio.load(html);
-        for (let manga of $('div.col-md-3', '.main .col-md-8 > .row').toArray().splice(0, 15)) {
-            const title = $('a', manga).last().text().trim();
-            const id = $('a', manga).last().attr('href') ?? title;
-            const image = $('div', manga).first().css('background');
+        for (let manga of $('li.glide__slide', 'ul.glide__slides').toArray().splice(9, 24)) {
+            const title = $('div > div > div > div > a.text-ellipsis', manga).last().text().trim();
+            const id = $('div > div > div > div > a.text-ellipsis', manga).last().attr('href') ?? title;
+            const image = $('div > div > div > div > a > div > div', manga).first().css('background');
             const bg = image?.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
-            const sub = $('a', manga).first().text().trim();
+            const sub = $('div > div > div > div > div > a', manga).first().text().trim();
             hotItems.push(createMangaTile({
                 id: 'https://lxmanga.net' + id,
                 image: 'https://lxmanga.net' + bg,
@@ -239,34 +238,34 @@ export class LXHentai extends Source {
         hot.items = hotItems;
         sectionCallback(hot);
 
-        //Featured
-        request = createRequestObject({
-            url: 'https://lxmanga.net/',
-            method: "GET",
-        });
-        let featuredItems: MangaTile[] = [];
-        data = await this.requestManager.schedule(request, 1);
-        html = Buffer.from(createByteArray(data.rawData)).toString()
-        $ = this.cheerio.load(html);
-        for (let manga of $('.truyenHot .gridSlide > div').toArray()) {
-            const title = $('.slideName > a', manga).text().trim();
-            const id = $('.slideName > a', manga).attr('href') ?? title;
-            const image = $('.itemSlide', manga).first().css('background');
-            const bg = image?.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
-            const sub = $('.newestChapter', manga).text().trim();
-            featuredItems.push(createMangaTile({
-                id: 'https://lxmanga.net' + id,
-                image: 'https://lxmanga.net' + bg,
-                title: createIconText({
-                    text: title,
-                }),
-                subtitleText: createIconText({
-                    text: sub,
-                }),
-            }))
-        }
-        featured.items = featuredItems;
-        sectionCallback(featured);
+        // //Featured
+        // request = createRequestObject({
+        //     url: 'https://lxmanga.net/',
+        //     method: "GET",
+        // });
+        // let featuredItems: MangaTile[] = [];
+        // data = await this.requestManager.schedule(request, 1);
+        // html = Buffer.from(createByteArray(data.rawData)).toString()
+        // $ = this.cheerio.load(html);
+        // for (let manga of $('.truyenHot .gridSlide > div').toArray()) {
+        //     const title = $('.slideName > a', manga).text().trim();
+        //     const id = $('.slideName > a', manga).attr('href') ?? title;
+        //     const image = $('.itemSlide', manga).first().css('background');
+        //     const bg = image?.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
+        //     const sub = $('.newestChapter', manga).text().trim();
+        //     featuredItems.push(createMangaTile({
+        //         id: 'https://lxmanga.net' + id,
+        //         image: 'https://lxmanga.net' + bg,
+        //         title: createIconText({
+        //             text: title,
+        //         }),
+        //         subtitleText: createIconText({
+        //             text: sub,
+        //         }),
+        //     }))
+        // }
+        // featured.items = featuredItems;
+        // sectionCallback(featured);
     }
 
     async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
