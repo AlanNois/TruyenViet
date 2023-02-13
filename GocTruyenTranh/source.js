@@ -600,7 +600,7 @@ const GocTruyenTranhParser_1 = require("./GocTruyenTranhParser");
 const DOMAIN = 'https://goctruyentranhvui.com/';
 const method = 'GET';
 exports.GocTruyenTranhInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'GocTruyenTranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -733,7 +733,11 @@ class GocTruyenTranh extends paperback_extensions_common_1.Source {
     }
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            // let featured = createHomeSection({ id: 'featured', title: 'Tiêu điểm', type: HomeSectionType.featured });
+            let featured = createHomeSection({
+                id: 'featured',
+                title: 'Tiêu điểm',
+                type: paperback_extensions_common_1.HomeSectionType.featured
+            });
             let hot = createHomeSection({
                 id: 'hot',
                 title: "Truyện Đề Xuất",
@@ -753,6 +757,7 @@ class GocTruyenTranh extends paperback_extensions_common_1.Source {
             sectionCallback(hot);
             sectionCallback(newUpdated);
             sectionCallback(newAdded);
+            sectionCallback(featured);
             ///Get the section data
             //Hot
             let url = '';
@@ -784,12 +789,16 @@ class GocTruyenTranh extends paperback_extensions_common_1.Source {
             json = (typeof data.data) === 'string' ? JSON.parse(data.data) : data.data;
             newAdded.items = GocTruyenTranhParser_1.parseViewMore(json).splice(0, 10);
             sectionCallback(newAdded);
-            // //Featured
-            // url = '';
-            // request = createRequestObject({
-            //     url: 'https://goctruyentranhvui.com/trang-chu',
-            //     method: "GET",
-            // });
+            //Featured
+            url = DOMAIN;
+            request = createRequestObject({
+                url: url,
+                method: "GET",
+            });
+            data = yield this.requestManager.schedule(request, 1);
+            let $ = yield this.cheerio.load(data.data);
+            featured.items = GocTruyenTranhParser_1.parseFeaturedSection($);
+            sectionCallback(featured);
             // let featuredItems: MangaTile[] = [];
             // data = await this.requestManager.schedule(request, 1);
             // $ = this.cheerio.load(data.data);
@@ -894,7 +903,7 @@ exports.GocTruyenTranh = GocTruyenTranh;
 },{"./GocTruyenTranhParser":57,"paperback-extensions-common":12}],57:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.convertTime = exports.decodeHTMLEntity = exports.parseViewMore = exports.parseSearch = exports.generateSearch = void 0;
+exports.parseFeaturedSection = exports.convertTime = exports.decodeHTMLEntity = exports.parseViewMore = exports.parseSearch = exports.generateSearch = void 0;
 const entities = require("entities"); //Import package for decoding HTML entities
 exports.generateSearch = (query) => {
     var _a;
@@ -909,7 +918,7 @@ exports.parseSearch = (json) => {
         let title = obj.name;
         let subtitle = 'Chương ' + obj.chapterLatest[0];
         const image = obj.photo;
-        let id = 'https://goctruyentranh.com/truyen/' + obj.nameEn + "::" + obj.id;
+        let id = 'https://goctruyentranhvui.com/truyen/' + obj.nameEn + "::" + obj.id;
         mangas.push(createMangaTile({
             id: id,
             image: (_b = encodeURI(image)) !== null && _b !== void 0 ? _b : "",
@@ -927,7 +936,7 @@ exports.parseViewMore = (json) => {
         let title = obj.name;
         let subtitle = 'Chương ' + obj.chapterLatest[0];
         const image = obj.photo;
-        let id = 'https://goctruyentranh.com/truyen/' + obj.nameEn + "::" + obj.id;
+        let id = 'https://goctruyentranhvui.com/truyen/' + obj.nameEn + "::" + obj.id;
         if (!collectedIds.includes(id)) {
             manga.push(createMangaTile({
                 id: id,
@@ -986,6 +995,22 @@ function convertTime(timeAgo) {
     return time;
 }
 exports.convertTime = convertTime;
+// export method parseFeaturedSection
+function parseFeaturedSection($) {
+    var _a, _b;
+    let featuredItems = [];
+    for (let manga of $('div.background-banner', 'section.top-banner-wrap').toArray()) {
+        const id = `https://goctruyentranhvui.com${(_a = $('div > a', manga).attr('href')) !== null && _a !== void 0 ? _a : ""}`;
+        const image = (_b = $('div > a > img', manga).attr('src')) !== null && _b !== void 0 ? _b : "";
+        featuredItems.push(createMangaTile({
+            title: createIconText({ text: '' }),
+            id: id,
+            image: image,
+        }));
+    }
+    return featuredItems;
+}
+exports.parseFeaturedSection = parseFeaturedSection;
 
 },{"entities":1}]},{},[56])(56)
 });
