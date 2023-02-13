@@ -73,37 +73,44 @@ export class LXHentai extends Source {
         const data = await this.requestManager.schedule(request, 10);
         let $ = this.cheerio.load(data.data);
         let tags: Tag[] = [];
-        let creator = '';
-        let status = 1; //completed, 1 = Ongoing
-        let artist = '';
+        let creator = $('.pb-4 > div.grow > .mt-2:nth-child(3) > span > a').text().trim();
+        let status = $('.pb-4 > div.grow > .mt-2:nth-child(4) > a > span').text().trim().toLowerCase().includes("đã") ? 0 : 1; //completed, 1 = Ongoing
+        // let artist = '';
         let desc = $('.detail-content > p').text();
-        for (const a of $('.row.mt-2 > .col-4.py-1').toArray()) {
-            switch ($(a).text().trim()) {
-                case "Tác giả":
-                    creator = $(a).next().text();
-                    break;
-                case "Tình trạng":
-                    status = $(a).next().text().toLowerCase().includes("đã") ? 0 : 1;
-                    break;
-                case "Thể loại":
-                    for (const t of $('a', $(a).next()).toArray()) {
-                        const genre = $(t).text().trim()
-                        const id = $(t).attr('href') ?? genre
-                        tags.push(createTag({ label: genre, id }));
-                    }
-                    break;
-                case "Thực hiện":
-                    artist = $(a).next().text();
-                    break;
-            }
+        for (const t of $('.pb-4 > div.grow > .mt-2:nth-child(2) > span > a').toArray()) {
+            const genre = $(t).text().trim()
+            const id = `https://lxmanga.net${$(t).attr('href') ?? genre}`
+            tags.push(createTag({ label: genre, id }));
         }
+        // for (const a of $('.row.mt-2 > .col-4.py-1').toArray()) {
+        //     switch ($(a).text().trim()) {
+        //         case "Tác giả":
+        //             creator = $(a).next().text();
+        //             break;
+        //         case "Tình trạng":
+        //             status = $(a).next().text().toLowerCase().includes("đã") ? 0 : 1;
+        //             break;
+        //         case "Thể loại":
+        //             for (const t of $('a', $(a).next()).toArray()) {
+        //                 const genre = $(t).text().trim()
+        //                 const id = $(t).attr('href') ?? genre
+        //                 tags.push(createTag({ label: genre, id }));
+        //             }
+        //             break;
+        //         // case "Thực hiện":
+        //         //     artist = $(a).next().text();
+        //         //     break;
+        //     }
+        // }
+        let image = $('div.relative.mx-auto.my-0 > div > div').attr('style')?.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '') ?? "";
+        console.log(image);
         return createManga({
             id: mangaId,
             author: creator,
-            artist: artist,
+            // artist: artist,
             desc: desc,
-            titles: [$('h1.title-detail').text()],
-            image: 'https://lxmanga.net' + $('.col-md-8 > .row > .col-md-4 > img').attr('src'),
+            titles: [$('div.flex.flex-row.truncate.mb-4 > span').text()],
+            image: image,
             status: status,
             // rating: parseFloat($('span[itemprop="ratingValue"]').text()),
             hentai: true,
@@ -192,12 +199,12 @@ export class LXHentai extends Source {
         for (let manga of $('div.w-full.relative', 'div.mt-4.grid').toArray().splice(0, 15)) {
             const title = $('a.text-ellipsis', manga).last().text().trim();
             const id = $('a.text-ellipsis', manga).last().attr('href') ?? title;
-            const image = $('div.border > div > a > div > div', manga).first().css('background');
-            const bg = image?.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
+            const image = $('div.border > div > a > div > div', manga).attr('style');
+            const bg = image?.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
             const sub = $('div.border > div > div > a', manga).first().text().trim();
             newUpdatedItems.push(createMangaTile({
                 id: 'https://lxmanga.net' + id,
-                image: 'https://lxmanga.net' + bg,
+                image: bg,
                 title: createIconText({
                     text: title,
                 }),
@@ -218,15 +225,15 @@ export class LXHentai extends Source {
         data = await this.requestManager.schedule(request, 1);
         html = Buffer.from(createByteArray(data.rawData)).toString()
         $ = this.cheerio.load(html);
-        for (let manga of $('li.glide__slide', 'ul.glide__slides').toArray().splice(9, 24)) {
+        for (let manga of $('li.glide__slide', 'ul.glide__slides').toArray().splice(0, 20)) {
             const title = $('div > div > div > div > a.text-ellipsis', manga).last().text().trim();
             const id = $('div > div > div > div > a.text-ellipsis', manga).last().attr('href') ?? title;
-            const image = $('div > div > div > div > a > div > div', manga).first().css('background');
-            const bg = image?.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
+            const image = $('div.border > div > a > div > div', manga).attr('style');
+            const bg = image?.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
             const sub = $('div > div > div > div > div > a', manga).first().text().trim();
             hotItems.push(createMangaTile({
                 id: 'https://lxmanga.net' + id,
-                image: 'https://lxmanga.net' + bg,
+                image: bg,
                 title: createIconText({
                     text: title,
                 }),
