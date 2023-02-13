@@ -101,19 +101,21 @@ export class LXHentai extends Source {
             }
             i++;
         }
-        console.log(tags, image, status, creator, desc)
-        return createManga({
+        // console.log(tags, image, status, creator, desc)
+        const item = createManga({
             id: mangaId,
             author: creator,
             // artist: artist,
             desc: desc,
-            titles: [$('div.flex.flex-row.truncate.mb-4 > span').text()],
+            titles: [$('div:nth-child(1) > div.flex.flex-row.truncate.mb-4 > span').text()],
             image: image,
             status: status,
             // rating: parseFloat($('span[itemprop="ratingValue"]').text()),
             hentai: true,
             tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
         });
+        // console.log(item, tags);
+        return item;
 
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
@@ -127,17 +129,18 @@ export class LXHentai extends Source {
         var i = 0;
         for (const obj of $(".overflow-y-auto.overflow-x-hidden").toArray().reverse()) {
             i++;
-            let time = $('a > li > div.hidden > span.timeago', obj).text();
+            // let time = $('a > li > div.hidden > span.timeago', obj).text();
             chapters.push(createChapter(<Chapter>{
                 id: 'https://lxmanga.net' + $('a', obj).attr('href'),
                 chapNum: i,
-                name: $('a > li > div > span', obj).text(),
+                name: $('a > li > div > span.text-ellipsis', obj).text(),
                 mangaId: mangaId,
                 langCode: LanguageCode.VIETNAMESE,
-                time: time
+                // time: time
             }));
         }
 
+        console.log(chapters);
         return chapters;
     }
 
