@@ -129,18 +129,17 @@ export class LXHentai extends Source {
         var i = 0;
         for (const obj of $(".overflow-y-auto.overflow-x-hidden").toArray().reverse()) {
             i++;
-            // let time = $('a > li > div.hidden > span.timeago', obj).text();
+            let time = $(`a:nth-child(${i}) > li > div.hidden > span.timeago`, obj).text();
             chapters.push(createChapter(<Chapter>{
-                id: 'https://lxmanga.net' + $('a', obj).attr('href'),
+                id: 'https://lxmanga.net' + $(`a:nth-child(${i})`, obj).attr('href'),
                 chapNum: i,
-                name: $('a > li > div > span.text-ellipsis', obj).text(),
+                name: $(`a:nth-child(${i}) > li > div > span.text-ellipsis`, obj).text(),
                 mangaId: mangaId,
                 langCode: LanguageCode.VIETNAMESE,
-                // time: time
+                time: new Date(time)
             }));
         }
 
-        console.log(chapters);
         return chapters;
     }
 
