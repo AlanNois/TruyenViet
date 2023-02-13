@@ -73,37 +73,35 @@ export class LXHentai extends Source {
         const data = await this.requestManager.schedule(request, 10);
         let $ = this.cheerio.load(data.data);
         let tags: Tag[] = [];
-        let creator = $('.pb-4 > div.grow > .mt-2:nth-child(3) > span > a').text().trim();
-        let status = $('.pb-4 > div.grow > .mt-2:nth-child(4) > a > span').text().trim().toLowerCase().includes("đã") ? 0 : 1; //completed, 1 = Ongoing
-        // let artist = '';
-        let desc = $('.detail-content > p').text();
-        for (const t of $('.pb-4 > div.grow > .mt-2:nth-child(2) > span > a').toArray()) {
-            const genre = $(t).text().trim()
-            const id = `https://lxmanga.net${$(t).attr('href') ?? genre}`
-            tags.push(createTag({ label: genre, id }));
-        }
-        // for (const a of $('.row.mt-2 > .col-4.py-1').toArray()) {
-        //     switch ($(a).text().trim()) {
-        //         case "Tác giả":
-        //             creator = $(a).next().text();
-        //             break;
-        //         case "Tình trạng":
-        //             status = $(a).next().text().toLowerCase().includes("đã") ? 0 : 1;
-        //             break;
-        //         case "Thể loại":
-        //             for (const t of $('a', $(a).next()).toArray()) {
-        //                 const genre = $(t).text().trim()
-        //                 const id = $(t).attr('href') ?? genre
-        //                 tags.push(createTag({ label: genre, id }));
-        //             }
-        //             break;
-        //         // case "Thực hiện":
-        //         //     artist = $(a).next().text();
-        //         //     break;
-        //     }
-        // }
         let image = $('div.relative.mx-auto.my-0 > div > div').attr('style')?.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '') ?? "";
-        console.log(image);
+        let creator = '';
+        let status = 1; //completed, 1 = Ongoing
+        // let artist = '';
+        var i = 1
+        let desc = $('.py-4.border-t.border-gray-200 > p').text() ?? "";
+        for (const a of $('div.grow > div > span:nth-child(1)').toArray()) {
+            // console.log($(a).text().trim())
+            switch ($(a).text().trim()) {
+                case "Tác giả:":
+                    // console.log('true')
+                    creator = $(`div.grow > div:nth-child(${i}) > span:nth-child(2) > a`).text().trim();
+                    break;
+                case "Tình trạng:":
+                    // console.log('true')
+                    status = $(`div.grow > div:nth-child(${i}) > span:nth-child(2) > a`).text().trim().toLowerCase().includes("đã") ? 0 : 1;
+                    break;
+                case "Thể loại:":
+                    // console.log('true')
+                    for (const t of $('a', $(`div.grow > div:nth-child(${i}) > span:nth-child(2)`)).toArray()) {
+                        const genre = $(t).text().trim()
+                        const id = `https://lxmanga.net${$(t).attr('href') ?? genre}`
+                        tags.push(createTag({ label: genre, id }));
+                    }
+                    break;
+            }
+            i++;
+        }
+        console.log(tags, image, status, creator, desc)
         return createManga({
             id: mangaId,
             author: creator,
