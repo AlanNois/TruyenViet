@@ -14,14 +14,15 @@ import {
     Response,
     Tag,
     LanguageCode,
+    HomeSectionType,
 } from "paperback-extensions-common"
-import { parseSearch, parseViewMore, decodeHTMLEntity, convertTime } from "./GocTruyenTranhParser"
+import { parseSearch, parseViewMore, decodeHTMLEntity, convertTime, parseFeaturedSection} from "./GocTruyenTranhParser"
 
 const DOMAIN = 'https://goctruyentranhvui.com/'
 const method = 'GET'
 
 export const GocTruyenTranhInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'GocTruyenTranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -156,7 +157,11 @@ export class GocTruyenTranh extends Source {
     }
 
     async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-        // let featured = createHomeSection({ id: 'featured', title: 'Tiêu điểm', type: HomeSectionType.featured });
+        let featured = createHomeSection({ 
+            id: 'featured', 
+            title: 'Tiêu điểm', 
+            type: HomeSectionType.featured 
+        });
         let hot: HomeSection = createHomeSection({
             id: 'hot',
             title: "Truyện Đề Xuất",
@@ -177,6 +182,7 @@ export class GocTruyenTranh extends Source {
         sectionCallback(hot);
         sectionCallback(newUpdated);
         sectionCallback(newAdded);
+        sectionCallback(featured);
 
         ///Get the section data
         //Hot
@@ -212,12 +218,16 @@ export class GocTruyenTranh extends Source {
         newAdded.items = parseViewMore(json).splice(0, 10);
         sectionCallback(newAdded);
 
-        // //Featured
-        // url = '';
-        // request = createRequestObject({
-        //     url: 'https://goctruyentranhvui.com/trang-chu',
-        //     method: "GET",
-        // });
+        //Featured
+        url = DOMAIN;
+        request = createRequestObject({
+            url: url,
+            method: "GET",
+        });
+        data = await this.requestManager.schedule(request, 1);
+        let $ = await this.cheerio.load(data.data);
+        featured.items = parseFeaturedSection($);
+        sectionCallback(featured);
         // let featuredItems: MangaTile[] = [];
         // data = await this.requestManager.schedule(request, 1);
         // $ = this.cheerio.load(data.data);

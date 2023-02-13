@@ -19,7 +19,7 @@ export const parseSearch = (json: any): MangaTile[] => {
         let title = obj.name;
         let subtitle = 'Chương ' + obj.chapterLatest[0];
         const image = obj.photo;
-        let id = 'https://goctruyentranh.com/truyen/' + obj.nameEn + "::" + obj.id;
+        let id = 'https://goctruyentranhvui.com/truyen/' + obj.nameEn + "::" + obj.id;
         mangas.push(createMangaTile({
             id: id,
             image: encodeURI(image) ?? "",
@@ -37,7 +37,7 @@ export const parseViewMore = (json: any): MangaTile[] => {
         let title = obj.name;
         let subtitle = 'Chương ' + obj.chapterLatest[0];
         const image = obj.photo;
-        let id = 'https://goctruyentranh.com/truyen/' + obj.nameEn + "::" + obj.id;
+        let id = 'https://goctruyentranhvui.com/truyen/' + obj.nameEn + "::" + obj.id;
         if (!collectedIds.includes(id)) {
             manga.push(createMangaTile({
                 id: id,
@@ -88,4 +88,19 @@ export function convertTime(timeAgo: string): Date {
         }
     }
     return time
+}
+
+// export method parseFeaturedSection
+export function parseFeaturedSection($: any): MangaTile[] {
+    let featuredItems: MangaTile[] = [];
+    for (let manga of $('div.background-banner', 'section.top-banner-wrap').toArray()) {
+        const id = `https://goctruyentranhvui.com${$('div > a', manga).attr('href') ?? ""}`;
+        const image = $('div > a > img', manga).attr('src') ?? "";
+        featuredItems.push(createMangaTile({
+            title: createIconText({ text: '' }),
+            id: id,
+            image: image,
+        }));
+    }
+    return featuredItems;
 }
