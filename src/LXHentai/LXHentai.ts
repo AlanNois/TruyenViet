@@ -19,7 +19,7 @@ import {
     Response
 } from "paperback-extensions-common"
 
-import { parseSearch, isLastPage, parseViewMore } from "./LXHentaiParser"
+import { parseSearch, isLastPage, parseViewMore, convertTime } from "./LXHentaiParser"
 
 const DOMAIN = 'https://lxmanga.net/'
 const method = 'GET'
@@ -127,19 +127,19 @@ export class LXHentai extends Source {
         const $ = this.cheerio.load(response.data);
         const chapters: Chapter[] = [];
         var i = 0;
-        for (const obj of $(".overflow-y-auto.overflow-x-hidden").toArray().reverse()) {
+        for (const obj of $(".overflow-y-auto.overflow-x-hidden > a").toArray().reverse()) {
             i++;
-            let time = $(`a:nth-child(${i}) > li > div.hidden > span.timeago`, obj).text();
             chapters.push(createChapter(<Chapter>{
-                id: 'https://lxmanga.net' + $(`a:nth-child(${i})`, obj).attr('href'),
+                id: 'https://lxmanga.net' + $(obj).attr('href'),
                 chapNum: i,
-                name: $(`a:nth-child(${i}) > li > div > span.text-ellipsis`, obj).text(),
+                name: $(`li > div > span.text-ellipsis`, obj).text(),
                 mangaId: mangaId,
                 langCode: LanguageCode.VIETNAMESE,
-                time: new Date(time)
+                time: null
             }));
         }
 
+        // console.log(chapters);
         return chapters;
     }
 
@@ -284,7 +284,7 @@ export class LXHentai extends Source {
                 url = `https://lxmanga.net/story/index.php?hot&p=${page}`;
                 break;
             case "new_updated":
-                url = `https://lxmanga.net/story/index.php?p=${page}`;
+                url = `https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bstatus%5D=2%2C1&page=${page}`;
                 break;
             default:
                 return Promise.resolve(createPagedResults({ results: [] }))
