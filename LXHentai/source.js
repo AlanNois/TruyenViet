@@ -2749,7 +2749,7 @@ exports.parseViewMore = ($) => {
         // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
             id: 'https://lxhentai.com' + id,
-            image: 'https://lxhentai.com' + bg,
+            image: bg,
             title: createIconText({
                 text: title,
             }),
