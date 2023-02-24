@@ -15,18 +15,12 @@ export const generateSearch = (query: SearchRequest): string => {
 export const parseSearch = ($: CheerioStatic, query: any): MangaTile[] => {
     const manga: MangaTile[] = [];
     // const collectedIds: string[] = [];
-    var loop = [];
-    if (query.title) {
-        loop = $('div.py-2', '.row').toArray();
-    } else {
-        loop = $('div.py-2', '.col-md-8 .row').toArray();
-    }
-    for (let obj of loop) {
-        const title = $('a', obj).last().text().trim();
-        const id = $('a', obj).last().attr('href') ?? title;
-        const image = $('div', obj).first().css('background');
-        const bg = image?.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
-        const sub = $('a', obj).first().text().trim();
+    for (let obj of $('div.w-full.relative', 'div.mt-4.grid').toArray()) {
+        const title = $('a.text-ellipsis', obj).last().text().trim();
+        const id = $('a.text-ellipsis', obj).last().attr('href') ?? title;
+        const image = $('div.border > div > a > div > div', obj).attr('style');
+        const bg = image?.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
+        const sub = $('div.border > div > div > a', obj).first().text().trim();
         // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
             id: 'https://lxhentai.com' + id,
@@ -46,11 +40,11 @@ export const parseViewMore = ($: CheerioStatic): MangaTile[] => {
     const manga: MangaTile[] = [];
     // const collectedIds: string[] = [];
     for (let obj of $('div.w-full.relative', 'div.mt-4.grid').toArray()) {
-        const title = $('a.text-ellipsis', manga).last().text().trim();
-        const id = $('a.text-ellipsis', manga).last().attr('href') ?? title;
-        const image = $('div.border > div > a > div > div', manga).attr('style');
+        const title = $('a.text-ellipsis', obj).last().text().trim();
+        const id = $('a.text-ellipsis', obj).last().attr('href') ?? title;
+        const image = $('div.border > div > a > div > div', obj).attr('style');
         const bg = image?.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
-        const sub = $('div.border > div > div > a', manga).first().text().trim();
+        const sub = $('div.border > div > div > a', obj).first().text().trim();
         // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
             id: 'https://lxhentai.com' + id,
