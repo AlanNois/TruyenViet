@@ -23,8 +23,8 @@ export const parseSearch = ($: CheerioStatic, query: any): MangaTile[] => {
         const sub = $('div.border > div > div > a', obj).first().text().trim();
         // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
-            id: 'https://lxhentai.com' + id,
-            image: 'https://lxhentai.com' + bg,
+            id: 'https://lxmanga.net' + id,
+            image: bg,
             title: createIconText({
                 text: title,
             }),
@@ -47,8 +47,8 @@ export const parseViewMore = ($: CheerioStatic): MangaTile[] => {
         const sub = $('div.border > div > div > a', obj).first().text().trim();
         // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
-            id: 'https://lxhentai.com' + id,
-            image: 'https://lxhentai.com' + bg,
+            id: 'https://lxmanga.net' + id,
+            image: bg,
             title: createIconText({
                 text: title,
             }),
