@@ -225,7 +225,7 @@ export class LXHentai extends Source {
         data = await this.requestManager.schedule(request, 1);
         html = Buffer.from(createByteArray(data.rawData)).toString()
         $ = this.cheerio.load(html);
-        for (let manga of $('li.glide__slide', 'ul.glide__slides').toArray().splice(0, 20)) {
+        for (let manga of $('li.glide__slide', 'ul.glide__slides').toArray()) {
             const title = $('div > div > div > div > a.text-ellipsis', manga).last().text().trim();
             const id = $('div > div > div > div > a.text-ellipsis', manga).last().attr('href') ?? title;
             const image = $('div.border > div > a > div > div', manga).attr('style');
