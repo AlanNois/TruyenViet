@@ -2629,7 +2629,7 @@ class LXHentai extends paperback_extensions_common_1.Source {
             let url = '';
             switch (homepageSectionId) {
                 case "hot":
-                    url = `https://lxmanga.net/story/index.php?hot&p=${page}`;
+                    url = `https://lxmanga.net/tim-kiem?sort=-views&filter%5Bstatus%5D=2%2C1&page=${page}`;
                     break;
                 case "new_updated":
                     url = `https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bstatus%5D=2%2C1&page=${page}`;
@@ -2659,7 +2659,7 @@ class LXHentai extends paperback_extensions_common_1.Source {
             let page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const tags = (_c = (_b = query.includedTags) === null || _b === void 0 ? void 0 : _b.map(tag => tag.id)) !== null && _c !== void 0 ? _c : [];
             const request = createRequestObject({
-                url: query.title ? `https://lxmanga.net/story/search.php?key=${encodeURI(query.title)}&p=${page}` : `${tags[0]}&p=${page}`,
+                url: query.title ? `https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bname%5D=${encodeURI(query.title)}&filter%5Bstatus%5D=2%2C1&page=${page}` : `${tags[0]}&p=${page}`,
                 method: "GET",
             });
             const data = yield this.requestManager.schedule(request, 1);
@@ -2686,7 +2686,7 @@ class LXHentai extends paperback_extensions_common_1.Source {
             const $ = this.cheerio.load(html);
             const arrayTags = [];
             //the loai
-            for (const tag of $('.col-sm-3 a', '#showTheLoai').toArray()) {
+            for (const tag of $('a', 'ul.absolute').toArray()) {
                 const label = $(tag).text().trim();
                 const id = (_a = 'https://lxmanga.net' + $(tag).attr('href')) !== null && _a !== void 0 ? _a : label;
                 if (!id || !label)
@@ -2747,16 +2747,15 @@ exports.parseViewMore = ($) => {
     var _a;
     const manga = [];
     // const collectedIds: string[] = [];
-    for (let obj of $('div.col-md-3', '.main .col-md-8 > .row').toArray()) {
-        const title = $('a', obj).last().text().trim();
-        const id = (_a = $('a', obj).last().attr('href')) !== null && _a !== void 0 ? _a : title;
-        const image = $('div', obj).first().css('background');
-        const bg = image === null || image === void 0 ? void 0 : image.replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
-        const sub = $('a', obj).first().text().trim();
-        // if (!id || !subtitle) continue;
+    for (let manga of $('div.w-full.relative', 'div.mt-4.grid').toArray().splice(0, 15)) {
+        const title = $('a.text-ellipsis', manga).last().text().trim();
+        const id = (_a = $('a.text-ellipsis', manga).last().attr('href')) !== null && _a !== void 0 ? _a : title;
+        const image = $('div.border > div > a > div > div', manga).attr('style');
+        const bg = image === null || image === void 0 ? void 0 : image.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
+        const sub = $('div.border > div > div > a', manga).first().text().trim();
         manga.push(createMangaTile({
-            id: 'https://lxhentai.com' + id,
-            image: 'https://lxhentai.com' + bg,
+            id: 'https://lxmanga.net' + id,
+            image: bg,
             title: createIconText({
                 text: title,
             }),
