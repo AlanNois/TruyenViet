@@ -312,7 +312,7 @@ export class LXHentai extends Source {
         let page = metadata?.page ?? 1;
         const tags = query.includedTags?.map(tag => tag.id) ?? [];
         const request = createRequestObject({
-            url: query.title ? `https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bname%5D=${encodeURI(query.title)}&filter%5Bstatus%5D=2%2C1&page=${page}` : `${tags[0]}&p=${page}`,
+            url: query.title ? `https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bname%5D=${encodeURI(query.title)}&filter%5Bstatus%5D=2%2C1&page=${page}` : `${tags[0]}&page=${page}`,
             method: "GET",
         });
 
