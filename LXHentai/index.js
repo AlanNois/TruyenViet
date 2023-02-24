@@ -2600,7 +2600,7 @@ class LXHentai extends paperback_extensions_common_1.Source {
             data = yield this.requestManager.schedule(request, 1);
             html = Buffer.from(createByteArray(data.rawData)).toString();
             $ = this.cheerio.load(html);
-            for (let manga of $('li.glide__slide', 'ul.glide__slides').toArray().splice(0, 20)) {
+            for (let manga of $('li.glide__slide', 'ul.glide__slides').toArray()) {
                 const title = $('div > div > div > div > a.text-ellipsis', manga).last().text().trim();
                 const id = (_b = $('div > div > div > div > a.text-ellipsis', manga).last().attr('href')) !== null && _b !== void 0 ? _b : title;
                 const image = $('div.border > div > a > div > div', manga).attr('style');
