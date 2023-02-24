@@ -2724,8 +2724,8 @@ exports.parseSearch = ($, query) => {
         const sub = $('div.border > div > div > a', obj).first().text().trim();
         // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
-            id: 'https://lxhentai.com' + id,
-            image: 'https://lxhentai.com' + bg,
+            id: 'https://lxmanga.net' + id,
+            image: bg,
             title: createIconText({
                 text: title,
             }),
@@ -2748,7 +2748,7 @@ exports.parseViewMore = ($) => {
         const sub = $('div.border > div > div > a', obj).first().text().trim();
         // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
-            id: 'https://lxhentai.com' + id,
+            id: 'https://lxmanga.net' + id,
             image: bg,
             title: createIconText({
                 text: title,
