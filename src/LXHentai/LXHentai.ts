@@ -281,7 +281,7 @@ export class LXHentai extends Source {
         let url = '';
         switch (homepageSectionId) {
             case "hot":
-                url = `https://lxmanga.net/story/index.php?hot&p=${page}`;
+                url = `https://lxmanga.net/tim-kiem?sort=-views&filter%5Bstatus%5D=2%2C1&page=${page}`;
                 break;
             case "new_updated":
                 url = `https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bstatus%5D=2%2C1&page=${page}`;
@@ -312,7 +312,7 @@ export class LXHentai extends Source {
         let page = metadata?.page ?? 1;
         const tags = query.includedTags?.map(tag => tag.id) ?? [];
         const request = createRequestObject({
-            url: query.title ? `https://lxmanga.net/story/search.php?key=${encodeURI(query.title)}&p=${page}` : `${tags[0]}&p=${page}`,
+            url: query.title ? `https://lxmanga.net/tim-kiem?sort=-updated_at&filter%5Bname%5D=${encodeURI(query.title)}&filter%5Bstatus%5D=2%2C1&page=${page}` : `${tags[0]}&p=${page}`,
             method: "GET",
         });
 
@@ -341,7 +341,7 @@ export class LXHentai extends Source {
         const $ = this.cheerio.load(html);
         const arrayTags: Tag[] = [];
         //the loai
-        for (const tag of $('.col-sm-3 a', '#showTheLoai').toArray()) {
+        for (const tag of $('a', 'ul.absolute').toArray()) {
             const label = $(tag).text().trim();
             const id = 'https://lxmanga.net' + $(tag).attr('href') ?? label;
             if (!id || !label) continue;
