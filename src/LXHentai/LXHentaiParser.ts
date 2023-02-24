@@ -45,15 +45,16 @@ export const parseSearch = ($: CheerioStatic, query: any): MangaTile[] => {
 export const parseViewMore = ($: CheerioStatic): MangaTile[] => {
     const manga: MangaTile[] = [];
     // const collectedIds: string[] = [];
-    for (let manga of $('div.w-full.relative', 'div.mt-4.grid').toArray().splice(0, 15)) {
+    for (let obj of $('div.w-full.relative', 'div.mt-4.grid').toArray()) {
         const title = $('a.text-ellipsis', manga).last().text().trim();
         const id = $('a.text-ellipsis', manga).last().attr('href') ?? title;
         const image = $('div.border > div > a > div > div', manga).attr('style');
         const bg = image?.replace('background-image: ', '').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/['"]+/g, '');
         const sub = $('div.border > div > div > a', manga).first().text().trim();
+        // if (!id || !subtitle) continue;
         manga.push(createMangaTile({
-            id: 'https://lxmanga.net' + id,
-            image: bg,
+            id: 'https://lxhentai.com' + id,
+            image: 'https://lxhentai.com' + bg,
             title: createIconText({
                 text: title,
             }),
