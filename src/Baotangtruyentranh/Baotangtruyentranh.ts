@@ -116,7 +116,7 @@ export class Baotangtruyentranh extends Source {
         }
 
         let desc = $("#summary").text();
-        let image = $('.col-image img').attr("data-src") ?? "";
+        let image = $('.col-image img').attr("src") ?? "";
 
         return createManga({
             id: mangaId,
@@ -173,7 +173,7 @@ export class Baotangtruyentranh extends Source {
         let $ = this.cheerio.load(data.data);
         const pages: string[] = [];
         for (let obj of $('.reading-detail img').toArray()) {
-            let image = $(obj).attr('data-src');
+            let image = $(obj).attr('src');
             pages.push(encodeURI(image));
         }
         const chapterDetails = createChapterDetails({
@@ -218,7 +218,7 @@ export class Baotangtruyentranh extends Source {
         let newUpdatedItems: MangaTile[] = [];
         for (const element of $('.row .item').toArray()) {
             let title = $('h3 > a', element).text().trim();
-            let image = $('.image img', element).attr("data-src");
+            let image = $('.image img', element).attr("src");
             let id = $('h3 > a', element).attr('href');
             let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
             newUpdatedItems.push(createMangaTile({
@@ -241,7 +241,7 @@ export class Baotangtruyentranh extends Source {
         $ = this.cheerio.load(data.data);
         for (const element of $('.items-slide .item').toArray()) {
             let title = $('.slide-caption h3', element).text().trim();
-            let image = $('a img', element).attr("data-src");
+            let image = $('a img', element).attr("src");
             let id = $('a', element).attr('href');
             let subtitle = $(".slide-caption > a", element).first().text().trim() + ' | ' + $(".time", element).first().text().trim();
             featuredItems.push(createMangaTile({
@@ -264,7 +264,7 @@ export class Baotangtruyentranh extends Source {
         $ = this.cheerio.load(data.data);
         for (const element of $('.row .item').toArray()) {
             let title = $('h3 > a', element).text().trim();
-            let image = $('.image img', element).attr("data-src");
+            let image = $('.image img', element).attr("src");
             let id = $('h3 > a', element).attr('href');
             let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
             transItems.push(createMangaTile({
