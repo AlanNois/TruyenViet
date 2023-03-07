@@ -25,7 +25,7 @@ const DOMAIN = 'https://baotangtruyennet.com/'
 const method = 'GET'
 
 export const BaotangtruyentranhInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
