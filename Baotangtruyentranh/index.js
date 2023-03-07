@@ -716,7 +716,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     getChapters(mangaId) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const StoryID = mangaId.split('-').pop();
+            let StoryID = mangaId.split('-').pop();
             // console.log(StoryID);
             const request = createRequestObject({
                 url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
