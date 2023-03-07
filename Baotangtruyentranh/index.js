@@ -716,14 +716,17 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     getChapters(mangaId) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            const StoryID = mangaId.split('-').pop();
+            // console.log(StoryID);
             const request = createRequestObject({
-                url: mangaId,
-                method,
+                url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
+                method: 'POST',
+                data: { StoryID: StoryID }
             });
             let data = yield this.requestManager.schedule(request, 1);
             let $ = this.cheerio.load(data.data);
             const chapters = [];
-            for (const obj of $('#nt_listchapter .row:not(.heading)').toArray()) {
+            for (const obj of $('nav .row:not(.heading)').toArray()) {
                 let id = $('a', obj).first().attr('href');
                 let chapNum = parseFloat((_a = $('a', obj).first().text()) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
                 let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? '' : $('a', obj).first().text().trim();
