@@ -600,7 +600,7 @@ const BaotangtruyentranhParser_1 = require("./BaotangtruyentranhParser");
 const DOMAIN = 'https://baotangtruyennet.com/';
 const method = 'GET';
 exports.BaotangtruyentranhInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
