@@ -735,9 +735,9 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                 }
                 let time = $('.col-xs-4', obj).text().trim();
                 chapters.push(createChapter({
-                    id,
+                    id: id,
                     chapNum: chapNum,
-                    name,
+                    name: name,
                     mangaId: mangaId,
                     langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
                     time: this.convertTime(BaotangtruyentranhParser_1.decodeHTMLEntity(time))
