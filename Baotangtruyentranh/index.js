@@ -720,7 +720,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             // console.log(StoryID);
             const request = createRequestObject({
                 url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
-                method: 'POST',
+                method,
                 data: { StoryID: StoryID }
             });
             let data = yield this.requestManager.schedule(request, 1);
@@ -1029,7 +1029,7 @@ exports.parseSearch = ($) => {
     const manga = [];
     for (const element of $('.row .item').toArray()) {
         let title = $('h3 > a', element).text().trim();
-        let image = (_a = $('.image img', element).attr("src")) !== null && _a !== void 0 ? _a : "";
+        let image = (_a = $('.image img', element).attr("data-src")) !== null && _a !== void 0 ? _a : "";
         let id = $('h3 > a', element).attr('href');
         let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
@@ -1046,7 +1046,7 @@ exports.parseViewMore = ($) => {
     const manga = [];
     for (const element of $('.row .item').toArray()) {
         let title = $('h3 > a', element).text().trim();
-        let image = (_a = $('.image img', element).attr("src")) !== null && _a !== void 0 ? _a : "";
+        let image = (_a = $('.image img', element).attr("data-src")) !== null && _a !== void 0 ? _a : "";
         let id = $('h3 > a', element).attr('href');
         let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
