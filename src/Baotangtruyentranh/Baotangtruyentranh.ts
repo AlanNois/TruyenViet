@@ -116,7 +116,7 @@ export class Baotangtruyentranh extends Source {
         }
 
         let desc = $("#summary").text();
-        let image = $('.col-image img').attr("src") ?? "";
+        let image = $('.col-image img').attr("data-src") ?? "";
 
         return createManga({
             id: mangaId,
@@ -146,7 +146,8 @@ export class Baotangtruyentranh extends Source {
         for (const obj of $('nav .row:not(.heading)').toArray()) {
             let id = $('a', obj).first().attr('href');
             let chapNum = parseFloat($('a', obj).first().text()?.split(' ')[1]);
-            let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? '' : $('a', obj).first().text().trim();
+            let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
+            console.log();
             if ($('.coin-unlock', obj).attr('title')) {
                 name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
             }
@@ -160,7 +161,6 @@ export class Baotangtruyentranh extends Source {
                 time: this.convertTime(decodeHTMLEntity(time))
             }));
         }
-
         return chapters;
     }
 
