@@ -698,7 +698,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                 tags.push(createTag({ label: BaotangtruyentranhParser_1.decodeHTMLEntity(genre), id }));
             }
             let desc = $("#summary").text();
-            let image = (_b = $('.col-image img').attr("data-src")) !== null && _b !== void 0 ? _b : "";
+            let image = (_b = $('.col-image img').attr("src")) !== null && _b !== void 0 ? _b : "";
             return createManga({
                 id: mangaId,
                 author: creator,
@@ -756,7 +756,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             let $ = this.cheerio.load(data.data);
             const pages = [];
             for (let obj of $('.reading-detail img').toArray()) {
-                let image = $(obj).attr('data-src');
+                let image = $(obj).attr('src');
                 pages.push(encodeURI(image));
             }
             const chapterDetails = createChapterDetails({
@@ -799,7 +799,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             let newUpdatedItems = [];
             for (const element of $('.row .item').toArray()) {
                 let title = $('h3 > a', element).text().trim();
-                let image = $('.image img', element).attr("data-src");
+                let image = $('.image img', element).attr("src");
                 let id = $('h3 > a', element).attr('href');
                 let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
                 newUpdatedItems.push(createMangaTile({
@@ -821,7 +821,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             $ = this.cheerio.load(data.data);
             for (const element of $('.items-slide .item').toArray()) {
                 let title = $('.slide-caption h3', element).text().trim();
-                let image = $('a img', element).attr("data-src");
+                let image = $('a img', element).attr("src");
                 let id = $('a', element).attr('href');
                 let subtitle = $(".slide-caption > a", element).first().text().trim() + ' | ' + $(".time", element).first().text().trim();
                 featuredItems.push(createMangaTile({
@@ -843,7 +843,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             $ = this.cheerio.load(data.data);
             for (const element of $('.row .item').toArray()) {
                 let title = $('h3 > a', element).text().trim();
-                let image = $('.image img', element).attr("data-src");
+                let image = $('.image img', element).attr("src");
                 let id = $('h3 > a', element).attr('href');
                 let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
                 transItems.push(createMangaTile({
@@ -1029,7 +1029,7 @@ exports.parseSearch = ($) => {
     const manga = [];
     for (const element of $('.row .item').toArray()) {
         let title = $('h3 > a', element).text().trim();
-        let image = (_a = $('.image img', element).attr("data-src")) !== null && _a !== void 0 ? _a : "";
+        let image = (_a = $('.image img', element).attr("src")) !== null && _a !== void 0 ? _a : "";
         let id = $('h3 > a', element).attr('href');
         let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
@@ -1046,7 +1046,7 @@ exports.parseViewMore = ($) => {
     const manga = [];
     for (const element of $('.row .item').toArray()) {
         let title = $('h3 > a', element).text().trim();
-        let image = (_a = $('.image img', element).attr("data-src")) !== null && _a !== void 0 ? _a : "";
+        let image = (_a = $('.image img', element).attr("src")) !== null && _a !== void 0 ? _a : "";
         let id = $('h3 > a', element).attr('href');
         let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
