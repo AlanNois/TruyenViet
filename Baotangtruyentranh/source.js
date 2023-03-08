@@ -700,8 +700,9 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             //         time: this.convertTime(decodeHTMLEntity(time))
             //     }));
             // }
-            // console.log(chapters)
-            return BaotangtruyentranhParser_1.parseChapterList($, mangaId);
+            const chapters = BaotangtruyentranhParser_1.parseChapterList($, mangaId);
+            console.log(chapters);
+            return chapters;
         });
     }
     getChapterDetails(mangaId, chapterId) {
