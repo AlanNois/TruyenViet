@@ -133,7 +133,7 @@ export class Baotangtruyentranh extends Source {
 
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
-        const StoryID = mangaId.split('-').pop();
+        let StoryID = mangaId.split('-').pop();
         // console.log(StoryID);
         const request = createRequestObject({
             url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
@@ -147,7 +147,6 @@ export class Baotangtruyentranh extends Source {
             let id = $('a', obj).first().attr('href');
             let chapNum = parseFloat($('a', obj).first().text()?.split(' ')[1]);
             let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
-            console.log();
             if ($('.coin-unlock', obj).attr('title')) {
                 name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
             }
@@ -161,6 +160,7 @@ export class Baotangtruyentranh extends Source {
                 time: this.convertTime(decodeHTMLEntity(time))
             }));
         }
+        console.log(chapters);
         return chapters;
     }
 
