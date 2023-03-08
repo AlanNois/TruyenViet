@@ -673,34 +673,23 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let StoryID = mangaId.split('-').pop();
+            const url = mangaId;
             const request = createRequestObject({
+                url: url,
+                method,
+            });
+            let data = yield this.requestManager.schedule(request, 1);
+            let $ = this.cheerio.load(data.data);
+            let StoryID = $('#ctl00_divCenter > ul > li:nth-child(2) > a').attr('href').split('-').pop();
+            // let StoryID = mangaId.split('-').pop();
+            const request2 = createRequestObject({
                 url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
                 method: 'POST',
                 data: { StoryID: StoryID }
             });
-            let data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
-            // const chapters: Chapter[] = [];
-            // for (let obj of $('ul .row:not(.heading)').toArray()) {
-            //     let ids = $('a', obj).first().attr('href');
-            //     let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
-            //     let chapNum = parseFloat($('a', obj).first().text()?.split(' ')[1]);
-            //     let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
-            //     if ($('.coin-unlock', obj).attr('title')) {
-            //         name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
-            //     }
-            //     let time = $('.col-xs-4', obj).text().trim();
-            //     chapters.push(createChapter(<Chapter>{
-            //         id,
-            //         chapNum: chapNum,
-            //         name,
-            //         mangaId: mangaId,
-            //         langCode: LanguageCode.VIETNAMESE,
-            //         time: this.convertTime(decodeHTMLEntity(time))
-            //     }));
-            // }
-            const chapters = BaotangtruyentranhParser_1.parseChapterList($, mangaId);
+            let data2 = yield this.requestManager.schedule(request2, 1);
+            let $2 = this.cheerio.load(data2.data);
+            const chapters = BaotangtruyentranhParser_1.parseChapterList($2, mangaId);
             console.log(chapters);
             return chapters;
         });
