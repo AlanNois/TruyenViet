@@ -813,7 +813,10 @@ class Parser {
             if (!obj.attribs['src'])
                 continue;
             let link = (_a = obj.attribs['src']) === null || _a === void 0 ? void 0 : _a.replace(/(\r\n|\n|\r)/gm, "");
-            if (link.indexOf('http') === -1) { //nếu link ko có 'http'
+            if (link.indexOf('https') === -1) { //nếu link ko có 'http'
+                pages.push('https:' + obj.attribs['src']);
+            }
+            else if (link.indexOf('http') === -1) {
                 pages.push('http:' + obj.attribs['src']);
             }
             else {
