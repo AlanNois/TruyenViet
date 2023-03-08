@@ -600,7 +600,7 @@ const BaotangtruyentranhParser_1 = require("./BaotangtruyentranhParser");
 const DOMAIN = 'https://baotangtruyennet.com/';
 const method = 'GET';
 exports.BaotangtruyentranhInfo = {
-    version: '1.0.3',
+    version: '1.0.2',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -714,15 +714,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
         });
     }
     getChapters(mangaId) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const url = mangaId;
-            const requests = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            let datas = yield this.requestManager.schedule(requests, 1);
-            let $s = this.cheerio.load(datas.data);
             let StoryID = mangaId.split('-').pop();
             const request = createRequestObject({
                 url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
@@ -733,14 +725,18 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             let $ = this.cheerio.load(data.data);
             const chapters = [];
             for (const obj of $('nav .row:not(.heading)').toArray()) {
-                let ids = $('a', obj).first().attr('href');
-                let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
-                let chapNum = parseFloat((_a = $('a', obj).first().text()) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
-                let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
-                if ($('.coin-unlock', obj).attr('title')) {
-                    name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
-                }
-                let time = $('.col-xs-4', obj).text().trim();
+                // let ids = $('a', obj).first().attr('href');
+                // let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
+                // let chapNum = parseFloat($('a', obj).first().text()?.split(' ')[1]);
+                // let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
+                // if ($('.coin-unlock', obj).attr('title')) {
+                // name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
+                // }
+                // let time = $('.col-xs-4', obj).text().trim();
+                let id = 'a';
+                let chapNum = 1;
+                let name = 'a';
+                let time = '';
                 chapters.push(createChapter({
                     id,
                     chapNum: chapNum,
@@ -749,6 +745,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                     langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
                     time: this.convertTime(BaotangtruyentranhParser_1.decodeHTMLEntity(time))
                 }));
+                break;
             }
             return chapters;
         });
