@@ -1078,7 +1078,7 @@ function convertTime(timeAgo) {
     }
     return time;
 }
-exports.parseChapterList = ($, mangaId) => {
+function parseChapterList($, mangaId) {
     var _a;
     const chapters = [];
     for (let obj of $('ul .row:not(.heading)').toArray()) {
@@ -1100,7 +1100,8 @@ exports.parseChapterList = ($, mangaId) => {
         }));
     }
     return chapters;
-};
+}
+exports.parseChapterList = parseChapterList;
 
 },{"entities":1,"paperback-extensions-common":12}]},{},[56])(56)
 });
