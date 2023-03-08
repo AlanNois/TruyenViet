@@ -715,38 +715,37 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let StoryID = mangaId.split('-').pop();
-            const request = createRequestObject({
-                url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
-                method: 'POST',
-                data: { StoryID: StoryID }
-            });
-            let data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
+            // let StoryID = mangaId.split('-').pop();
+            // const request = createRequestObject({
+            //     url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
+            //     method: 'POST',
+            //     data: {StoryID: StoryID}
+            // });
+            // let data = await this.requestManager.schedule(request, 1);
+            // let $ = this.cheerio.load(data.data);
             const chapters = [];
-            for (const obj of $('nav .row:not(.heading)').toArray()) {
-                // let ids = $('a', obj).first().attr('href');
-                // let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
-                // let chapNum = parseFloat($('a', obj).first().text()?.split(' ')[1]);
-                // let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
-                // if ($('.coin-unlock', obj).attr('title')) {
-                // name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
-                // }
-                // let time = $('.col-xs-4', obj).text().trim();
-                let id = 'a';
-                let chapNum = 1;
-                let name = 'a';
-                let time = '';
-                chapters.push(createChapter({
-                    id,
-                    chapNum: chapNum,
-                    name,
-                    mangaId: mangaId,
-                    langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
-                    time: this.convertTime(BaotangtruyentranhParser_1.decodeHTMLEntity(time))
-                }));
-                break;
-            }
+            // for (const obj of $('nav .row:not(.heading)').toArray()) {
+            // let ids = $('a', obj).first().attr('href');
+            // let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
+            // let chapNum = parseFloat($('a', obj).first().text()?.split(' ')[1]);
+            // let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
+            // if ($('.coin-unlock', obj).attr('title')) {
+            // name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
+            // }
+            // let time = $('.col-xs-4', obj).text().trim();
+            let id = 'a';
+            let chapNum = 1;
+            let name = 'a';
+            let time = '';
+            chapters.push(createChapter({
+                id,
+                chapNum: chapNum,
+                name,
+                mangaId: mangaId,
+                langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
+                time: this.convertTime(BaotangtruyentranhParser_1.decodeHTMLEntity(time))
+            }));
+            // }
             return chapters;
         });
     }
