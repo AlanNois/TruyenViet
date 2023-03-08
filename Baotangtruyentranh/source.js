@@ -727,12 +727,14 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             let $ = this.cheerio.load(data.data);
             const chapters = [];
             for (const obj of $('nav .row:not(.heading)').toArray()) {
+                // let id = $('a', obj).first().attr('href');
                 let id = $('a', obj).first().attr('href');
                 let chapNum = parseFloat((_a = $('a', obj).first().text()) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
-                let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
-                if ($('.coin-unlock', obj).attr('title')) {
-                    name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
-                }
+                // let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
+                let name = 'a';
+                // if ($('.coin-unlock', obj).attr('title')) {
+                //     name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
+                // }
                 let time = $('.col-xs-4', obj).text().trim();
                 chapters.push(createChapter({
                     id: id,
@@ -743,6 +745,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                     time: this.convertTime(BaotangtruyentranhParser_1.decodeHTMLEntity(time))
                 }));
             }
+            console.log(chapters);
             return chapters;
         });
     }
