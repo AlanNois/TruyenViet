@@ -724,7 +724,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             let data = yield this.requestManager.schedule(request, 1);
             let $ = this.cheerio.load(data.data);
             const chapters = [];
-            for (const obj of $('nav .row:not(.heading)').toArray()) {
+            for (const obj of $('ul .row:not(.heading)').toArray()) {
                 let ids = $('a', obj).first().attr('href');
                 let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
                 // let chapNum = parseFloat($('a', obj).first().text()?.split(' ')[1]);
