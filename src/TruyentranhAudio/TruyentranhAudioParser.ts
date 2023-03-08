@@ -94,7 +94,9 @@ export class Parser {
         for (let obj of $('div.reading-detail > div.page-chapter > img').toArray()) {
             if (!obj.attribs['src']) continue;
             let link = obj.attribs['src']?.replace(/(\r\n|\n|\r)/gm, "");
-            if (link.indexOf('http') === -1) {//nếu link ko có 'http'
+            if (link.indexOf('https') === -1) {//nếu link ko có 'http'
+                pages.push('https:' + obj.attribs['src']);
+            } else if (link.indexOf('http') === -1 && link.indexOf('https') === -1) {
                 pages.push('http:' + obj.attribs['src']);
             } else {
                 pages.push(link);
