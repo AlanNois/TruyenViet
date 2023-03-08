@@ -743,7 +743,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                     time: this.convertTime(BaotangtruyentranhParser_1.decodeHTMLEntity(time))
                 }));
             }
-            alert(JSON.stringify(chapters));
+            throw new Error(JSON.stringify(chapters));
             return chapters;
         });
     }
