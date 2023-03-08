@@ -715,12 +715,12 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // let StoryID = mangaId.split('-').pop();
-            // const request = createRequestObject({
-            //     url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
-            //     method: 'POST',
-            //     data: {StoryID: StoryID}
-            // });
+            let StoryID = mangaId.split('-').pop();
+            const request = createRequestObject({
+                url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
+                method: 'POST',
+                data: { StoryID: StoryID }
+            });
             // let data = await this.requestManager.schedule(request, 1);
             // let $ = this.cheerio.load(data.data);
             const chapters = [];
