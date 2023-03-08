@@ -133,6 +133,7 @@ export class Baotangtruyentranh extends Source {
 
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
+        let mangaID = mangaId;
         let StoryID = mangaId.split('-').pop();
         // console.log(StoryID);
         const request = createRequestObject({
@@ -155,7 +156,7 @@ export class Baotangtruyentranh extends Source {
                 id,
                 chapNum: chapNum,
                 name,
-                mangaId: mangaId,
+                mangaId: mangaID,
                 langCode: LanguageCode.VIETNAMESE,
                 time: this.convertTime(decodeHTMLEntity(time))
             }));
