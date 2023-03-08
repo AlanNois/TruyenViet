@@ -600,7 +600,7 @@ const BaotangtruyentranhParser_1 = require("./BaotangtruyentranhParser");
 const DOMAIN = 'https://baotangtruyennet.com/';
 const method = 'GET';
 exports.BaotangtruyentranhInfo = {
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -721,8 +721,8 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                 method: 'POST',
                 data: { StoryID: StoryID }
             });
-            // let data = await this.requestManager.schedule(request, 1);
-            // let $ = this.cheerio.load(data.data);
+            let data = yield this.requestManager.schedule(request, 1);
+            let $ = this.cheerio.load(data.data);
             const chapters = [];
             // for (const obj of $('nav .row:not(.heading)').toArray()) {
             // let ids = $('a', obj).first().attr('href');
