@@ -816,7 +816,7 @@ class Parser {
             if (link.indexOf('https') === -1) { //nếu link ko có 'http'
                 pages.push('https:' + obj.attribs['src']);
             }
-            else if (link.indexOf('http') === -1) {
+            else if (link.indexOf('http') === -1 && link.indexOf('https') === -1) {
                 pages.push('http:' + obj.attribs['src']);
             }
             else {
