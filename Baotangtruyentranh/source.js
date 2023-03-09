@@ -673,9 +673,8 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = mangaId;
             const request = createRequestObject({
-                url: url,
+                url: mangaId,
                 method,
             });
             let data = yield this.requestManager.schedule(request, 1);
@@ -684,7 +683,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             // let StoryID = mangaId.split('-').pop();
             const request2 = createRequestObject({
                 url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
-                method: 'POST',
+                method,
                 data: { StoryID: StoryID }
             });
             let data2 = yield this.requestManager.schedule(request2, 1);
@@ -1074,7 +1073,7 @@ function parseChapterList($, mangaId) {
         let ids = $('a', obj).first().attr('href');
         let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
         let chapNum = parseFloat((_a = $('a', obj).first().text()) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
-        let name = ($('a', obj).first().text().trim() === ('Chapter ' + chapNum.toString())) ? $('a', obj).first().text().trim() : '';
+        let name = $('a', obj).first().text().trim();
         if ($('.coin-unlock', obj).attr('title')) {
             name = 'LOCKED (' + $('.coin-unlock', obj).attr('title') + ')';
         }
