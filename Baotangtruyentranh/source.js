@@ -1067,9 +1067,10 @@ function convertTime(timeAgo) {
     return time;
 }
 function parseChapterList($, mangaId) {
-    var _a;
     const chapters = [];
-    for (let obj of $('ul .row:not(.heading)').toArray()) {
+    let x = $('ul .row:not(.heading)').toArray();
+    x.forEach(obj => {
+        var _a;
         let ids = $('a', obj).first().attr('href');
         let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
         let chapNum = parseFloat((_a = $('a', obj).first().text()) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
@@ -1086,7 +1087,7 @@ function parseChapterList($, mangaId) {
             langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
             time: convertTime(exports.decodeHTMLEntity(time))
         }));
-    }
+    });
     return chapters;
 }
 exports.parseChapterList = parseChapterList;
