@@ -683,7 +683,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                     referer: mangaId,
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
                     'x-requested-with': 'XMLHttpRequest',
-                    cookie: ''
+                    cookie: 'cf_zaraz_google-analytics_v4_a9ec=true; google-analytics_v4_a9ec__ga4sid=1270034858; google-analytics_v4_a9ec__session_counter=1; google-analytics_v4_a9ec__ga4=89235605-67f8-4a5b-a185-c1af25aac63d; google-analytics_v4_a9ec___z_ga_audiences=89235605-67f8-4a5b-a185-c1af25aac63d; __RequestVerificationToken=qtuuVs0Zbxndw6tJqXqCLjz1pcZSjgmNo6j7DkU51KIiXVtg_bVQ3zpUuSaxTh5W87zDG7--QGguu8b2SmXjAgWNbIaeJhbEr_bCPmD2avU1; Guid=7d04bc3b-4ea3-4a0e-9b3e-18c828e82874; google-analytics_v4_a9ec__engagementPaused=1678200645737; google-analytics_v4_a9ec__engagementStart=1678200647548; google-analytics_v4_a9ec__counter=12; google-analytics_v4_a9ec__let=1678200647548'
                 },
                 data: { StoryID: StoryID }
             });
