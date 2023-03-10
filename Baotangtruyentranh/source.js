@@ -612,6 +612,10 @@ exports.BaotangtruyentranhInfo = {
         {
             text: "Recommended",
             type: paperback_extensions_common_1.TagType.BLUE
+        },
+        {
+            text: "Cloudflare Bypass",
+            type: paperback_extensions_common_1.TagType.YELLOW
         }
     ]
 };
