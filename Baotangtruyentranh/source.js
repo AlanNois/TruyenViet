@@ -682,7 +682,8 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                     referer: mangaId,
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
-                    'x-requested-with': 'XMLHttpRequest'
+                    'x-requested-with': 'XMLHttpRequest',
+                    cookie: ''
                 },
                 data: { StoryID: StoryID }
             });
