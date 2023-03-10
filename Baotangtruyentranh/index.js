@@ -673,17 +673,15 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const request = createRequestObject({
-                url: mangaId,
-                method,
-            });
-            let data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
-            let StoryID = $('#ctl00_divCenter > ul > li:nth-child(2) > a').attr('href').split('-').pop();
-            // let StoryID = mangaId.split('-').pop();
+            let StoryID = mangaId.split('-').pop();
             const request2 = createRequestObject({
                 url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
-                method,
+                method: "POST",
+                headers: {
+                    authority: 'baotangtruyennet.com',
+                    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    referer: mangaId
+                },
                 data: { StoryID: StoryID }
             });
             let data2 = yield this.requestManager.schedule(request2, 1);
@@ -1067,10 +1065,9 @@ function convertTime(timeAgo) {
     return time;
 }
 function parseChapterList($, mangaId) {
+    var _a;
     const chapters = [];
-    let x = $('ul .row:not(.heading)').toArray();
-    x.forEach(obj => {
-        var _a;
+    for (let obj of $('ul .row:not(.heading)').toArray()) {
         let ids = $('a', obj).first().attr('href');
         let id = ids.replace(ids.match(/chapter-\d+/), mangaId.split('/')[mangaId.split('/').length - 1].split('-').slice(0, -1).join('-'));
         let chapNum = parseFloat((_a = $('a', obj).first().text()) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
@@ -1087,7 +1084,8 @@ function parseChapterList($, mangaId) {
             langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
             time: convertTime(exports.decodeHTMLEntity(time))
         }));
-    });
+    }
+    ;
     return chapters;
 }
 exports.parseChapterList = parseChapterList;
