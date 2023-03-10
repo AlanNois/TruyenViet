@@ -614,8 +614,8 @@ exports.BaotangtruyentranhInfo = {
             type: paperback_extensions_common_1.TagType.BLUE
         },
         {
-            text: "Cloudflare Bypass",
-            type: paperback_extensions_common_1.TagType.YELLOW
+            text: "Cloudflare",
+            type: paperback_extensions_common_1.TagType.RED
         }
     ]
 };
