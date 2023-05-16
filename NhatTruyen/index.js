@@ -377,7 +377,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NhatTruyen = exports.NhatTruyenInfo = exports.isLastPage = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const NhatTruyenParser_1 = require("./NhatTruyenParser");
-const DOMAIN = 'http://nhattruyenmin.com/';
+const DOMAIN = 'http://nhattruyenup.com/';
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
