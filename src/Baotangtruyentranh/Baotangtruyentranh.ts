@@ -102,23 +102,28 @@ export class Baotangtruyentranh extends Source {
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
         let StoryID = mangaId.split('-').pop();
-        const request2 = createRequestObject({
+        const request = createRequestObject({
             url: 'https://baotangtruyengo.com/Story/ListChapterByStoryID',
             method: "POST",
             headers: {
-                authority: 'baotangtruyengo.com',
-                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                referer: mangaId,
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
-                'x-requested-with': 'XMLHttpRequest',
-                cookie: 'cf_zaraz_google-analytics_v4_a9ec=true; google-analytics_v4_a9ec__ga4sid=1270034858; google-analytics_v4_a9ec__session_counter=1; google-analytics_v4_a9ec__ga4=89235605-67f8-4a5b-a185-c1af25aac63d; google-analytics_v4_a9ec___z_ga_audiences=89235605-67f8-4a5b-a185-c1af25aac63d; __RequestVerificationToken=qtuuVs0Zbxndw6tJqXqCLjz1pcZSjgmNo6j7DkU51KIiXVtg_bVQ3zpUuSaxTh5W87zDG7--QGguu8b2SmXjAgWNbIaeJhbEr_bCPmD2avU1; Guid=7d04bc3b-4ea3-4a0e-9b3e-18c828e82874; google-analytics_v4_a9ec__engagementPaused=1678200645737; google-analytics_v4_a9ec__engagementStart=1678200647548; google-analytics_v4_a9ec__counter=12; google-analytics_v4_a9ec__let=1678200647548'
-              },
-            data: {StoryID: StoryID}
+                'authority': "baotangtruyengo.com",
+                'accept': "*/*",
+                'accept-language': "vi-VN,vi;q=0.9,en;q=0.8",
+                'cache-control': "no-cache, must-revalidate, max-age=0",
+                'content-type': "application/x-www-form-urlencoded; charset=UTF-8",
+                'origin': "https://baotangtruyengo.com",
+                'referer': "https://google.com",
+                'sec-fetch-dest': "empty",
+                'sec-fetch-mode': "cors",
+                'sec-fetch-site': "same-origin",
+                'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0"
+        },
+            data: {"StoryID": StoryID}
         });
-        let data2 = await this.requestManager.schedule(request2, 1);
-        let $2 = this.cheerio.load(data2.data);
+        let data = await this.requestManager.schedule(request, 1);
+        let $ = this.cheerio.load(data.data);
    
-        const chapters = parseChapterList($2, mangaId);
+        const chapters = parseChapterList($, mangaId);
         console.log(chapters)
         return chapters;
     }
