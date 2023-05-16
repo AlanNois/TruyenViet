@@ -45,5 +45,5 @@ https://alannois.github.io/TruyenViet/
 |   34  | VlogTruyen                | https://vlogtruyen.net                     |
 |   35  | Truyendep                 | https://truyendep.net                      |
 |   36  | Truyengihot               | https://truyengihot.net                    |
-|   37  | Baotangtruyentranh        | https://baotangtruyentranh.com             |
+|   37  | Baotangtruyentranh        | https://baotangtruyentranhgo.com             |
 |   38  | TruyenChon                | http://truyenchon.com                      |
