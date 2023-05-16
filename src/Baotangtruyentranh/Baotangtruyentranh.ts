@@ -38,10 +38,6 @@ export const BaotangtruyentranhInfo: SourceInfo = {
         {
             text: "Recommended",
             type: TagType.BLUE
-        },
-        {
-            text: "Cloudflare",
-            type: TagType.RED
         }
     ]
 }
