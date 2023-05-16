@@ -22,7 +22,7 @@ import {
 
 import { parseSearch, parseViewMore, isLastPage, decodeHTMLEntity, parseChapterList } from "./BaotangtruyentranhParser"
 
-const DOMAIN = 'https://baotangtruyennet.com/'
+const DOMAIN = 'https://baotangtruyengo.com/'
 const method = 'GET'
 
 export const BaotangtruyentranhInfo: SourceInfo = {
@@ -107,10 +107,10 @@ export class Baotangtruyentranh extends Source {
     async getChapters(mangaId: string): Promise<Chapter[]> {
         let StoryID = mangaId.split('-').pop();
         const request2 = createRequestObject({
-            url: 'https://baotangtruyennet.com/Story/ListChapterByStoryID',
+            url: 'https://baotangtruyengo.com/Story/ListChapterByStoryID',
             method: "POST",
             headers: {
-                authority: 'baotangtruyennet.com',
+                authority: 'baotangtruyengo.com',
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 referer: mangaId,
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
@@ -173,7 +173,7 @@ export class Baotangtruyentranh extends Source {
 
         //New Updates
         let request = createRequestObject({
-            url: 'https://baotangtruyennet.com/home?page=1&typegroup=0',
+            url: 'https://baotangtruyengo.com/home?page=1&typegroup=0',
             method: "GET",
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -219,7 +219,7 @@ export class Baotangtruyentranh extends Source {
 
         //trans
         request = createRequestObject({
-            url: 'https://baotangtruyennet.com/home?page=1&typegroup=1',
+            url: 'https://baotangtruyengo.com/home?page=1&typegroup=1',
             method: "GET",
         });
         let transItems: MangaTile[] = [];
@@ -247,11 +247,11 @@ export class Baotangtruyentranh extends Source {
         let select = 1;
         switch (homepageSectionId) {
             case "new_updated":
-                url = `https://baotangtruyennet.com/home?page=${page}&typegroup=0`;
+                url = `https://baotangtruyengo.com/home?page=${page}&typegroup=0`;
                 select = 1;
                 break;
             case "trans":
-                url = `https://baotangtruyennet.com/home?page=${page}&typegroup=1`;
+                url = `https://baotangtruyengo.com/home?page=${page}&typegroup=1`;
                 select = 1;
                 break;
             default:
@@ -295,8 +295,8 @@ export class Baotangtruyentranh extends Source {
             }
         })
         const request = createRequestObject({
-            url: query.title ? encodeURI(`https://baotangtruyennet.com/tim-truyen?keyword=${query.title}&page=${page}`)
-                : encodeURI(`https://baotangtruyennet.com/tim-truyen/${search.cate}?status=${search.status}&sort=${search.sort}&page=${page}`),
+            url: query.title ? encodeURI(`https://baotangtruyengo.com/tim-truyen?keyword=${query.title}&page=${page}`)
+                : encodeURI(`https://baotangtruyengo.com/tim-truyen/${search.cate}?status=${search.status}&sort=${search.sort}&page=${page}`),
             method: "GET",
         });
 
