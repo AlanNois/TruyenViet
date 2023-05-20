@@ -101,6 +101,26 @@ export class Baotangtruyentranh extends Source {
 
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
+        const request1 = createRequestObject({
+            url: mangaId,
+            method: "GET",
+        });
+        let data1 = await this.requestManager.schedule(request1, 1);
+        let $1 = this.cheerio.load(data1.data);
+        
+        const request2 = createRequestObject({
+            url: 'https://baotangtruyengo.com/Home/GetUserInfo',
+            method: "POST",
+            headers: {
+                'authority': "baotangtruyengo.com",
+                'accept': "*/*",
+                'X-Requested-With': "XMLHttpRequest",
+            },
+            data: {"currentUrl": mangaId}
+        })
+        let data2 = await this.requestManager.schedule(request2, 1);
+        let $2 = this.cheerio.load(data2.data);
+
         let StoryID = mangaId.split('-').pop();
         const request = createRequestObject({
             url: 'https://baotangtruyengo.com/Story/ListChapterByStoryID',
@@ -117,7 +137,7 @@ export class Baotangtruyentranh extends Source {
                 'sec-fetch-mode': "cors",
                 'sec-fetch-site': "same-origin",
                 'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0"
-        },
+            },
             data: {"StoryID": StoryID}
         });
         let data = await this.requestManager.schedule(request, 1);
