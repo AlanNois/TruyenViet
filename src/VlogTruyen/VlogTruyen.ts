@@ -28,7 +28,7 @@ export const VlogTruyenInfo: SourceInfo = {
     author: 'AlanNois',
     authorWebsite: 'https://github.com/AlanNois/',
     description: 'Extension that pulls manga from VlogTruyen',
-    websiteBaseURL: `https://vlogtruyen2.net/`,
+    websiteBaseURL: `https://vlogtruyen3.net/`,
     contentRating: ContentRating.MATURE,
     sourceTags: [
         {
@@ -49,7 +49,7 @@ export class VlogTruyen extends Source {
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'referer': 'https://vlogtruyen2.net/'
+                        'referer': 'https://vlogtruyen3.net/'
                     }
                 }
 
@@ -71,7 +71,7 @@ export class VlogTruyen extends Source {
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'referer': 'https://vlogtruyen2.net/',
+                        'referer': 'https://vlogtruyen3.net/',
                         'x-requested-with': 'XMLHttpRequest'
                     }
                 }
@@ -127,7 +127,7 @@ export class VlogTruyen extends Source {
         let $1 = this.cheerio.load(data.data);
         let value = $1('input[name=manga_id]').attr('value');
         const request2 = createRequestObject({
-            url: `https://vlogtruyen2.net/thong-tin-ca-nhan?manga_id=${value}`,
+            url: `https://vlogtruyen3.net/thong-tin-ca-nhan?manga_id=${value}`,
             method
         });
         let data2 = await this.requestManager2.schedule(request2, 1);
@@ -202,7 +202,7 @@ export class VlogTruyen extends Source {
 
         //New Updates
         let request = createRequestObject({
-            url: 'https://vlogtruyen2.net/the-loai/moi-cap-nhap',
+            url: 'https://vlogtruyen3.net/the-loai/moi-cap-nhap',
             method: "GET",
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -225,7 +225,7 @@ export class VlogTruyen extends Source {
 
         //hot
         request = createRequestObject({
-            url: 'https://vlogtruyen2.net/the-loai/dang-hot',
+            url: 'https://vlogtruyen3.net/the-loai/dang-hot',
             method: "GET",
         });
         let hotItems: MangaTile[] = [];
@@ -248,7 +248,7 @@ export class VlogTruyen extends Source {
 
         //view
         request = createRequestObject({
-            url: 'https://vlogtruyen2.net/de-nghi/pho-bien/xem-nhieu',
+            url: 'https://vlogtruyen3.net/de-nghi/pho-bien/xem-nhieu',
             method: "GET",
         });
         let viewItems: MangaTile[] = [];
@@ -276,15 +276,15 @@ export class VlogTruyen extends Source {
         let select = 1;
         switch (homepageSectionId) {
             case "new_updated":
-                url = `https://vlogtruyen2.net/the-loai/moi-cap-nhap?page=${page}`;
+                url = `https://vlogtruyen3.net/the-loai/moi-cap-nhap?page=${page}`;
                 select = 1;
                 break;
             case "hot":
-                url = `https://vlogtruyen2.net/the-loai/dang-hot?page=${page}`;
+                url = `https://vlogtruyen3.net/the-loai/dang-hot?page=${page}`;
                 select = 2;
                 break;
             case "view":
-                url = `https://vlogtruyen2.net/de-nghi/pho-bien/xem-nhieu?page=${page}`;
+                url = `https://vlogtruyen3.net/de-nghi/pho-bien/xem-nhieu?page=${page}`;
                 select = 3;
                 break;
             default:
@@ -336,9 +336,9 @@ export class VlogTruyen extends Source {
             }
         })
         const request = createRequestObject({
-            url: query.title ? encodeURI(`https://vlogtruyen2.net/tim-kiem?q=${query.title}&page=${page}`) :
+            url: query.title ? encodeURI(`https://vlogtruyen3.net/tim-kiem?q=${query.title}&page=${page}`) :
                 (tags[0].includes('http') ? (tags[0] + `?page=${page}`) :
-                    encodeURI(`https://vlogtruyen2.net/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`)),
+                    encodeURI(`https://vlogtruyen3.net/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`)),
             method: "GET",
         });
 
@@ -358,15 +358,15 @@ export class VlogTruyen extends Source {
         const tags: Tag[] = [];
         const tags2: Tag[] = [
             {
-                id: 'https://vlogtruyen2.net/bang-xep-hang/top-tuan',
+                id: 'https://vlogtruyen3.net/bang-xep-hang/top-tuan',
                 label: 'Top tuần'
             },
             {
-                id: 'https://vlogtruyen2.net/bang-xep-hang/top-thang',
+                id: 'https://vlogtruyen3.net/bang-xep-hang/top-thang',
                 label: 'Top tháng'
             },
             {
-                id: 'https://vlogtruyen2.net/bang-xep-hang/top-nam',
+                id: 'https://vlogtruyen3.net/bang-xep-hang/top-nam',
                 label: 'Top năm'
             }
         ];
@@ -375,7 +375,7 @@ export class VlogTruyen extends Source {
         const tags5: Tag[] = [];
         const tags6: Tag[] = [];
 
-        const url = `https://vlogtruyen2.net/the-loai/dang-hot`
+        const url = `https://vlogtruyen3.net/the-loai/dang-hot`
         const request = createRequestObject({
             url: url,
             method: "GET",
