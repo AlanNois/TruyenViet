@@ -605,7 +605,7 @@ exports.VlogTruyenInfo = {
     author: 'AlanNois',
     authorWebsite: 'https://github.com/AlanNois/',
     description: 'Extension that pulls manga from VlogTruyen',
-    websiteBaseURL: `https://vlogtruyen2.net/`,
+    websiteBaseURL: `https://vlogtruyen3.net/`,
     contentRating: paperback_extensions_common_1.ContentRating.MATURE,
     sourceTags: [
         {
@@ -624,7 +624,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), {
-                        'referer': 'https://vlogtruyen2.net/'
+                        'referer': 'https://vlogtruyen3.net/'
                     });
                     return request;
                 }),
@@ -640,7 +640,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     var _b;
                     request.headers = Object.assign(Object.assign({}, ((_b = request.headers) !== null && _b !== void 0 ? _b : {})), {
-                        'referer': 'https://vlogtruyen2.net/',
+                        'referer': 'https://vlogtruyen3.net/',
                         'x-requested-with': 'XMLHttpRequest'
                     });
                     return request;
@@ -699,7 +699,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
             let $1 = this.cheerio.load(data.data);
             let value = $1('input[name=manga_id]').attr('value');
             const request2 = createRequestObject({
-                url: `https://vlogtruyen2.net/thong-tin-ca-nhan?manga_id=${value}`,
+                url: `https://vlogtruyen3.net/thong-tin-ca-nhan?manga_id=${value}`,
                 method
             });
             let data2 = yield this.requestManager2.schedule(request2, 1);
@@ -774,7 +774,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
             ///Get the section data
             //New Updates
             let request = createRequestObject({
-                url: 'https://vlogtruyen2.net/the-loai/moi-cap-nhap',
+                url: 'https://vlogtruyen3.net/the-loai/moi-cap-nhap',
                 method: "GET",
             });
             let data = yield this.requestManager.schedule(request, 1);
@@ -796,7 +796,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
             sectionCallback(newUpdated);
             //hot
             request = createRequestObject({
-                url: 'https://vlogtruyen2.net/the-loai/dang-hot',
+                url: 'https://vlogtruyen3.net/the-loai/dang-hot',
                 method: "GET",
             });
             let hotItems = [];
@@ -818,7 +818,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
             sectionCallback(hot);
             //view
             request = createRequestObject({
-                url: 'https://vlogtruyen2.net/de-nghi/pho-bien/xem-nhieu',
+                url: 'https://vlogtruyen3.net/de-nghi/pho-bien/xem-nhieu',
                 method: "GET",
             });
             let viewItems = [];
@@ -848,15 +848,15 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
             let select = 1;
             switch (homepageSectionId) {
                 case "new_updated":
-                    url = `https://vlogtruyen2.net/the-loai/moi-cap-nhap?page=${page}`;
+                    url = `https://vlogtruyen3.net/the-loai/moi-cap-nhap?page=${page}`;
                     select = 1;
                     break;
                 case "hot":
-                    url = `https://vlogtruyen2.net/the-loai/dang-hot?page=${page}`;
+                    url = `https://vlogtruyen3.net/the-loai/dang-hot?page=${page}`;
                     select = 2;
                     break;
                 case "view":
-                    url = `https://vlogtruyen2.net/de-nghi/pho-bien/xem-nhieu?page=${page}`;
+                    url = `https://vlogtruyen3.net/de-nghi/pho-bien/xem-nhieu?page=${page}`;
                     select = 3;
                     break;
                 default:
@@ -908,9 +908,9 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
                 }
             });
             const request = createRequestObject({
-                url: query.title ? encodeURI(`https://vlogtruyen2.net/tim-kiem?q=${query.title}&page=${page}`) :
+                url: query.title ? encodeURI(`https://vlogtruyen3.net/tim-kiem?q=${query.title}&page=${page}`) :
                     (tags[0].includes('http') ? (tags[0] + `?page=${page}`) :
-                        encodeURI(`https://vlogtruyen2.net/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`)),
+                        encodeURI(`https://vlogtruyen3.net/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`)),
                 method: "GET",
             });
             let data = yield this.requestManager.schedule(request, 1);
@@ -928,15 +928,15 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
             const tags = [];
             const tags2 = [
                 {
-                    id: 'https://vlogtruyen2.net/bang-xep-hang/top-tuan',
+                    id: 'https://vlogtruyen3.net/bang-xep-hang/top-tuan',
                     label: 'Top tuần'
                 },
                 {
-                    id: 'https://vlogtruyen2.net/bang-xep-hang/top-thang',
+                    id: 'https://vlogtruyen3.net/bang-xep-hang/top-thang',
                     label: 'Top tháng'
                 },
                 {
-                    id: 'https://vlogtruyen2.net/bang-xep-hang/top-nam',
+                    id: 'https://vlogtruyen3.net/bang-xep-hang/top-nam',
                     label: 'Top năm'
                 }
             ];
@@ -944,7 +944,7 @@ class VlogTruyen extends paperback_extensions_common_1.Source {
             const tags4 = [];
             const tags5 = [];
             const tags6 = [];
-            const url = `https://vlogtruyen2.net/the-loai/dang-hot`;
+            const url = `https://vlogtruyen3.net/the-loai/dang-hot`;
             const request = createRequestObject({
                 url: url,
                 method: "GET",
