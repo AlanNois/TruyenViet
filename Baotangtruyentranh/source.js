@@ -699,16 +699,13 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                     'authority': "baotangtruyengo.com",
                     'accept': "*/*",
                     'accept-language': "vi-VN,vi;q=0.9,en;q=0.8",
-                    'cache-control': "no-cache, must-revalidate, max-age=0",
+                    // 'cache-control': "no-cache, must-revalidate, max-age=0",
                     'content-type': "application/x-www-form-urlencoded; charset=UTF-8",
                     'origin': "https://baotangtruyengo.com",
-                    'referer': "https://google.com",
-                    'sec-fetch-dest': "empty",
-                    'sec-fetch-mode': "cors",
-                    'sec-fetch-site': "same-origin",
-                    'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0"
+                    'referer': "https://baotangtruyengo.com/",
                 },
-                data: { "StoryID": StoryID }
+                // string storyID
+                data: { StoryID: String(StoryID) }
             });
             let data = yield this.requestManager.schedule(request, 1);
             let $ = this.cheerio.load(data.data);
