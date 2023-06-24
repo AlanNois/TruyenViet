@@ -21,11 +21,11 @@ import {
 
 import { parseSearch, parseViewMore, isLastPage, decodeHTMLEntity, parseChapterList } from "./BaotangtruyentranhParser"
 
-const DOMAIN = 'https://baotangtruyen3.com/'
+const DOMAIN = 'https://baotangtruyen3.com'
 const method = 'GET'
 
 export const BaotangtruyentranhInfo: SourceInfo = {
-    version: '1.1.0',
+    version: '1.1.1',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -105,6 +105,7 @@ export class Baotangtruyentranh extends Source {
             url: `${DOMAIN}/Story/ListChapterByStoryID`,
             method: "POST",
             headers: {
+                'content-type': 'application/x-www-form-urlencoded',
                 'Cache-Control': 'no-cache, must-revalidate, max-age=0'
             },
             // string storyID
