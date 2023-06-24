@@ -377,7 +377,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NetTruyen = exports.NetTruyenInfo = exports.isLastPage = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const NetTruyenParser_1 = require("./NetTruyenParser");
-const DOMAIN = 'http://www.nettruyenplus.com/';
+const DOMAIN = 'http://www.nettruyenmax.com/';
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.NetTruyenInfo = {
-    version: '1.0.0',
+    version: '1.1.0',
     name: 'NetTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -457,7 +457,7 @@ class NetTruyen extends paperback_extensions_common_1.Source {
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: chapterId,
+                url: `${DOMAIN}truyen-tranh/${chapterId}`,
                 method: "GET",
             });
             const data = yield this.requestManager.schedule(request, 1);
@@ -795,7 +795,7 @@ class Parser {
             let chapNum = parseFloat($('div.chapter a', obj).text().split(' ')[1]);
             let timeFinal = this.convertTime(time);
             chapters.push(createChapter({
-                id: $('div.chapter a', obj).attr('href'),
+                id: $('div.chapter a', obj).attr('href').split('/').slice(4, 7).join('/'),
                 chapNum: chapNum,
                 name: name.includes(':') ? name.split('Chapter ' + chapNum + ':')[1].trim() : '',
                 mangaId: mangaId,

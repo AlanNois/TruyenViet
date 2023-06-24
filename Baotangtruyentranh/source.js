@@ -597,10 +597,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Baotangtruyentranh = exports.BaotangtruyentranhInfo = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const BaotangtruyentranhParser_1 = require("./BaotangtruyentranhParser");
-const DOMAIN = 'https://baotangtruyengo.com/';
+const DOMAIN = 'https://baotangtruyen3.com/';
 const method = 'GET';
 exports.BaotangtruyentranhInfo = {
-    version: '1.0.3',
+    version: '1.1.0',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -635,12 +635,12 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             }
         });
     }
-    getMangaShareUrl(mangaId) { return (mangaId); }
+    getMangaShareUrl(mangaId) { return (`${DOMAIN}/${mangaId}`); }
     ;
     getMangaDetails(mangaId) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const url = mangaId;
+            const url = `${DOMAIN}/${mangaId}`;
             const request = createRequestObject({
                 url: url,
                 method: "GET",
@@ -673,51 +673,26 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const request1 = createRequestObject({
-                url: mangaId,
-                method: "GET",
-            });
-            let data1 = yield this.requestManager.schedule(request1, 1);
-            let $1 = this.cheerio.load(data1.data);
-            const request2 = createRequestObject({
-                url: 'https://baotangtruyengo.com/Home/GetUserInfo',
-                method: "POST",
-                headers: {
-                    'authority': "baotangtruyengo.com",
-                    'accept': "*/*",
-                    'X-Requested-With': "XMLHttpRequest",
-                },
-                data: { "currentUrl": mangaId }
-            });
-            let data2 = yield this.requestManager.schedule(request2, 1);
-            let $2 = this.cheerio.load(data2.data);
             let StoryID = mangaId.split('-').pop();
             const request = createRequestObject({
-                url: 'https://baotangtruyengo.com/Story/ListChapterByStoryID',
+                url: `${DOMAIN}/Story/ListChapterByStoryID`,
                 method: "POST",
                 headers: {
-                    'authority': "baotangtruyengo.com",
-                    'accept': "*/*",
-                    'accept-language': "vi-VN,vi;q=0.9,en;q=0.8",
-                    // 'cache-control': "no-cache, must-revalidate, max-age=0",
-                    'content-type': "application/x-www-form-urlencoded; charset=UTF-8",
-                    'origin': "https://baotangtruyengo.com",
-                    'referer': "https://baotangtruyengo.com/",
+                    'Cache-Control': 'no-cache, must-revalidate, max-age=0'
                 },
                 // string storyID
-                data: { StoryID: String(StoryID) }
+                data: { StoryID: StoryID }
             });
             let data = yield this.requestManager.schedule(request, 1);
             let $ = this.cheerio.load(data.data);
             const chapters = BaotangtruyentranhParser_1.parseChapterList($, mangaId);
-            console.log(chapters);
             return chapters;
         });
     }
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: `${chapterId}`,
+                url: `${DOMAIN}/${chapterId}`,
                 method
             });
             let data = yield this.requestManager.schedule(request, 1);
@@ -759,7 +734,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             ///Get the section dat
             //New Updates
             let request = createRequestObject({
-                url: 'https://baotangtruyengo.com/home?page=1&typegroup=0',
+                url: `${DOMAIN}/home?page=1&typegroup=0`,
                 method: "GET",
             });
             let data = yield this.requestManager.schedule(request, 1);
@@ -768,7 +743,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             for (const element of $('.row .item').toArray()) {
                 let title = $('h3 > a', element).text().trim();
                 let image = $('.image img', element).attr("src");
-                let id = $('h3 > a', element).attr('href');
+                let id = $('h3 > a', element).attr('href').split('/').slice(-2).join('/');
                 let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
                 newUpdatedItems.push(createMangaTile({
                     id: id !== null && id !== void 0 ? id : "",
@@ -790,7 +765,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             for (const element of $('.items-slide .item').toArray()) {
                 let title = $('.slide-caption h3', element).text().trim();
                 let image = $('a img', element).attr("src");
-                let id = $('a', element).attr('href');
+                let id = $('a', element).attr('href').split('/').slice(-2).join('/');
                 let subtitle = $(".slide-caption > a", element).first().text().trim() + ' | ' + $(".time", element).first().text().trim();
                 featuredItems.push(createMangaTile({
                     id: id !== null && id !== void 0 ? id : "",
@@ -803,7 +778,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             sectionCallback(featured);
             //trans
             request = createRequestObject({
-                url: 'https://baotangtruyengo.com/home?page=1&typegroup=1',
+                url: `${DOMAIN}/home?page=1&typegroup=1`,
                 method: "GET",
             });
             let transItems = [];
@@ -812,7 +787,7 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             for (const element of $('.row .item').toArray()) {
                 let title = $('h3 > a', element).text().trim();
                 let image = $('.image img', element).attr("src");
-                let id = $('h3 > a', element).attr('href');
+                let id = $('h3 > a', element).attr('href').split('/').slice(-2).join('/');
                 let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
                 transItems.push(createMangaTile({
                     id: id !== null && id !== void 0 ? id : "",
@@ -833,11 +808,11 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
             let select = 1;
             switch (homepageSectionId) {
                 case "new_updated":
-                    url = `https://baotangtruyengo.com/home?page=${page}&typegroup=0`;
+                    url = `${DOMAIN}/home?page=${page}&typegroup=0`;
                     select = 1;
                     break;
                 case "trans":
-                    url = `https://baotangtruyengo.com/home?page=${page}&typegroup=1`;
+                    url = `${DOMAIN}/home?page=${page}&typegroup=1`;
                     select = 1;
                     break;
                 default:
@@ -881,8 +856,8 @@ class Baotangtruyentranh extends paperback_extensions_common_1.Source {
                 }
             });
             const request = createRequestObject({
-                url: query.title ? encodeURI(`https://baotangtruyengo.com/tim-truyen?keyword=${query.title}&page=${page}`)
-                    : encodeURI(`https://baotangtruyengo.com/tim-truyen/${search.cate}?status=${search.status}&sort=${search.sort}&page=${page}`),
+                url: query.title ? encodeURI(`${DOMAIN}/tim-truyen?keyword=${query.title}&page=${page}`)
+                    : encodeURI(`${DOMAIN}/tim-truyen/${search.cate}?status=${search.status}&sort=${search.sort}&page=${page}`),
                 method: "GET",
             });
             let data = yield this.requestManager.schedule(request, 1);
@@ -1100,7 +1075,7 @@ function parseChapterList($, mangaId) {
         }
         let time = $('.col-xs-4', obj).text().trim();
         chapters.push(createChapter({
-            id,
+            id: id.split('/').slice(-4).join('/'),
             chapNum: chapNum,
             name,
             mangaId: mangaId,
