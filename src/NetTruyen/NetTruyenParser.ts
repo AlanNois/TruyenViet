@@ -76,7 +76,7 @@ export class Parser {
             let chapNum = parseFloat($('div.chapter a', obj).text().split(' ')[1]);
             let timeFinal = this.convertTime(time);
             chapters.push(createChapter(<Chapter>{
-                id: $('div.chapter a', obj).attr('href'),
+                id: $('div.chapter a', obj).attr('href').split('/').slice(4,7).join('/'),
                 chapNum: chapNum,
                 name: name.includes(':') ? name.split('Chapter ' + chapNum + ':')[1].trim() : '',
                 mangaId: mangaId,

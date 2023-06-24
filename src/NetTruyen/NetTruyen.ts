@@ -16,7 +16,7 @@ import {
 } from "paperback-extensions-common"
 import { Parser } from './NetTruyenParser';
 
-const DOMAIN = 'http://www.nettruyenplus.com/'
+const DOMAIN = 'http://www.nettruyenmax.com/'
 
 export const isLastPage = ($: CheerioStatic): boolean => {
     const current = $('ul.pagination > li.active > a').text();
@@ -30,7 +30,7 @@ export const isLastPage = ($: CheerioStatic): boolean => {
 }
 
 export const NetTruyenInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.1.0',
     name: 'NetTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -99,7 +99,7 @@ export class NetTruyen extends Source {
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
-            url: chapterId,
+            url: `${DOMAIN}truyen-tranh/${chapterId}`,
             method: "GET",
         });
         const data = await this.requestManager.schedule(request, 1);

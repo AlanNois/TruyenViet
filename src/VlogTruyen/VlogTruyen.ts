@@ -20,15 +20,16 @@ import {
 import { parseSearch, parseViewMore, isLastPage } from "./VlogTruyenParser"
 
 const method = 'GET'
+const DOMAIN = 'https://vlogtruyen5.net'
 
 export const VlogTruyenInfo: SourceInfo = {
-    version: '1.0.2',
+    version: '1.1.0',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
     authorWebsite: 'https://github.com/AlanNois/',
     description: 'Extension that pulls manga from VlogTruyen',
-    websiteBaseURL: `https://vlogtruyen3.com/`,
+    websiteBaseURL: DOMAIN,
     contentRating: ContentRating.MATURE,
     sourceTags: [
         {
@@ -38,8 +39,9 @@ export const VlogTruyenInfo: SourceInfo = {
     ]
 }
 
+
 export class VlogTruyen extends Source {
-    getMangaShareUrl(mangaId: string): string { return `${mangaId}` };
+    getMangaShareUrl(mangaId: string): string { return `${DOMAIN}/${mangaId}` };
     requestManager = createRequestManager({
         requestsPerSecond: 5,
         requestTimeout: 20000,
@@ -49,7 +51,7 @@ export class VlogTruyen extends Source {
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'referer': 'https://vlogtruyen3.com/'
+                        'referer': DOMAIN
                     }
                 }
 
@@ -62,31 +64,8 @@ export class VlogTruyen extends Source {
         }
     })
     
-    requestManager2 = createRequestManager({
-        requestsPerSecond: 5,
-        requestTimeout: 20000,
-        interceptor: {
-            interceptRequest: async (request: Request): Promise<Request> => {
-
-                request.headers = {
-                    ...(request.headers ?? {}),
-                    ...{
-                        'referer': 'https://vlogtruyen3.com/',
-                        'x-requested-with': 'XMLHttpRequest'
-                    }
-                }
-
-                return request
-            },
-
-            interceptResponse: async (response: Response): Promise<Response> => {
-                return response
-            }
-        }
-    })
-
     async getMangaDetails(mangaId: string): Promise<Manga> {
-        const url = `${mangaId}`;
+        const url = `${DOMAIN}/${mangaId}`;
         const request = createRequestObject({
             url: url,
             method: "GET",
@@ -120,23 +99,26 @@ export class VlogTruyen extends Source {
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
         const request = createRequestObject({
-            url: `${mangaId}`,
+            url: `${DOMAIN}/${mangaId}`,
             method,
         });
         let data = await this.requestManager.schedule(request, 1);
         let $1 = this.cheerio.load(data.data);
         let value = $1('input[name=manga_id]').attr('value');
         const request2 = createRequestObject({
-            url: `https://vlogtruyen3.com/thong-tin-ca-nhan?manga_id=${value}`,
+            url: `${DOMAIN}/thong-tin-ca-nhan?manga_id=${value}`,
+            headers: {
+                'X-Requested-With': "XMLHttpRequest",
+            },
             method
         });
-        let data2 = await this.requestManager2.schedule(request2, 1);
+        let data2 = await this.requestManager.schedule(request2, 1);
         let $ = this.cheerio.load(JSON.parse(data2.data)['data']['chaptersHtml']);
         const chapters: Chapter[] = [];
         var i = 0;
         for (const obj of $('li').toArray().reverse()) {
             i++;
-            let id = $('a', obj).first().attr('href');
+            let id = $('a', obj).first().attr('href').split('/').slice(3,5).join('/');
             let chapNum = Number($('a', obj).first().attr('title')?.split(' ')[1]);
             let group = $('span.chapter-view', obj).text();
             let name = $('a', obj).first().attr('title');
@@ -157,7 +139,7 @@ export class VlogTruyen extends Source {
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
-            url: `${chapterId}`,
+            url: `${DOMAIN}/${chapterId}`,
             method
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -202,7 +184,7 @@ export class VlogTruyen extends Source {
 
         //New Updates
         let request = createRequestObject({
-            url: 'https://vlogtruyen3.com/the-loai/moi-cap-nhap',
+            url: `${DOMAIN}/the-loai/moi-cap-nhap`,
             method: "GET",
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -211,7 +193,7 @@ export class VlogTruyen extends Source {
         for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray().splice(0, 20)) {
             let title = $('.title-commic-tab', element).text().trim();
             let image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-            let id = $('a', element).first().attr('href');
+            let id = $('a', element).first().attr('href').split('/').pop();
             let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
             newUpdatedItems.push(createMangaTile({
                 id: id ?? "",
@@ -225,7 +207,7 @@ export class VlogTruyen extends Source {
 
         //hot
         request = createRequestObject({
-            url: 'https://vlogtruyen3.com/the-loai/dang-hot',
+            url: `${DOMAIN}/the-loai/dang-hot`,
             method: "GET",
         });
         let hotItems: MangaTile[] = [];
@@ -234,7 +216,7 @@ export class VlogTruyen extends Source {
         for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray().splice(0, 20)) {
             let title = $('.title-commic-tab', element).text().trim();
             let image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-            let id = $('a', element).first().attr('href');
+            let id = $('a', element).first().attr('href').split('/').pop();
             let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
             hotItems.push(createMangaTile({
                 id: id ?? "",
@@ -248,7 +230,7 @@ export class VlogTruyen extends Source {
 
         //view
         request = createRequestObject({
-            url: 'https://vlogtruyen3.com/de-nghi/pho-bien/xem-nhieu',
+            url: `${DOMAIN}/de-nghi/pho-bien/xem-nhieu`,
             method: "GET",
         });
         let viewItems: MangaTile[] = [];
@@ -257,7 +239,7 @@ export class VlogTruyen extends Source {
         for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray().splice(0, 20)) {
             let title = $('.title-commic-tab', element).text().trim();
             let image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-            let id = $('a', element).first().attr('href');
+            let id = $('a', element).first().attr('href').split('/').pop();
             let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
             viewItems.push(createMangaTile({
                 id: id ?? "",
@@ -276,15 +258,15 @@ export class VlogTruyen extends Source {
         let select = 1;
         switch (homepageSectionId) {
             case "new_updated":
-                url = `https://vlogtruyen3.com/the-loai/moi-cap-nhap?page=${page}`;
+                url = `${DOMAIN}/the-loai/moi-cap-nhap?page=${page}`;
                 select = 1;
                 break;
             case "hot":
-                url = `https://vlogtruyen3.com/the-loai/dang-hot?page=${page}`;
+                url = `${DOMAIN}/the-loai/dang-hot?page=${page}`;
                 select = 2;
                 break;
             case "view":
-                url = `https://vlogtruyen3.com/de-nghi/pho-bien/xem-nhieu?page=${page}`;
+                url = `${DOMAIN}/de-nghi/pho-bien/xem-nhieu?page=${page}`;
                 select = 3;
                 break;
             default:
@@ -336,9 +318,9 @@ export class VlogTruyen extends Source {
             }
         })
         const request = createRequestObject({
-            url: query.title ? encodeURI(`https://vlogtruyen3.com/tim-kiem?q=${query.title}&page=${page}`) :
+            url: query.title ? encodeURI(`${DOMAIN}/tim-kiem?q=${query.title}&page=${page}`) :
                 (tags[0].includes('http') ? (tags[0] + `?page=${page}`) :
-                    encodeURI(`https://vlogtruyen3.com/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`)),
+                    encodeURI(`${DOMAIN}/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`)),
             method: "GET",
         });
 
@@ -358,15 +340,15 @@ export class VlogTruyen extends Source {
         const tags: Tag[] = [];
         const tags2: Tag[] = [
             {
-                id: 'https://vlogtruyen3.com/bang-xep-hang/top-tuan',
+                id: `${DOMAIN}/bang-xep-hang/top-tuan`,
                 label: 'Top tuần'
             },
             {
-                id: 'https://vlogtruyen3.com/bang-xep-hang/top-thang',
+                id: `${DOMAIN}/bang-xep-hang/top-thang`,
                 label: 'Top tháng'
             },
             {
-                id: 'https://vlogtruyen3.com/bang-xep-hang/top-nam',
+                id: `${DOMAIN}/bang-xep-hang/top-nam`,
                 label: 'Top năm'
             }
         ];
@@ -375,7 +357,7 @@ export class VlogTruyen extends Source {
         const tags5: Tag[] = [];
         const tags6: Tag[] = [];
 
-        const url = `https://vlogtruyen3.com/the-loai/dang-hot`
+        const url = `${DOMAIN}/the-loai/dang-hot`
         const request = createRequestObject({
             url: url,
             method: "GET",

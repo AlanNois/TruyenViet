@@ -1,4 +1,3 @@
-import { test } from "mocha"
 import {
     Source,
     Manga,
@@ -22,11 +21,11 @@ import {
 
 import { parseSearch, parseViewMore, isLastPage, decodeHTMLEntity, parseChapterList } from "./BaotangtruyentranhParser"
 
-const DOMAIN = 'https://baotangtruyengo.com/'
+const DOMAIN = 'https://baotangtruyen3.com/'
 const method = 'GET'
 
 export const BaotangtruyentranhInfo: SourceInfo = {
-    version: '1.0.3',
+    version: '1.1.0',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -43,7 +42,7 @@ export const BaotangtruyentranhInfo: SourceInfo = {
 }
 
 export class Baotangtruyentranh extends Source {
-    getMangaShareUrl(mangaId: string): string { return (mangaId) };
+    getMangaShareUrl(mangaId: string): string { return (`${DOMAIN}/${mangaId}`) };
     requestManager = createRequestManager({
         requestsPerSecond: 5,
         requestTimeout: 20000,
@@ -67,7 +66,7 @@ export class Baotangtruyentranh extends Source {
     })
 
     async getMangaDetails(mangaId: string): Promise<Manga> {
-        const url = mangaId;
+        const url = `${DOMAIN}/${mangaId}`;
         const request = createRequestObject({
             url: url,
             method: "GET",
@@ -101,57 +100,26 @@ export class Baotangtruyentranh extends Source {
 
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
-        const request1 = createRequestObject({
-            url: mangaId,
-            method: "GET",
-        });
-        let data1 = await this.requestManager.schedule(request1, 1);
-        let $1 = this.cheerio.load(data1.data);
-        
-        const request2 = createRequestObject({
-            url: 'https://baotangtruyengo.com/Home/GetUserInfo',
-            method: "POST",
-            headers: {
-                'authority': "baotangtruyengo.com",
-                'accept': "*/*",
-                'X-Requested-With': "XMLHttpRequest",
-            },
-            data: {"currentUrl": mangaId}
-        })
-        let data2 = await this.requestManager.schedule(request2, 1);
-        let $2 = this.cheerio.load(data2.data);
-
         let StoryID = mangaId.split('-').pop();
         const request = createRequestObject({
-            url: 'https://baotangtruyengo.com/Story/ListChapterByStoryID',
+            url: `${DOMAIN}/Story/ListChapterByStoryID`,
             method: "POST",
             headers: {
-                'authority': "baotangtruyengo.com",
-                'accept': "*/*",
-                'accept-language': "vi-VN,vi;q=0.9,en;q=0.8",
-                // 'cache-control': "no-cache, must-revalidate, max-age=0",
-                'content-type': "application/x-www-form-urlencoded; charset=UTF-8",
-                'origin': "https://baotangtruyengo.com",
-                'referer': "https://baotangtruyengo.com/",
-                // 'sec-fetch-dest': "empty",
-                // 'sec-fetch-mode': "cors",
-                // 'sec-fetch-site': "same-origin",
-                // 'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0"
+                'Cache-Control': 'no-cache, must-revalidate, max-age=0'
             },
             // string storyID
-            data: {StoryID: String(StoryID)}
+            data: {StoryID: StoryID}
         });
         let data = await this.requestManager.schedule(request, 1);
         let $ = this.cheerio.load(data.data);
    
         const chapters = parseChapterList($, mangaId);
-        console.log(chapters)
         return chapters;
     }
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
-            url: `${chapterId}`,
+            url: `${DOMAIN}/${chapterId}`,
             method
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -195,7 +163,7 @@ export class Baotangtruyentranh extends Source {
 
         //New Updates
         let request = createRequestObject({
-            url: 'https://baotangtruyengo.com/home?page=1&typegroup=0',
+            url: `${DOMAIN}/home?page=1&typegroup=0`,
             method: "GET",
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -204,7 +172,7 @@ export class Baotangtruyentranh extends Source {
         for (const element of $('.row .item').toArray()) {
             let title = $('h3 > a', element).text().trim();
             let image = $('.image img', element).attr("src");
-            let id = $('h3 > a', element).attr('href');
+            let id = $('h3 > a', element).attr('href').split('/').slice(-2).join('/');
             let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
             newUpdatedItems.push(createMangaTile({
                 id: id ?? "",
@@ -227,7 +195,7 @@ export class Baotangtruyentranh extends Source {
         for (const element of $('.items-slide .item').toArray()) {
             let title = $('.slide-caption h3', element).text().trim();
             let image = $('a img', element).attr("src");
-            let id = $('a', element).attr('href');
+            let id = $('a', element).attr('href').split('/').slice(-2).join('/');
             let subtitle = $(".slide-caption > a", element).first().text().trim() + ' | ' + $(".time", element).first().text().trim();
             featuredItems.push(createMangaTile({
                 id: id ?? "",
@@ -241,7 +209,7 @@ export class Baotangtruyentranh extends Source {
 
         //trans
         request = createRequestObject({
-            url: 'https://baotangtruyengo.com/home?page=1&typegroup=1',
+            url: `${DOMAIN}/home?page=1&typegroup=1`,
             method: "GET",
         });
         let transItems: MangaTile[] = [];
@@ -250,7 +218,7 @@ export class Baotangtruyentranh extends Source {
         for (const element of $('.row .item').toArray()) {
             let title = $('h3 > a', element).text().trim();
             let image = $('.image img', element).attr("src");
-            let id = $('h3 > a', element).attr('href');
+            let id = $('h3 > a', element).attr('href').split('/').slice(-2).join('/');
             let subtitle = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
             transItems.push(createMangaTile({
                 id: id ?? "",
@@ -269,11 +237,11 @@ export class Baotangtruyentranh extends Source {
         let select = 1;
         switch (homepageSectionId) {
             case "new_updated":
-                url = `https://baotangtruyengo.com/home?page=${page}&typegroup=0`;
+                url = `${DOMAIN}/home?page=${page}&typegroup=0`;
                 select = 1;
                 break;
             case "trans":
-                url = `https://baotangtruyengo.com/home?page=${page}&typegroup=1`;
+                url = `${DOMAIN}/home?page=${page}&typegroup=1`;
                 select = 1;
                 break;
             default:
@@ -317,8 +285,8 @@ export class Baotangtruyentranh extends Source {
             }
         })
         const request = createRequestObject({
-            url: query.title ? encodeURI(`https://baotangtruyengo.com/tim-truyen?keyword=${query.title}&page=${page}`)
-                : encodeURI(`https://baotangtruyengo.com/tim-truyen/${search.cate}?status=${search.status}&sort=${search.sort}&page=${page}`),
+            url: query.title ? encodeURI(`${DOMAIN}/tim-truyen?keyword=${query.title}&page=${page}`)
+                : encodeURI(`${DOMAIN}/tim-truyen/${search.cate}?status=${search.status}&sort=${search.sort}&page=${page}`),
             method: "GET",
         });
 

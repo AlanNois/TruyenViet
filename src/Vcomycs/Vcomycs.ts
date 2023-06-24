@@ -21,15 +21,16 @@ import {
 import { parseSearch, parseViewMore, decryptImages, decodeHTMLEntity } from "./VcomycsParser"
 
 const method = 'GET'
+const DOMAIN = 'https://vivicomi.info'
 
 export const VcomycsInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.1.0',
     name: 'Vcomycs',
     icon: 'icon.png',
     author: 'AlanNois',
     authorWebsite: 'https://github.com/AlanNois/',
     description: 'Extension that pulls manga from Vcomycs',
-    websiteBaseURL: `https://vcomycs.online/`,
+    websiteBaseURL: DOMAIN,
     contentRating: ContentRating.MATURE,
     sourceTags: [
         {
@@ -39,8 +40,9 @@ export const VcomycsInfo: SourceInfo = {
     ]
 }
 
+
 export class Vcomycs extends Source {
-    getMangaShareUrl(mangaId: string): string { return `${mangaId}` };
+    getMangaShareUrl(mangaId: string): string { return `${DOMAIN}/truyen-tranh/${mangaId}` };
     requestManager = createRequestManager({
         requestsPerSecond: 5,
         requestTimeout: 20000,
@@ -50,7 +52,7 @@ export class Vcomycs extends Source {
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'referer': 'https://vcomycs.online/'
+                        'referer': DOMAIN
                     }
                 }
 
@@ -64,7 +66,7 @@ export class Vcomycs extends Source {
     })
 
     async getMangaDetails(mangaId: string): Promise<Manga> {
-        const url = `${mangaId}`;
+        const url = `${DOMAIN}/truyen-tranh/${mangaId}`;
         const request = createRequestObject({
             url: url,
             method: "GET",
@@ -97,7 +99,7 @@ export class Vcomycs extends Source {
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
         const request = createRequestObject({
-            url: `${mangaId}`,
+            url: `${DOMAIN}/truyen-tranh/${mangaId}`,
             method,
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -106,17 +108,17 @@ export class Vcomycs extends Source {
         var el = $("tbody td a").toArray();
         for (var i in el) {
             var e = el[i];
-            let id = $(e).attr("href");
+            let id = $(e).attr("href").split('/').slice(-2).join('/');
             let chapNum = Number($(e).text().trim().match(/Chap.+/)?.[0].split(" ")[1]);
             let name = $($('span', e).toArray()[0]).text().trim();
-            // let time = $('tr > td.hidden-xs.hidden-sm', e).text().trim().split('/');
+            let time = $('tr > td.hidden-xs.hidden-sm', e).text().trim().split('/');
             chapters.push(createChapter(<Chapter>{
                 id,
                 chapNum: chapNum,
                 name: decodeHTMLEntity(name),
                 mangaId: mangaId,
                 langCode: LanguageCode.VIETNAMESE,
-                // time: new Date(time[1] + '/' + time[0] + '/' + time[2])
+                time: new Date(time[1] + '/' + time[0] + '/' + time[2])
             }));
         }
 
@@ -125,7 +127,7 @@ export class Vcomycs extends Source {
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
-            url: `${chapterId}`,
+            url: `${DOMAIN}/${chapterId}`,
             method
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -165,7 +167,7 @@ export class Vcomycs extends Source {
 
         //New Updates
         let request = createRequestObject({
-            url: 'https://vcomycs.online/',
+            url: DOMAIN,
             method: "GET",
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -174,7 +176,7 @@ export class Vcomycs extends Source {
         for (const element of $('.comic-item', '.col-md-9 > .comic-list ').toArray().splice(0, 20)) {
             let title = $('.comic-title', element).text().trim();
             let image = $('.img-thumbnail', element).attr('data-thumb') ?? "";
-            let id = $('.comic-img > a', element).first().attr('href');
+            let id = $('.comic-img > a', element).first().attr('href').split('/').slice(-2).join('/');
             let subtitle = $(`.comic-chapter`, element).text().trim();
             newUpdatedItems.push(createMangaTile({
                 id: id ?? "",
@@ -188,7 +190,7 @@ export class Vcomycs extends Source {
 
         //hot
         request = createRequestObject({
-            url: 'https://vcomycs.online/truyen-hot-nhat/',
+            url: `${DOMAIN}/truyen-hot-nhat/`,
             method: "GET",
         });
         let hotItems: MangaTile[] = [];
@@ -197,7 +199,7 @@ export class Vcomycs extends Source {
         for (const element of $('li', '.col-md-9 .comic-list-page ul.most-views').toArray()) {
             let title = $('.super-title > a', element).text().trim();
             let image = $('.list-left-img', element).attr('src') ?? "";
-            let id = $('.super-title > a', element).first().attr('href');
+            let id = $('.super-title > a', element).first().attr('href').split('/').slice(-2).join('/');
             hotItems.push(createMangaTile({
                 id: id ?? "",
                 image: image.replace('150x150', '300x404') ?? "",
@@ -209,7 +211,7 @@ export class Vcomycs extends Source {
 
         //view
         request = createRequestObject({
-            url: 'https://vcomycs.online/nhieu-xem-nhat/',
+            url: `${DOMAIN}/nhieu-xem-nhat/`,
             method: "GET",
         });
         let viewItems: MangaTile[] = [];
@@ -218,7 +220,7 @@ export class Vcomycs extends Source {
         for (const element of $('li', '.col-md-9 .comic-list-page ul.most-views').toArray()) {
             let title = $('.super-title > a', element).text().trim();
             let image = $('.list-left-img', element).attr('src') ?? "";
-            let id = $('.super-title > a', element).first().attr('href');
+            let id = $('.super-title > a', element).first().attr('href').split('/').slice(-2).join('/');
             // let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
             viewItems.push(createMangaTile({
                 id: id ?? "",
@@ -236,7 +238,7 @@ export class Vcomycs extends Source {
         let url = '';
         switch (homepageSectionId) {
             case "new_updated":
-                url = `https://vcomycs.online/page/${page}/`;
+                url = `${DOMAIN}/page/${page}/`;
                 break;
             default:
                 return Promise.resolve(createPagedResults({ results: [] }))
@@ -263,7 +265,7 @@ export class Vcomycs extends Source {
         var url = '';
         var request: any = '';
         if (query.title) {
-            url = 'https://vcomycs.online/wp-admin/admin-ajax.php';
+            url = `${DOMAIN}/wp-admin/admin-ajax.php`;
             request = createRequestObject({
                 url,
                 method: 'post',
@@ -311,7 +313,7 @@ export class Vcomycs extends Source {
 
     async getSearchTags(): Promise<TagSection[]> {
         const tags: Tag[] = [];
-        const url = `https://vcomycs.online/so-do-trang/`
+        const url = `${DOMAIN}/so-do-trang/`
         const request = createRequestObject({
             url: url,
             method: "GET",

@@ -115,7 +115,7 @@ export function parseChapterList($: any, mangaId: string): Chapter[] {
         }
         let time = $('.col-xs-4', obj).text().trim();
         chapters.push(createChapter(<Chapter>{
-            id,
+            id: id.split('/').slice(-4).join('/'),
             chapNum: chapNum,
             name,
             mangaId: mangaId,

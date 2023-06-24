@@ -73,7 +73,7 @@ export const decodeHTMLEntity = (str: string): string => {
 export const decryptImages = ($: any, tis: any) => {
     var CryptoJS = require('crypto-js');
     const pages: string[] = [];
-    var htmlContent = $.html().match(/htmlContent="(.+)".+text-center post-credit">/)[1].replace(/\\\\/g, '').replace(/\\\"/g, '"') // => xoá \\ và replace \" thành "
+    var htmlContent = $('#view-chapter').html().match(/htmlContent="(.+)"/)[0].replace('htmlContent="',"").replace('"}"','"}').replace(/\\\\/g, '').replace(/\\\"/g, '"') // => xoá \\ và replace \" thành "
     function CryptoJSAesDecrypt(passphrase: any, encrypted_json_string: any) {
         var obj_json = JSON.parse(encrypted_json_string);
         var encrypted = obj_json.ciphertext;
