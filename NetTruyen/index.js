@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.NetTruyenInfo = {
-    version: '1.1.0',
+    version: '1.1.1',
     name: 'NetTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -418,7 +418,7 @@ class NetTruyen extends paperback_extensions_common_1.Source {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), {
-                        'referer': DOMAIN
+                        'referer': DOMAIN,
                     });
                     return request;
                 }),
@@ -430,38 +430,34 @@ class NetTruyen extends paperback_extensions_common_1.Source {
     }
     getMangaShareUrl(mangaId) { return `${DOMAIN}truyen-tranh/${mangaId}`; }
     ;
-    getMangaDetails(mangaId) {
+    fetchData(url) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `${DOMAIN}truyen-tranh/${mangaId}`;
             const request = createRequestObject({
                 url: url,
                 method: "GET",
             });
             const data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
+            return this.cheerio.load(data.data);
+        });
+    }
+    getMangaDetails(mangaId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const url = `${DOMAIN}truyen-tranh/${mangaId}`;
+            const $ = yield this.fetchData(url);
             return this.parser.parseMangaDetails($, mangaId);
         });
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `${DOMAIN}truyen-tranh/${mangaId}`;
-            const request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            const data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
+            const $ = yield this.fetchData(url);
             return this.parser.parseChapterList($, mangaId);
         });
     }
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const request = createRequestObject({
-                url: `${DOMAIN}truyen-tranh/${chapterId}`,
-                method: "GET",
-            });
-            const data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
+            const url = `${DOMAIN}truyen-tranh/${chapterId}`;
+            const $ = yield this.fetchData(url);
             const pages = this.parser.parseChapterDetails($);
             return createChapterDetails({
                 pages: pages,
@@ -484,36 +480,32 @@ class NetTruyen extends paperback_extensions_common_1.Source {
             };
             const tags = (_c = (_b = query.includedTags) === null || _b === void 0 ? void 0 : _b.map(tag => tag.id)) !== null && _c !== void 0 ? _c : [];
             const genres = [];
-            tags.map((value) => {
+            for (const value of tags) {
                 if (value.indexOf('.') === -1) {
                     genres.push(value);
                 }
                 else {
-                    switch (value.split(".")[0]) {
+                    const [key, val] = value.split(".");
+                    switch (key) {
                         case 'minchapter':
-                            search.minchapter = (value.split(".")[1]);
+                            search.minchapter = val;
                             break;
                         case 'gender':
-                            search.gender = (value.split(".")[1]);
+                            search.gender = val;
                             break;
                         case 'sort':
-                            search.sort = (value.split(".")[1]);
+                            search.sort = val;
                             break;
                         case 'status':
-                            search.status = (value.split(".")[1]);
+                            search.status = val;
                             break;
                     }
                 }
-            });
-            search.genres = (genres !== null && genres !== void 0 ? genres : []).join(",");
-            const url = `${DOMAIN}`;
-            const request = createRequestObject({
-                url: query.title ? (url + '/tim-truyen') : (url + '/tim-truyen-nang-cao'),
-                method: "GET",
-                param: encodeURI(`?keyword=${(_d = query.title) !== null && _d !== void 0 ? _d : ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`)
-            });
-            const data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
+            }
+            search.genres = genres.join(",");
+            const url = `${DOMAIN}${query.title ? '/tim-truyen' : '/tim-truyen-nang-cao'}`;
+            const param = encodeURI(`?keyword=${(_d = query.title) !== null && _d !== void 0 ? _d : ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`);
+            const $ = yield this.fetchData(url + param);
             const tiles = this.parser.parseSearchResults($);
             metadata = !exports.isLastPage($) ? { page: page + 1 } : undefined;
             return createPagedResults({
@@ -524,104 +516,62 @@ class NetTruyen extends paperback_extensions_common_1.Source {
     }
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            let featured = createHomeSection({
-                id: 'featured',
-                title: "Truyện Đề Cử",
-                type: paperback_extensions_common_1.HomeSectionType.featured
-            });
-            let viewest = createHomeSection({
-                id: 'viewest',
-                title: "Truyện Xem Nhiều Nhất",
-                view_more: true,
-            });
-            let hot = createHomeSection({
-                id: 'hot',
-                title: "Truyện Hot Nhất",
-                view_more: true,
-            });
-            let newUpdated = createHomeSection({
-                id: 'new_updated',
-                title: "Truyện Mới Cập Nhật",
-                view_more: true,
-            });
-            let newAdded = createHomeSection({
-                id: 'new_added',
-                title: "Truyện Mới Thêm Gần Đây",
-                view_more: true,
-            });
-            let full = createHomeSection({
-                id: 'full',
-                title: "Truyện Đã Hoàn Thành",
-                view_more: true,
-            });
-            //Load empty sections
-            sectionCallback(featured);
-            sectionCallback(viewest);
-            sectionCallback(hot);
-            sectionCallback(newUpdated);
-            sectionCallback(newAdded);
-            sectionCallback(full);
-            ///Get the section data
-            //Featured
-            let url = `${DOMAIN}`;
-            let request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            let data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
-            featured.items = this.parser.parseFeaturedSection($);
-            sectionCallback(featured);
-            //View
-            url = `${DOMAIN}tim-truyen?status=-1&sort=10`;
-            request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            data = yield this.requestManager.schedule(request, 1);
-            $ = this.cheerio.load(data.data);
-            viewest.items = this.parser.parsePopularSection($);
-            sectionCallback(viewest);
-            //Hot
-            url = `${DOMAIN}hot`;
-            request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            data = yield this.requestManager.schedule(request, 1);
-            $ = this.cheerio.load(data.data);
-            hot.items = this.parser.parseHotSection($);
-            sectionCallback(hot);
-            //New Updates
-            url = `${DOMAIN}`;
-            request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            data = yield this.requestManager.schedule(request, 1);
-            $ = this.cheerio.load(data.data);
-            newUpdated.items = this.parser.parseNewUpdatedSection($);
-            sectionCallback(newUpdated);
-            //New added
-            url = `${DOMAIN}tim-truyen?status=-1&sort=15`;
-            request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            data = yield this.requestManager.schedule(request, 1);
-            $ = this.cheerio.load(data.data);
-            newAdded.items = this.parser.parseNewAddedSection($);
-            sectionCallback(newAdded);
-            //Full
-            url = `${DOMAIN}truyen-full`;
-            request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            data = yield this.requestManager.schedule(request, 1);
-            $ = this.cheerio.load(data.data);
-            full.items = this.parser.parseFullSection($);
-            sectionCallback(full);
+            const sections = [
+                createHomeSection({ id: 'featured', title: "Truyện Đề Cử", type: paperback_extensions_common_1.HomeSectionType.featured }),
+                createHomeSection({ id: 'viewest', title: "Truyện Xem Nhiều Nhất", view_more: true }),
+                createHomeSection({ id: 'hot', title: "Truyện Hot Nhất", view_more: true }),
+                createHomeSection({ id: 'new_updated', title: "Truyện Mới Cập Nhật", view_more: true }),
+                createHomeSection({ id: 'new_added', title: "Truyện Mới Thêm Gần Đây", view_more: true }),
+                createHomeSection({ id: 'full', title: "Truyện Đã Hoàn Thành", view_more: true }),
+            ];
+            for (const section of sections) {
+                sectionCallback(section);
+                let url;
+                switch (section.id) {
+                    case 'featured':
+                        url = `${DOMAIN}`;
+                        break;
+                    case 'viewest':
+                        url = `${DOMAIN}tim-truyen?status=-1&sort=10`;
+                        break;
+                    case 'hot':
+                        url = `${DOMAIN}hot`;
+                        break;
+                    case 'new_updated':
+                        url = `${DOMAIN}`;
+                        break;
+                    case 'new_added':
+                        url = `${DOMAIN}tim-truyen?status=-1&sort=15`;
+                        break;
+                    case 'full':
+                        url = `${DOMAIN}truyen-full`;
+                        break;
+                    default:
+                        throw new Error("Invalid homepage section ID");
+                }
+                const $ = yield this.fetchData(url);
+                switch (section.id) {
+                    case 'featured':
+                        section.items = this.parser.parseFeaturedSection($);
+                        break;
+                    case 'viewest':
+                        section.items = this.parser.parsePopularSection($);
+                        break;
+                    case 'hot':
+                        section.items = this.parser.parseHotSection($);
+                        break;
+                    case 'new_updated':
+                        section.items = this.parser.parseNewUpdatedSection($);
+                        break;
+                    case 'new_added':
+                        section.items = this.parser.parseNewAddedSection($);
+                        break;
+                    case 'full':
+                        section.items = this.parser.parseFullSection($);
+                        break;
+                }
+                sectionCallback(section);
+            }
         });
     }
     getViewMoreItems(homepageSectionId, metadata) {
@@ -662,7 +612,6 @@ class NetTruyen extends paperback_extensions_common_1.Source {
             const response = yield this.requestManager.schedule(request, 1);
             const $ = this.cheerio.load(response.data);
             const manga = this.parser.parseViewMoreItems($);
-            ;
             metadata = exports.isLastPage($) ? undefined : { page: page + 1 };
             return createPagedResults({
                 results: manga,
@@ -673,43 +622,33 @@ class NetTruyen extends paperback_extensions_common_1.Source {
     getSearchTags() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `${DOMAIN}tim-truyen-nang-cao`;
-            const request = createRequestObject({
-                url: url,
-                method: "GET",
-            });
-            const response = yield this.requestManager.schedule(request, 1);
-            const $ = this.cheerio.load(response.data);
+            const $ = yield this.fetchData(url);
             return this.parser.parseTags($);
         });
     }
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const updateManga = [];
             const pages = 10;
             for (let i = 1; i < pages + 1; i++) {
-                const request = createRequestObject({
-                    url: DOMAIN + '?page=' + i,
-                    method: 'GET',
-                });
-                const response = yield this.requestManager.schedule(request, 1);
-                const $ = this.cheerio.load(response.data);
-                // let x = $('time.small').text().trim();
-                // let y = x.split("lúc:")[1].replace(']', '').trim().split(' ');
-                // let z = y[1].split('/');
-                // const timeUpdate = new Date(z[1] + '/' + z[0] + '/' + z[2] + ' ' + y[0]);
-                // updateManga.push({
-                //     id: item,
-                //     time: timeUpdate
+                // const request = createRequestObject({
+                //     url: DOMAIN + '?page=' + i,
+                //     method: 'GET',
                 // })
-                for (let manga of $('div.item', 'div.row').toArray()) {
+                // const response = await this.requestManager.schedule(request, 1)
+                // const $ = this.cheerio.load(response.data);
+                let url = `${DOMAIN}?page=${i}`;
+                const $ = yield this.fetchData(url);
+                const updateManga = $('div.item', 'div.row').toArray().map(manga => {
+                    var _a;
                     const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
                     const time = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > i", manga).last().text().trim();
-                    updateManga.push(({
+                    return {
                         id: id,
                         time: time
-                    }));
-                }
+                    };
+                });
+                updateManga.push(...updateManga);
             }
             const returnObject = this.parser.parseUpdatedManga(updateManga, time, ids);
             mangaUpdatesFoundCallback(createMangaUpdates(returnObject));
