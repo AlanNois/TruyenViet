@@ -30,7 +30,7 @@ export const isLastPage = ($: CheerioStatic): boolean => {
 }
 
 export const NetTruyenInfo: SourceInfo = {
-    version: '1.1.0',
+    version: '1.1.1',
     name: 'NetTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -62,7 +62,7 @@ export class NetTruyen extends Source {
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'referer': DOMAIN
+                        'referer': DOMAIN,
                     }
                 }
 
@@ -75,36 +75,31 @@ export class NetTruyen extends Source {
         }
     })
 
-    async getMangaDetails(mangaId: string): Promise<Manga> {
-        const url = `${DOMAIN}truyen-tranh/${mangaId}`;
+    private async fetchData(url: string): Promise<CheerioStatic> {
         const request = createRequestObject({
             url: url,
             method: "GET",
         });
         const data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        return this.parser.parseMangaDetails($, mangaId)
+        return this.cheerio.load(data.data);
+    }
+
+    async getMangaDetails(mangaId: string): Promise<Manga> {
+        const url = `${DOMAIN}truyen-tranh/${mangaId}`;
+        const $ = await this.fetchData(url);
+        return this.parser.parseMangaDetails($, mangaId);
     }
 
     async getChapters(mangaId: string): Promise<Chapter[]> {
         const url = `${DOMAIN}truyen-tranh/${mangaId}`;
-        const request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-        const data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        return this.parser.parseChapterList($, mangaId)
+        const $ = await this.fetchData(url);
+        return this.parser.parseChapterList($, mangaId);
     }
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
-        const request = createRequestObject({
-            url: `${DOMAIN}truyen-tranh/${chapterId}`,
-            method: "GET",
-        });
-        const data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        const pages = this.parser.parseChapterDetails($)
+        const url = `${DOMAIN}truyen-tranh/${chapterId}`;
+        const $ = await this.fetchData(url);
+        const pages = this.parser.parseChapterDetails($);
         return createChapterDetails({
             pages: pages,
             longStrip: false,
@@ -126,38 +121,33 @@ export class NetTruyen extends Source {
 
         const tags = query.includedTags?.map(tag => tag.id) ?? [];
         const genres: string[] = [];
-        tags.map((value) => {
+        for (const value of tags) {
             if (value.indexOf('.') === -1) {
-                genres.push(value)
+                genres.push(value);
             } else {
-                switch (value.split(".")[0]) {
+                const [key, val] = value.split(".");
+                switch (key) {
                     case 'minchapter':
-                        search.minchapter = (value.split(".")[1]);
-                        break
+                        search.minchapter = val;
+                        break;
                     case 'gender':
-                        search.gender = (value.split(".")[1]);
-                        break
+                        search.gender = val;
+                        break;
                     case 'sort':
-                        search.sort = (value.split(".")[1]);
-                        break
+                        search.sort = val;
+                        break;
                     case 'status':
-                        search.status = (value.split(".")[1]);
-                        break
+                        search.status = val;
+                        break;
                 }
             }
-        })
-        search.genres = (genres ?? []).join(",");
-        const url = `${DOMAIN}`
-        const request = createRequestObject({
-            url: query.title ? (url + '/tim-truyen') : (url + '/tim-truyen-nang-cao'),
-            method: "GET",
-            param: encodeURI(`?keyword=${query.title ?? ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`)
-        });
+        }
+        search.genres = genres.join(",");
 
-        const data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
+        const url = `${DOMAIN}${query.title ? '/tim-truyen' : '/tim-truyen-nang-cao'}`;
+        const param = encodeURI(`?keyword=${query.title ?? ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`);
+        const $ = await this.fetchData(url + param);
         const tiles = this.parser.parseSearchResults($);
-
         metadata = !isLastPage($) ? { page: page + 1 } : undefined;
 
         return createPagedResults({
@@ -167,123 +157,71 @@ export class NetTruyen extends Source {
     }
 
     async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-        let featured: HomeSection = createHomeSection({
-            id: 'featured',
-            title: "Truyện Đề Cử",
-            type: HomeSectionType.featured
-        });
-        let viewest: HomeSection = createHomeSection({
-            id: 'viewest',
-            title: "Truyện Xem Nhiều Nhất",
-            view_more: true,
-        });
-        let hot: HomeSection = createHomeSection({
-            id: 'hot',
-            title: "Truyện Hot Nhất",
-            view_more: true,
-        });
-        let newUpdated: HomeSection = createHomeSection({
-            id: 'new_updated',
-            title: "Truyện Mới Cập Nhật",
-            view_more: true,
-        });
-        let newAdded: HomeSection = createHomeSection({
-            id: 'new_added',
-            title: "Truyện Mới Thêm Gần Đây",
-            view_more: true,
-        });
-        let full: HomeSection = createHomeSection({
-            id: 'full',
-            title: "Truyện Đã Hoàn Thành",
-            view_more: true,
-        });
+        const sections: HomeSection[] = [
+            createHomeSection({ id: 'featured', title: "Truyện Đề Cử", type: HomeSectionType.featured }),
+            createHomeSection({ id: 'viewest', title: "Truyện Xem Nhiều Nhất", view_more: true }),
+            createHomeSection({ id: 'hot', title: "Truyện Hot Nhất", view_more: true }),
+            createHomeSection({ id: 'new_updated', title: "Truyện Mới Cập Nhật", view_more: true }),
+            createHomeSection({ id: 'new_added', title: "Truyện Mới Thêm Gần Đây", view_more: true }),
+            createHomeSection({ id: 'full', title: "Truyện Đã Hoàn Thành", view_more: true }),
+        ];
 
-        //Load empty sections
-        sectionCallback(featured);
-        sectionCallback(viewest);
-        sectionCallback(hot);
-        sectionCallback(newUpdated);
-        sectionCallback(newAdded);
-        sectionCallback(full);
+        for (const section of sections) {
+            sectionCallback(section);
+            let url: string;
+            switch (section.id) {
+                case 'featured':
+                    url = `${DOMAIN}`;
+                    break;
+                case 'viewest':
+                    url = `${DOMAIN}tim-truyen?status=-1&sort=10`;
+                    break;
+                case 'hot':
+                    url = `${DOMAIN}hot`;
+                    break;
+                case 'new_updated':
+                    url = `${DOMAIN}`;
+                    break;
+                case 'new_added':
+                    url = `${DOMAIN}tim-truyen?status=-1&sort=15`;
+                    break;
+                case 'full':
+                    url = `${DOMAIN}truyen-full`;
+                    break;
+                default:
+                    throw new Error("Invalid homepage section ID");
+            }
 
-        ///Get the section data
-        //Featured
-        let url = `${DOMAIN}`
-        let request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-
-        featured.items = this.parser.parseFeaturedSection($);
-        sectionCallback(featured);
-
-        //View
-        url = `${DOMAIN}tim-truyen?status=-1&sort=10`
-        request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-        data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-
-        viewest.items = this.parser.parsePopularSection($);
-        sectionCallback(viewest);
-
-        //Hot
-        url = `${DOMAIN}hot`
-        request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-        data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-
-        hot.items = this.parser.parseHotSection($);
-        sectionCallback(hot);
-
-        //New Updates
-        url = `${DOMAIN}`
-        request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-        data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-
-        newUpdated.items = this.parser.parseNewUpdatedSection($);
-        sectionCallback(newUpdated);
-
-        //New added
-        url = `${DOMAIN}tim-truyen?status=-1&sort=15`
-        request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-        data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-
-        newAdded.items = this.parser.parseNewAddedSection($);
-        sectionCallback(newAdded);
-
-        //Full
-        url = `${DOMAIN}truyen-full`
-        request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-        data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-
-        full.items = this.parser.parseFullSection($);
-        sectionCallback(full);
+            const $ = await this.fetchData(url);
+            switch (section.id) {
+                case 'featured':
+                    section.items = this.parser.parseFeaturedSection($);
+                    break;
+                case 'viewest':
+                    section.items = this.parser.parsePopularSection($);
+                    break;
+                case 'hot':
+                    section.items = this.parser.parseHotSection($);
+                    break;
+                case 'new_updated':
+                    section.items = this.parser.parseNewUpdatedSection($);
+                    break;
+                case 'new_added':
+                    section.items = this.parser.parseNewAddedSection($);
+                    break;
+                case 'full':
+                    section.items = this.parser.parseFullSection($);
+                    break;
+            }
+            sectionCallback(section);
+        }
     }
 
     async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
         let page: number = metadata?.page ?? 1;
         let param = "";
         let url = "";
+
         switch (homepageSectionId) {
             case "viewest":
                 param = `?status=-1&sort=10&page=${page}`;
@@ -318,7 +256,7 @@ export class NetTruyen extends Source {
         const response = await this.requestManager.schedule(request, 1);
         const $ = this.cheerio.load(response.data);
 
-        const manga = this.parser.parseViewMoreItems($);;
+        const manga = this.parser.parseViewMoreItems($);
         metadata = isLastPage($) ? undefined : { page: page + 1 };
 
         return createPagedResults({
@@ -328,14 +266,8 @@ export class NetTruyen extends Source {
     }
 
     async getSearchTags(): Promise<TagSection[]> {
-        const url = `${DOMAIN}tim-truyen-nang-cao`
-        const request = createRequestObject({
-            url: url,
-            method: "GET",
-        });
-
-        const response = await this.requestManager.schedule(request, 1)
-        const $ = this.cheerio.load(response.data);
+        const url = `${DOMAIN}tim-truyen-nang-cao`;
+        const $ = await this.fetchData(url);
         return this.parser.parseTags($);
     }
 
@@ -343,28 +275,25 @@ export class NetTruyen extends Source {
         const updateManga: any = [];
         const pages = 10;
         for (let i = 1; i < pages + 1; i++) {
-            const request = createRequestObject({
-                url: DOMAIN + '?page=' + i,
-                method: 'GET',
-            })
-            const response = await this.requestManager.schedule(request, 1)
-            const $ = this.cheerio.load(response.data);
-            // let x = $('time.small').text().trim();
-            // let y = x.split("lúc:")[1].replace(']', '').trim().split(' ');
-            // let z = y[1].split('/');
-            // const timeUpdate = new Date(z[1] + '/' + z[0] + '/' + z[2] + ' ' + y[0]);
-            // updateManga.push({
-            //     id: item,
-            //     time: timeUpdate
+            // const request = createRequestObject({
+            //     url: DOMAIN + '?page=' + i,
+            //     method: 'GET',
             // })
-            for (let manga of $('div.item', 'div.row').toArray()) {
+            // const response = await this.requestManager.schedule(request, 1)
+            // const $ = this.cheerio.load(response.data);
+            let url = `${DOMAIN}?page=${i}`
+            const $ = await this.fetchData(url);
+            const updateManga = $('div.item', 'div.row').toArray().map(manga => {
                 const id = $('figure.clearfix > div.image > a', manga).attr('href')?.split('/').pop();
                 const time = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > i", manga).last().text().trim();
-                updateManga.push(({
+                return {
                     id: id,
                     time: time
-                }));
-            }
+                };
+            });
+
+            updateManga.push(...updateManga);
+
         }
 
         const returnObject = this.parser.parseUpdatedManga(updateManga, time, ids)
