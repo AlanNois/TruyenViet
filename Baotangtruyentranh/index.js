@@ -1355,7 +1355,7 @@ const BaotangtruyentranhParser_1 = require("./BaotangtruyentranhParser");
 const DOMAIN = 'https://baotangtruyen3.com';
 const method = 'GET';
 exports.BaotangtruyentranhInfo = {
-    version: '1.1.3',
+    version: '1.1.4',
     name: 'Baotangtruyentranh',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -1725,10 +1725,10 @@ exports.generateSearch = (query) => {
 exports.parseSearch = ($) => {
     const manga = [];
     $('.row .item').each((_, element) => {
-        var _a;
+        var _a, _b;
         const title = $('h3 > a', element).text().trim();
-        const image = (_a = $('.image img', element).attr("data-src")) !== null && _a !== void 0 ? _a : "";
-        const id = $('h3 > a', element).attr('href');
+        const image = (_a = $('.image img', element).attr("src")) !== null && _a !== void 0 ? _a : "";
+        const id = (_b = $('h3 > a', element).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').slice(-2).join('/');
         const chapter = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
             id: id !== null && id !== void 0 ? id : "",
@@ -1742,10 +1742,10 @@ exports.parseSearch = ($) => {
 exports.parseViewMore = ($) => {
     const manga = [];
     $('.row .item').each((_, element) => {
-        var _a;
+        var _a, _b;
         const title = $('h3 > a', element).text().trim();
-        const image = (_a = $('.image img', element).attr("data-src")) !== null && _a !== void 0 ? _a : "";
-        const id = $('h3 > a', element).attr('href');
+        const image = (_a = $('.image img', element).attr("src")) !== null && _a !== void 0 ? _a : "";
+        const id = (_b = $('h3 > a', element).attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').slice(-2).join('/');
         const chapter = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
             id: id !== null && id !== void 0 ? id : "",

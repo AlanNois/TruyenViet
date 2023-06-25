@@ -1355,7 +1355,7 @@ const VlogTruyenParser_1 = require("./VlogTruyenParser");
 const method = 'GET';
 const DOMAIN = 'https://vlogtruyen5.net';
 exports.VlogTruyenInfo = {
-    version: '1.1.1',
+    version: '1.1.2',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -1707,13 +1707,13 @@ exports.generateSearch = (query) => {
     return encodeURI(keyword);
 };
 exports.parseSearch = ($, query, tags) => {
-    var _a, _b;
+    var _a, _b, _c;
     const manga = [];
     const selector = query.title ? '#content-column' : (tags[0].includes('http') ? '#content-column' : '#ul-content-pho-bien');
     for (const element of $('.commic-hover', selector).toArray()) {
         const title = $('.title-commic-tab', element).text().trim();
         const image = (_a = $('.image-commic-tab > img', element).attr('data-src')) !== null && _a !== void 0 ? _a : "";
-        const id = (_b = $('a', element).first().attr('href')) !== null && _b !== void 0 ? _b : title;
+        const id = (_c = (_b = $('a', element).first().attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop()) !== null && _c !== void 0 ? _c : title;
         const subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
         manga.push(createMangaTile({
             id: id,
@@ -1725,12 +1725,12 @@ exports.parseSearch = ($, query, tags) => {
     return manga;
 };
 exports.parseViewMore = ($) => {
-    var _a, _b;
+    var _a, _b, _c;
     const manga = [];
     for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray()) {
         const title = $('.title-commic-tab', element).text().trim();
         const image = (_a = $('.image-commic-tab > img', element).attr('data-src')) !== null && _a !== void 0 ? _a : "";
-        const id = (_b = $('a', element).first().attr('href')) !== null && _b !== void 0 ? _b : title;
+        const id = (_c = (_b = $('a', element).first().attr('href')) === null || _b === void 0 ? void 0 : _b.split('/').pop()) !== null && _c !== void 0 ? _c : title;
         const subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
         manga.push(createMangaTile({
             id: id,
