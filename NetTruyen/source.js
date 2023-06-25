@@ -768,24 +768,26 @@ class Parser {
     parseTags($) {
         const tagSections = [];
         const sections = [
-            { selector: 'div.col-md-3.col-sm-4.col-xs-6.mrb10', idPrefix: '0', label: 'Thể Loại (Có thể chọn nhiều hơn 1)' },
-            { selector: 'option', idPrefix: '1', label: 'Số Lượng Chapter (Chỉ chọn 1)', className: 'select-minchapter' },
-            { selector: 'option', idPrefix: '2', label: 'Tình Trạng (Chỉ chọn 1)', className: 'select-status' },
-            { selector: 'option', idPrefix: '3', label: 'Dành Cho (Chỉ chọn 1)', className: 'select-gender' },
-            { selector: 'option', idPrefix: '4', label: 'Sắp xếp theo (Chỉ chọn 1)', className: 'select-sort' },
+            { selector: 'div.col-sm-10 > div.row', tags: [] },
+            { selector: 'select.select-minchapter', tags: [] },
+            { selector: '.select-status', tags: [] },
+            { selector: '.select-gender', tags: [] },
+            { selector: '.select-sort', tags: [] },
         ];
-        sections.forEach(({ selector, idPrefix, label, className }) => {
-            const tags = [];
-            $(selector, `div.col-sm-10 > div.row ${className ? `.${className}` : ''}`).each((_, tag) => {
-                var _a;
+        for (const section of sections) {
+            for (const tag of $(`option`, section.selector).toArray()) {
                 const label = $(tag).text().trim();
-                const id = (_a = `${idPrefix}.${$(tag).attr('value')}`) !== null && _a !== void 0 ? _a : label;
+                const id = `${section.selector}.${$(tag).attr('value')}` || label;
                 if (!id || !label)
-                    return;
-                tags.push({ id, label });
-            });
-            tagSections.push(createTagSection({ id: idPrefix, label, tags: tags.map(x => createTag(x)) }));
-        });
+                    continue;
+                section.tags.push({ id, label });
+            }
+            tagSections.push(createTagSection({
+                id: tagSections.length.toString(),
+                label: section.selector,
+                tags: section.tags.map(x => createTag(x))
+            }));
+        }
         return tagSections;
     }
     parseFeaturedSection($) {
