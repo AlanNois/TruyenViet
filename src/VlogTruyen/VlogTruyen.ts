@@ -10,7 +10,7 @@ import {
     TagType,
     TagSection,
     ContentRating,
-    RequestHeaders,
+    // RequestHeaders,
     MangaTile,
     Tag,
     LanguageCode,
@@ -23,7 +23,7 @@ const method = 'GET'
 const DOMAIN = 'https://vlogtruyen5.net'
 
 export const VlogTruyenInfo: SourceInfo = {
-    version: '1.1.0',
+    version: '1.1.1',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -63,76 +63,77 @@ export class VlogTruyen extends Source {
             }
         }
     })
-    
+
     async getMangaDetails(mangaId: string): Promise<Manga> {
         const url = `${DOMAIN}/${mangaId}`;
         const request = createRequestObject({
-            url: url,
+            url,
             method: "GET",
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        let tags: Tag[] = [];
-        let creator = $('.top-detail-manga-content > .drawer:nth-child(5) a').text().trim();
-        let status = $('.manga-status > p').text().trim(); //completed, 1 = Ongoing
-        let statusFinal = status.toLowerCase().includes("đang") ? 1 : 0;
-        let desc = $(".desc-commic-detail").text().trim();
-        for (const t of $('.categories-list-detail-commic > li > a').toArray()) {
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
+
+        const tags: Tag[] = $('.categories-list-detail-commic > li > a').toArray().map((t: any) => {
             const genre = $(t).text().trim();
             const id = $(t).attr('href') ?? genre;
-            tags.push(createTag({ label: genre, id }));
-        }
+            return createTag({ label: genre, id });
+        });
+
+        const creator = $('.top-detail-manga-content > .drawer:nth-child(5) a').text().trim();
+        const status = $('.manga-status > p').text().trim().toLowerCase();
+        const statusFinal = status.includes("đang") ? 1 : 0;
+        const desc = $(".desc-commic-detail").text().trim();
         const image = $('.image-commic-detail img').attr('data-src') ?? "";
+
         return createManga({
             id: mangaId,
             author: creator,
             artist: creator,
-            desc: desc,
+            desc,
             titles: [$('.title-commic-detail').text().trim()],
-            image: image,
+            image,
             status: statusFinal,
-            // rating: parseFloat($('span[itemprop="ratingValue"]').text()),
             hentai: false,
-            tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
+            tags: [createTagSection({ label: "genres", tags, id: '0' })],
         });
-
     }
+
     async getChapters(mangaId: string): Promise<Chapter[]> {
         const request = createRequestObject({
             url: `${DOMAIN}/${mangaId}`,
             method,
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $1 = this.cheerio.load(data.data);
-        let value = $1('input[name=manga_id]').attr('value');
+        const data = await this.requestManager.schedule(request, 1);
+        const $1 = this.cheerio.load(data.data);
+        const value = $1('input[name=manga_id]').attr('value');
         const request2 = createRequestObject({
             url: `${DOMAIN}/thong-tin-ca-nhan?manga_id=${value}`,
             headers: {
                 'X-Requested-With': "XMLHttpRequest",
             },
-            method
+            method,
         });
-        let data2 = await this.requestManager.schedule(request2, 1);
-        let $ = this.cheerio.load(JSON.parse(data2.data)['data']['chaptersHtml']);
+        const data2 = await this.requestManager.schedule(request2, 1);
+        const $ = this.cheerio.load(JSON.parse(data2.data)['data']['chaptersHtml']);
         const chapters: Chapter[] = [];
-        var i = 0;
-        for (const obj of $('li').toArray().reverse()) {
-            i++;
-            let id = $('a', obj).first().attr('href').split('/').slice(3,5).join('/');
-            let chapNum = Number($('a', obj).first().attr('title')?.split(' ')[1]);
-            let group = $('span.chapter-view', obj).text();
-            let name = $('a', obj).first().attr('title');
-            let time = $('span:nth-child(4)', obj).text().trim().split('-');
-            chapters.push(createChapter(<Chapter>{
+
+        $('li').toArray().reverse().forEach((obj: any, i: number) => {
+            const id = $('a', obj).first().attr('href').split('/').slice(3, 5).join('/');
+            const chapNum = Number($('a', obj).first().attr('title')?.split(' ')[1]);
+            const group = $('span.chapter-view', obj).text();
+            const name = $('a', obj).first().attr('title');
+            const time = $('span:nth-child(4)', obj).text().trim().split('-');
+
+            chapters.push(createChapter({
                 id,
-                chapNum: isNaN(chapNum) ? i : chapNum,
+                chapNum: isNaN(chapNum) ? i + 1 : chapNum,
                 name,
-                mangaId: mangaId,
+                mangaId,
                 group: group + " lượt xem",
                 langCode: LanguageCode.VIETNAMESE,
-                time: new Date(time[1] + '/' + time[0] + '/' + time[2])
+                time: new Date(time[1] + '/' + time[0] + '/' + time[2]),
             }));
-        }
+        });
 
         return chapters;
     }
@@ -140,116 +141,81 @@ export class VlogTruyen extends Source {
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
             url: `${DOMAIN}/${chapterId}`,
-            method
+            method,
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        const pages: string[] = [];
-        for (let obj of $('#aniimated-thumbnial > img').toArray()) {
-            let link = $(obj).attr('src') ?? "";
-            pages.push(encodeURI(link));
-        }
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
+
+        const pages: string[] = $('#aniimated-thumbnial > img').map((_: any, obj: any) => {
+            const link = $(obj).attr('src') ?? "";
+            return encodeURI(link);
+        }).get();
+
         const chapterDetails = createChapterDetails({
             id: chapterId,
-            mangaId: mangaId,
-            pages: pages,
-            longStrip: false
+            mangaId,
+            pages,
+            longStrip: false,
         });
+
         return chapterDetails;
     }
 
     async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-        let newUpdated: HomeSection = createHomeSection({
-            id: 'new_updated',
-            title: "Mới cập nhật",
-            view_more: true,
-        });
-        let hot: HomeSection = createHomeSection({
-            id: 'hot',
-            title: "Đang hot",
-            view_more: true,
-        });
-        let view: HomeSection = createHomeSection({
-            id: 'view',
-            title: "Xem nhiều",
-            view_more: true,
-        });
+        const sections: HomeSection[] = [
+            createHomeSection({
+                id: 'new_updated',
+                title: "Mới cập nhật",
+                view_more: true,
+            }),
+            createHomeSection({
+                id: 'hot',
+                title: "Đang hot",
+                view_more: true,
+            }),
+            createHomeSection({
+                id: 'view',
+                title: "Xem nhiều",
+                view_more: true,
+            }),
+        ];
 
-        //Load empty sections
-        sectionCallback(newUpdated);
-        sectionCallback(hot);
-        sectionCallback(view);
+        // Load empty sections
+        sections.forEach((section) => sectionCallback(section));
 
-        ///Get the section data
+        const sectionData = [
+            { section: sections[0], url: `${DOMAIN}/the-loai/moi-cap-nhap` },
+            { section: sections[1], url: `${DOMAIN}/the-loai/dang-hot` },
+            { section: sections[2], url: `${DOMAIN}/de-nghi/pho-bien/xem-nhieu` },
+        ];
 
-        //New Updates
-        let request = createRequestObject({
-            url: `${DOMAIN}/the-loai/moi-cap-nhap`,
-            method: "GET",
-        });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        let newUpdatedItems: MangaTile[] = [];
-        for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray().splice(0, 20)) {
-            let title = $('.title-commic-tab', element).text().trim();
-            let image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-            let id = $('a', element).first().attr('href').split('/').pop();
-            let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
-            newUpdatedItems.push(createMangaTile({
-                id: id ?? "",
-                image: image ?? "",
-                title: createIconText({ text: title }),
-                subtitleText: createIconText({ text: subtitle }),
-            }))
-        }
-        newUpdated.items = newUpdatedItems;
-        sectionCallback(newUpdated);
+        // Fetch section data concurrently
+        await Promise.all(sectionData.map(async (data) => {
+            const request = createRequestObject({
+                url: data.url,
+                method: "GET",
+            });
+            const response = await this.requestManager.schedule(request, 1);
+            const $ = this.cheerio.load(response.data);
+            const items: MangaTile[] = [];
 
-        //hot
-        request = createRequestObject({
-            url: `${DOMAIN}/the-loai/dang-hot`,
-            method: "GET",
-        });
-        let hotItems: MangaTile[] = [];
-        data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-        for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray().splice(0, 20)) {
-            let title = $('.title-commic-tab', element).text().trim();
-            let image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-            let id = $('a', element).first().attr('href').split('/').pop();
-            let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
-            hotItems.push(createMangaTile({
-                id: id ?? "",
-                image: image ?? "",
-                title: createIconText({ text: title }),
-                subtitleText: createIconText({ text: subtitle }),
-            }))
-        }
-        hot.items = hotItems;
-        sectionCallback(hot);
+            for (const element of $('.commic-hover', '#ul-content-pho-bien').slice(0, 20).toArray()) {
+                const title = $('.title-commic-tab', element).text().trim();
+                const image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
+                const id = $('a', element).first().attr('href')?.split('/').pop() ?? "";
+                const subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
 
-        //view
-        request = createRequestObject({
-            url: `${DOMAIN}/de-nghi/pho-bien/xem-nhieu`,
-            method: "GET",
-        });
-        let viewItems: MangaTile[] = [];
-        data = await this.requestManager.schedule(request, 1);
-        $ = this.cheerio.load(data.data);
-        for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray().splice(0, 20)) {
-            let title = $('.title-commic-tab', element).text().trim();
-            let image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-            let id = $('a', element).first().attr('href').split('/').pop();
-            let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
-            viewItems.push(createMangaTile({
-                id: id ?? "",
-                image: image ?? "",
-                title: createIconText({ text: title }),
-                subtitleText: createIconText({ text: subtitle }),
-            }))
-        }
-        view.items = viewItems;
-        sectionCallback(view);
+                items.push(createMangaTile({
+                    id,
+                    image,
+                    title: createIconText({ text: title }),
+                    subtitleText: createIconText({ text: subtitle }),
+                }));
+            }
+
+            data.section.items = items;
+            sectionCallback(data.section);
+        }));
     }
 
     async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
@@ -270,18 +236,19 @@ export class VlogTruyen extends Source {
                 select = 3;
                 break;
             default:
-                return Promise.resolve(createPagedResults({ results: [] }))
+                return Promise.resolve(createPagedResults({ results: [] }));
         }
 
         const request = createRequestObject({
             url,
-            method
+            method,
         });
 
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        let manga = parseViewMore($);
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
+        const manga = parseViewMore($);
         metadata = !isLastPage($) ? { page: page + 1 } : undefined;
+
         return createPagedResults({
             results: manga,
             metadata,
@@ -298,34 +265,28 @@ export class VlogTruyen extends Source {
             status: "Trạng+thái",
             sort: "moi-nhat"
         };
-        tags.map((value) => {
-            switch (value.split(".")[0]) {
-                case 'cate':
-                    search.cate = (value.split(".")[1]);
-                    break
-                case 'translator':
-                    search.translator = (value.split(".")[1]);
-                    break
-                case 'writer':
-                    search.writer = (value.split(".")[1]);
-                    break
-                case 'status':
-                    search.status = (value.split(".")[1]);
-                    break
-                case 'sort':
-                    search.sort = (value.split(".")[1]);
-                    break
-            }
-        })
+
+        tags.forEach((value) => {
+            const [category, option] = value.split(".");
+            if (category === 'cate') search.cate = option;
+            if (category === 'translator') search.translator = option;
+            if (category === 'writer') search.writer = option;
+            if (category === 'status') search.status = option;
+            if (category === 'sort') search.sort = option;
+        });
+
+        const url = query.title
+            ? encodeURI(`${DOMAIN}/tim-kiem?q=${query.title}&page=${page}`)
+            : (tags[0].includes('http') ? (tags[0] + `?page=${page}`) :
+                encodeURI(`${DOMAIN}/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`));
+
         const request = createRequestObject({
-            url: query.title ? encodeURI(`${DOMAIN}/tim-kiem?q=${query.title}&page=${page}`) :
-                (tags[0].includes('http') ? (tags[0] + `?page=${page}`) :
-                    encodeURI(`${DOMAIN}/the-loai/huynh?cate=${search.cate}&translator=${search.translator}&writer=${search.writer}&status=${search.status}&sort=${search.sort}&page=${page}`)),
+            url,
             method: "GET",
         });
 
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
         const tiles = parseSearch($, query, tags);
 
         metadata = !isLastPage($) ? { page: page + 1 } : undefined;
@@ -337,75 +298,76 @@ export class VlogTruyen extends Source {
     }
 
     async getSearchTags(): Promise<TagSection[]> {
+        const tagSections: TagSection[] = [];
         const tags: Tag[] = [];
-        const tags2: Tag[] = [
-            {
-                id: `${DOMAIN}/bang-xep-hang/top-tuan`,
-                label: 'Top tuần'
-            },
-            {
-                id: `${DOMAIN}/bang-xep-hang/top-thang`,
-                label: 'Top tháng'
-            },
-            {
-                id: `${DOMAIN}/bang-xep-hang/top-nam`,
-                label: 'Top năm'
-            }
-        ];
-        const tags3: Tag[] = [];
-        const tags4: Tag[] = [];
-        const tags5: Tag[] = [];
-        const tags6: Tag[] = [];
 
-        const url = `${DOMAIN}/the-loai/dang-hot`
+        const url = `${DOMAIN}/the-loai/dang-hot`;
         const request = createRequestObject({
-            url: url,
+            url,
             method: "GET",
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        //the loai
+
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
+
+        // Bảng xếp hạng
+        const tags2: Tag[] = [
+            { id: `${DOMAIN}/bang-xep-hang/top-tuan`, label: 'Top tuần' },
+            { id: `${DOMAIN}/bang-xep-hang/top-thang`, label: 'Top tháng' },
+            { id: `${DOMAIN}/bang-xep-hang/top-nam`, label: 'Top năm' }
+        ];
+
+        // Thể loại
         for (const tag of $('select[name="cate"] > option:not(:first-child)').toArray()) {
             const label = $(tag).text().trim();
             const id = 'cate.' + $(tag).attr('value');
             if (!id || !label) continue;
-            tags.push({ id: id, label: label });
+            tags.push({ id, label });
         }
-        //nhom dich
+        tagSections.push(createTagSection({ id: '1', label: 'Thể Loại', tags: tags.map(x => createTag(x)) }));
+
+        // Nhóm dịch
+        const tags3: Tag[] = [];
         for (const tag of $('select[name="translator"] > option:not(:first-child)').toArray()) {
             const label = $(tag).text().trim();
             const id = 'translator.' + $(tag).attr('value');
             if (!id || !label) continue;
-            tags3.push({ id: id, label: label });
+            tags3.push({ id, label });
         }
-        //tac gia
+        tagSections.push(createTagSection({ id: '2', label: 'Nhóm dịch', tags: tags3.map(x => createTag(x)) }));
+
+        // Tác giả
+        const tags4: Tag[] = [];
         for (const tag of $('select[name="writer"] > option:not(:first-child)').toArray()) {
             const label = $(tag).text().trim();
             const id = 'writer.' + $(tag).attr('value');
             if (!id || !label) continue;
-            tags4.push({ id: id, label: label });
+            tags4.push({ id, label });
         }
-        //trang thai
+        tagSections.push(createTagSection({ id: '3', label: 'Tác giả', tags: tags4.map(x => createTag(x)) }));
+
+        // Trạng thái
+        const tags5: Tag[] = [];
         for (const tag of $('select[name="status"] > option:not(:first-child)').toArray()) {
             const label = $(tag).text().trim();
             const id = 'status.' + $(tag).attr('value');
             if (!id || !label) continue;
-            tags5.push({ id: id, label: label });
+            tags5.push({ id, label });
         }
-        //sap xep
+        tagSections.push(createTagSection({ id: '4', label: 'Trạng thái', tags: tags5.map(x => createTag(x)) }));
+
+        // Sắp xếp
+        const tags6: Tag[] = [];
         for (const tag of $('select[name="sort"] > option').toArray()) {
             const label = $(tag).text().trim();
             const id = 'sort.' + $(tag).attr('value');
             if (!id || !label) continue;
-            tags6.push({ id: id, label: label });
+            tags6.push({ id, label });
         }
-        const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'Bảng xếp hạng', tags: tags2.map(x => createTag(x)) }),
-        createTagSection({ id: '1', label: 'Thể Loại', tags: tags.map(x => createTag(x)) }),
-        createTagSection({ id: '2', label: 'Nhóm dịch', tags: tags3.map(x => createTag(x)) }),
-        createTagSection({ id: '3', label: 'Tác giả', tags: tags4.map(x => createTag(x)) }),
-        createTagSection({ id: '4', label: 'Trạng thái', tags: tags5.map(x => createTag(x)) }),
-        createTagSection({ id: '5', label: 'Sắp xếp', tags: tags6.map(x => createTag(x)) }),
-        ]
+        tagSections.push(createTagSection({ id: '5', label: 'Sắp xếp', tags: tags6.map(x => createTag(x)) }));
+
+        tagSections.unshift(createTagSection({ id: '0', label: 'Bảng xếp hạng', tags: tags2.map(x => createTag(x)) }));
+
         return tagSections;
     }
 }

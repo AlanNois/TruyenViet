@@ -29,7 +29,7 @@ export const BlogtruyenInfo: SourceInfo = {
     author: 'AlanNois',
     authorWebsite: 'https://github.com/AlanNois/',
     description: 'Extension that pulls manga from Blogtruyen',
-    websiteBaseURL: `https://blogtruyen.vn`,
+    websiteBaseURL: DOMAIN,
     contentRating: ContentRating.MATURE,
     sourceTags: [
         {
@@ -50,7 +50,7 @@ export class Blogtruyen extends Source {
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'referer': DOMAIN
+                        'referer': DOMAIN,
                     }
                 }
 
@@ -64,7 +64,7 @@ export class Blogtruyen extends Source {
     })
 
     async getMangaDetails(mangaId: string): Promise<Manga> {
-        const url = `https://blogtruyen.vn${mangaId}`;
+        const url = `${DOMAIN}${mangaId}`;
         const request = createRequestObject({
             url: url,
             method: "GET",
@@ -111,7 +111,7 @@ export class Blogtruyen extends Source {
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
         const request = createRequestObject({
-            url: `https://blogtruyen.vn${mangaId}`,
+            url: `${DOMAIN}${mangaId}`,
             method,
         });
 
@@ -144,7 +144,7 @@ export class Blogtruyen extends Source {
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
-            url: `https://blogtruyen.vn${chapterId}`,
+            url: `${DOMAIN}${chapterId}`,
             method
         });
 
@@ -213,9 +213,9 @@ export class Blogtruyen extends Source {
 
         ///Get the section data
         //Featured
-        let url = `${DOMAIN}`
+        // let url = `${DOMAIN}`
         let request = createRequestObject({
-            url: 'https://blogtruyen.vn/thumb',
+            url: `${DOMAIN}/thumb`,
             method: "GET",
         });
         let data = await this.requestManager.schedule(request, 1);
@@ -238,9 +238,9 @@ export class Blogtruyen extends Source {
         sectionCallback(featured);
 
         //Hot
-        url = '';
+        // url = '';
         request = createRequestObject({
-            url: 'https://blogtruyen.vn/ajax/Search/AjaxLoadListManga?key=tatca&orderBy=3&p=1',
+            url: `${DOMAIN}/ajax/Search/AjaxLoadListManga?key=tatca&orderBy=3&p=1`,
             method: "GET",
         });
         let hotItems: MangaTile[] = [];
@@ -266,9 +266,9 @@ export class Blogtruyen extends Source {
         sectionCallback(hot);
 
         //New Updates
-        url = '';
+        // url = '';
         request = createRequestObject({
-            url: 'https://blogtruyen.vn/thumb',
+            url: `${DOMAIN}/thumb`,
             method: "GET",
         });
         let newUpdatedItems: MangaTile[] = [];
@@ -295,9 +295,9 @@ export class Blogtruyen extends Source {
         sectionCallback(newUpdated);
 
         //New Added
-        url = DOMAIN
+        // url = DOMAIN
         request = createRequestObject({
-            url: 'https://blogtruyen.vn/thumb',
+            url: `${DOMAIN}/thumb`,
             method: "GET",
         });
         let newAddItems: MangaTile[] = [];
@@ -324,9 +324,9 @@ export class Blogtruyen extends Source {
         sectionCallback(newAdded);
 
         //full
-        url = '';
+        // url = '';
         request = createRequestObject({
-            url: 'https://blogtruyen.vn/ajax/Category/AjaxLoadMangaByCategory?id=0&orderBy=5&p=1',
+            url: `${DOMAIN}/ajax/Category/AjaxLoadMangaByCategory?id=0&orderBy=5&p=1`,
             method: "GET",
         });
         let fullItems: MangaTile[] = [];
@@ -352,9 +352,9 @@ export class Blogtruyen extends Source {
         sectionCallback(full);
 
         //girl
-        url = '';
+        // url = '';
         request = createRequestObject({
-            url: 'https://blogtruyen.vn/ajax/Category/AjaxLoadMangaByCategory?id=29&orderBy=5&p=1',
+            url: `${DOMAIN}/ajax/Category/AjaxLoadMangaByCategory?id=29&orderBy=5&p=1`,
             method: "GET",
         });
         let girlItems: MangaTile[] = [];
@@ -380,9 +380,9 @@ export class Blogtruyen extends Source {
         sectionCallback(girl);
 
         //boy
-        url = '';
+        // url = '';
         request = createRequestObject({
-            url: 'https://blogtruyen.vn/ajax/Category/AjaxLoadMangaByCategory?id=31&orderBy=5&p=1',
+            url: `${DOMAIN}/ajax/Category/AjaxLoadMangaByCategory?id=31&orderBy=5&p=1`,
             method: "GET",
         });
         let boyItems: MangaTile[] = [];
@@ -415,23 +415,23 @@ export class Blogtruyen extends Source {
         let select = 1;
         switch (homepageSectionId) {
             case "hot":
-                url = `https://blogtruyen.vn/ajax/Search/AjaxLoadListManga?key=tatca&orderBy=3&p=${page}`;
+                url = `${DOMAIN}/ajax/Search/AjaxLoadListManga?key=tatca&orderBy=3&p=${page}`;
                 select = 0;
                 break;
             case "new_updated":
-                url = `https://blogtruyen.vn/thumb-${page}`;
+                url = `${DOMAIN}/thumb-${page}`;
                 select = 1;
                 break;
             case "full":
-                url = `https://blogtruyen.vn/ajax/Category/AjaxLoadMangaByCategory?id=0&orderBy=5&p=${page}`;
+                url = `${DOMAIN}/ajax/Category/AjaxLoadMangaByCategory?id=0&orderBy=5&p=${page}`;
                 select = 0;
                 break;
             case "girl":
-                url = `https://blogtruyen.vn/ajax/Category/AjaxLoadMangaByCategory?id=29&orderBy=5&p=${page}`;
+                url = `${DOMAIN}/ajax/Category/AjaxLoadMangaByCategory?id=29&orderBy=5&p=${page}`;
                 select = 0;
                 break;
             case "boy":
-                url = `https://blogtruyen.vn/ajax/Category/AjaxLoadMangaByCategory?id=31&orderBy=5&p=${page}`;
+                url = `${DOMAIN}/ajax/Category/AjaxLoadMangaByCategory?id=31&orderBy=5&p=${page}`;
                 select = 0;
                 break;
             default:
@@ -459,7 +459,7 @@ export class Blogtruyen extends Source {
         let page = metadata?.page ?? 1;
         const tags = query.includedTags?.map(tag => tag.id) ?? [];
         const request = createRequestObject({
-            url: encodeURI(`https://blogtruyen.vn/timkiem/nangcao/1/0/${tags[0] ? tags[0] : '-1'}/-1?txt=${query.title ? query.title : ''}`),
+            url: encodeURI(`${DOMAIN}/timkiem/nangcao/1/0/${tags[0] ? tags[0] : '-1'}/-1?txt=${query.title ? query.title : ''}`),
             method: "GET",
             param: encodeURI(`&p=${page}`)
         });
@@ -478,7 +478,7 @@ export class Blogtruyen extends Source {
 
     async getSearchTags(): Promise<TagSection[]> {
         const tags: Tag[] = [];
-        const url = `https://blogtruyen.vn/timkiem/nangcao`
+        const url = `${DOMAIN}/timkiem/nangcao`
         const request = createRequestObject({
             url: url,
             method: "GET",

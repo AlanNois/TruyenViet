@@ -80,7 +80,6 @@ export class Baotangtruyentranh extends Source {
             const id = $(element).attr('href') || genre;
             return createTag({ label: decodeHTMLEntity(genre), id });
         }).get();
-        console.log(tags)
         const creator = decodeHTMLEntity($('.author p').last().text().trim());
         const statusFinal = $('.status p').last().text().trim().includes('Đang') ? 1 : 0;
         const desc = $("#summary").text();
@@ -289,8 +288,10 @@ export class Baotangtruyentranh extends Source {
             }
         });
 
-        const queryTitle = query.title ? `keyword=${query.title}&` : '';
-        const url = encodeURI(`${DOMAIN}/tim-truyen?${queryTitle}page=${page}`);
+        const searchUrl = query.title
+            ? `https://baotangtruyentranh.com/tim-truyen?keyword=${encodeURI(query.title)}&page=${page}`
+            : `https://baotangtruyentranh.com/tim-truyen/${search.cate}?status=${search.status}&sort=${search.sort}&page=${page}`;
+        const url = encodeURI(searchUrl);
         const request = createRequestObject({
             url,
             method: "GET",

@@ -1,5 +1,6 @@
 import { MangaTile, SearchRequest, Chapter, LanguageCode } from "paperback-extensions-common";
-import entities from "entities";
+
+const entities = require("entities");
 
 export function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

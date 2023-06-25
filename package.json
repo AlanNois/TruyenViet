@@ -20,9 +20,9 @@
   "dependencies": {
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "cheerio": "^0.22.0",
+    "cheerio": "^1.0.0-rc.12",
     "crypto-js": "^4.1.1",
-    "gh-pages": "^3.2.3",
+    "gh-pages": "^3.0.0",
     "paperback-cli": "^2.0.0-alpha.10",
     "paperback-extensions-common": "^5.0.0-alpha.4",
     "ts-mocha": "^7.0.0",
@@ -32,16 +32,16 @@
   "devDependencies": {
     "@types/chai": "^4.2.21",
     "@types/chai-as-promised": "^7.1.4",
-    "@types/cheerio": "^0.22.21",
+    "@types/cheerio": "^0.22.31",
     "@types/entities": "^2.0.0",
     "@types/mocha": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "eslint": "^7.18.0",
     "eslint-config-oclif": "^3.1.0",
     "eslint-config-oclif-typescript": "^0.2.0",
-    "mocha": "^7.2.0",
-    "nyc": "^15.1.0",
-    "typedoc": "^0.17.6"
+    "mocha": "^10.2.0",
+    "nyc": "^6.6.1",
+    "typedoc": "^0.24.8"
   },
   "baseURL": "https://alannois.github.io/TruyenViet/",
   "repositoryName": "AlanNois"

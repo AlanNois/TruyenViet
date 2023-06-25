@@ -1,103 +1,104 @@
 import { MangaTile, SearchRequest } from "paperback-extensions-common";
+import CryptoJS from "crypto-js";
 
-const entities = require("entities"); //Import package for decoding HTML entities
+const entities = require("entities");
 
-export interface UpdatedManga {
-    ids: string[];
-    loadMore: boolean;
-}
-
-export function capitalizeFirstLetter(string: string) {
+export function capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export const generateSearch = (query: SearchRequest): string => {
-    let keyword: string = query.title ?? "";
+    const keyword: string = query.title ?? "";
     return encodeURI(keyword);
-}
+};
 
 export const parseSearch = ($: CheerioStatic): MangaTile[] => {
     const manga: MangaTile[] = [];
-    for (const element of $('li', '#archive-list-table').toArray()) {
-        let title = $('.super-title a', element).text().trim();
-        let image = $('img', element).attr('src') ?? "";
-        let id = $('.super-title > a', element).first().attr('href');
-        // let subtitle = $(`.comic-chapter`, element).text().trim();
-        if (!id) continue;
+    $('#archive-list-table li').each((_, element) => {
+        const title = $('.super-title a', element).text().trim();
+        const image = $('img', element).attr('src') || "";
+        const id = $('.super-title > a', element).first().attr('href');
+        if (!id) return;
         manga.push(createMangaTile({
             id: id ?? "",
             image: image.replace('150x150', '300x404'),
             title: createIconText({ text: title }),
-            // subtitleText: createIconText({ text: subtitle }),
-        }))
-    }
+        }));
+    });
     return manga;
-}
+};
 
 export const parseViewMore = ($: CheerioStatic): MangaTile[] => {
     const manga: MangaTile[] = [];
-    for (const element of $('.comic-item', '.col-md-9 > .comic-list ').toArray()) {
-        let title = $('.comic-title', element).text().trim();
-        let image = $('.img-thumbnail', element).attr('data-thumb') ?? "";
-        let id = $('.comic-img > a', element).first().attr('href');
-        let subtitle = $(`.comic-chapter`, element).text().trim();
+    $('.comic-item', '.col-md-9 > .comic-list ').each((_, element) => {
+        const title = $('.comic-title', element).text().trim();
+        const image = $('.img-thumbnail', element).attr('data-thumb') || "";
+        const id = $('.comic-img > a', element).first().attr('href');
+        const subtitle = $('.comic-chapter', element).text().trim();
         manga.push(createMangaTile({
             id: id ?? "",
             image: image.replace('150x150', '300x404') ?? "",
             title: createIconText({ text: title }),
             subtitleText: createIconText({ text: subtitle }),
-        }))
-    }
+        }));
+    });
     return manga;
-}
+};
 
 export const isLastPage = ($: CheerioStatic): boolean => {
-    let isLast = false;
-    const pages = [];
+    const pages: number[] = [];
 
-    for (const page of $("li", "ul.pagination").toArray()) {
+    $('ul.pagination li').each((_, page) => {
         const p = Number($('a', page).text().trim());
-        if (isNaN(p)) continue;
-        pages.push(p);
-    }
+        if (!isNaN(p)) pages.push(p);
+    });
+
     const lastPage = Math.max(...pages);
     const currentPage = Number($("ul.pagination > li.active > span").text().trim());
-    if (currentPage >= lastPage) isLast = true;
-    return isLast;
-}
+    return currentPage >= lastPage;
+};
 
 export const decodeHTMLEntity = (str: string): string => {
     return entities.decodeHTML(str);
-}
+};
 
-export const decryptImages = ($: any, tis: any) => {
-    var CryptoJS = require('crypto-js');
+export const decryptImages = ($: any, tis: any): string[] => {
     const pages: string[] = [];
-    var htmlContent = $('#view-chapter').html().match(/htmlContent="(.+)"/)[0].replace('htmlContent="',"").replace('"}"','"}').replace(/\\\\/g, '').replace(/\\\"/g, '"') // => xoá \\ và replace \" thành "
+
+    const htmlContent = $('#view-chapter').html().match(/htmlContent="(.+)"/)[0]
+        .replace('htmlContent="', "")
+        .replace('"}"', '"}')
+        .replace(/\\\\/g, '')
+        .replace(/\\\"/g, '"');
+
     function CryptoJSAesDecrypt(passphrase: any, encrypted_json_string: any) {
-        var obj_json = JSON.parse(encrypted_json_string);
-        var encrypted = obj_json.ciphertext;
-        var salt = CryptoJS.enc.Hex.parse(obj_json.salt);
-        var iv = CryptoJS.enc.Hex.parse(obj_json.iv);
-        var key = CryptoJS.PBKDF2(passphrase, salt, {
+        const obj_json = JSON.parse(encrypted_json_string);
+        const encrypted = obj_json.ciphertext;
+        const salt = CryptoJS.enc.Hex.parse(obj_json.salt);
+        const iv = CryptoJS.enc.Hex.parse(obj_json.iv);
+        const key = CryptoJS.PBKDF2(passphrase, salt, {
             hasher: CryptoJS.algo.SHA512,
             keySize: 64 / 8,
             iterations: 999
         });
-        var decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+        const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
             iv: iv
         });
         return decrypted.toString(CryptoJS.enc.Utf8);
     }
-    var chapterHTML = CryptoJSAesDecrypt('EhwuFp' + 'SJkhMV' + 'uUPzrw', htmlContent)
+
+    let chapterHTML = CryptoJSAesDecrypt('EhwuFp' + 'SJkhMV' + 'uUPzrw', htmlContent);
     chapterHTML = chapterHTML.replace(/EhwuFp/g, '.');
     chapterHTML = chapterHTML.replace(/SJkhMV/g, ':');
     chapterHTML = chapterHTML.replace(/uUPzrw/g, '/');
+
     const $2 = tis.cheerio.load(chapterHTML);
-    var cc = $2('img').toArray();
-    for (var el in cc) {
-        var e = cc[el];
-        pages.push($2(e).attr('data-ehwufp'));
+    const cc = $2('img').toArray();
+
+    for (const el of cc) {
+        const dataEhwufp = $2(el).attr('data-ehwufp');
+        if (dataEhwufp) pages.push(dataEhwufp);
     }
-    return pages
-}
+
+    return pages;
+};

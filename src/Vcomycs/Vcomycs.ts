@@ -10,7 +10,7 @@ import {
     TagType,
     TagSection,
     ContentRating,
-    RequestHeaders,
+    // RequestHeaders,
     MangaTile,
     Tag,
     LanguageCode,
@@ -71,23 +71,27 @@ export class Vcomycs extends Source {
             url: url,
             method: "GET",
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        let tags: Tag[] = [];
-        let creator = $(".comic-intro-text span").toArray();
-        let status = $(".comic-intro-text .comic-stt").text(); //completed, 1 = Ongoing
-        let statusFinal = status.toLowerCase().includes("đang") ? 1 : 0;
-        let desc = $(".text-justify p").text();
-        for (const t of $(".comic-info .tags > a").toArray()) {
+
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
+        const tags: Tag[] = [];
+        const creator = $(".comic-intro-text span");
+        const status = $(".comic-intro-text .comic-stt").text();
+        const statusFinal = status.toLowerCase().includes("đang") ? 1 : 0;
+        const desc = $(".text-justify p").text();
+
+        $(".comic-info .tags > a").each((_, t) => {
             const genre = $(t).text().trim();
-            const id = $(t).attr('href') ?? genre;
+            const id = $(t).attr('href') || genre;
             tags.push(createTag({ label: genre, id }));
-        }
-        const image = $(".img-thumbnail").attr("src") ?? "";
+        });
+
+        const image = $(".img-thumbnail").attr("src") || "";
+
         return createManga({
             id: mangaId,
-            author: $(creator[1]).text().trim(),
-            artist: $(creator[1]).text().trim(),
+            author: creator.eq(1).text().trim(),
+            artist: creator.eq(1).text().trim(),
             desc: desc === '' ? 'Đang cập nhật…' : decodeHTMLEntity(desc),
             titles: [$(".info-title").text()],
             image: image,
@@ -95,32 +99,33 @@ export class Vcomycs extends Source {
             hentai: false,
             tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
         });
-
     }
+
     async getChapters(mangaId: string): Promise<Chapter[]> {
         const request = createRequestObject({
             url: `${DOMAIN}/truyen-tranh/${mangaId}`,
-            method,
+            method: "GET",
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
+
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
         const chapters: Chapter[] = [];
-        var el = $("tbody td a").toArray();
-        for (var i in el) {
-            var e = el[i];
-            let id = $(e).attr("href").split('/').slice(-2).join('/');
-            let chapNum = Number($(e).text().trim().match(/Chap.+/)?.[0].split(" ")[1]);
-            let name = $($('span', e).toArray()[0]).text().trim();
-            let time = $('tr > td.hidden-xs.hidden-sm', e).text().trim().split('/');
-            chapters.push(createChapter(<Chapter>{
+        const el = $("tbody td a");
+
+        el.each((_, e) => {
+            const id = $(e).attr("href").split('/').slice(-2).join('/');
+            const chapNum = Number($(e).text().trim().match(/Chap.+/)?.[0].split(" ")[1]);
+            const name = $($('span', e)[0]).text().trim();
+            const time = $('tr > td.hidden-xs.hidden-sm', e).text().trim().split('/');
+            chapters.push(createChapter({
                 id,
-                chapNum: chapNum,
+                chapNum,
                 name: decodeHTMLEntity(name),
-                mangaId: mangaId,
+                mangaId,
                 langCode: LanguageCode.VIETNAMESE,
                 time: new Date(time[1] + '/' + time[0] + '/' + time[2])
             }));
-        }
+        });
 
         return chapters;
     }
@@ -128,131 +133,143 @@ export class Vcomycs extends Source {
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
         const request = createRequestObject({
             url: `${DOMAIN}/${chapterId}`,
-            method
+            method: "GET",
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
+
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
         const chapterDetails = createChapterDetails({
             id: chapterId,
-            mangaId: mangaId,
+            mangaId,
             pages: decryptImages($, this),
             longStrip: false
         });
+
         return chapterDetails;
     }
 
     async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-        let newUpdated: HomeSection = createHomeSection({
+        const newUpdated: HomeSection = createHomeSection({
             id: 'new_updated',
             title: "Mới cập nhật",
             view_more: true,
         });
-        let hot: HomeSection = createHomeSection({
+        const hot: HomeSection = createHomeSection({
             id: 'hot',
             title: "Hot nhất",
             view_more: false,
         });
-        let view: HomeSection = createHomeSection({
+        const view: HomeSection = createHomeSection({
             id: 'view',
             title: "Xem nhiều",
             view_more: false,
         });
 
-        //Load empty sections
+        // Load empty sections
         sectionCallback(newUpdated);
         sectionCallback(hot);
         sectionCallback(view);
 
-        ///Get the section data
+        // Get the section data
 
-        //New Updates
+        // New Updates
         let request = createRequestObject({
             url: DOMAIN,
             method: "GET",
         });
+
         let data = await this.requestManager.schedule(request, 1);
         let $ = this.cheerio.load(data.data);
-        let newUpdatedItems: MangaTile[] = [];
-        for (const element of $('.comic-item', '.col-md-9 > .comic-list ').toArray().splice(0, 20)) {
-            let title = $('.comic-title', element).text().trim();
-            let image = $('.img-thumbnail', element).attr('data-thumb') ?? "";
-            let id = $('.comic-img > a', element).first().attr('href').split('/').slice(-2).join('/');
-            let subtitle = $(`.comic-chapter`, element).text().trim();
-            newUpdatedItems.push(createMangaTile({
-                id: id ?? "",
-                image: image.replace('150x150', '300x404') ?? "",
-                title: createIconText({ text: title }),
-                subtitleText: createIconText({ text: subtitle }),
-            }))
-        }
+        const newUpdatedItems: MangaTile[] = $('.comic-item', '.col-md-9 > .comic-list ')
+            .toArray()
+            .splice(0, 20)
+            .map((element) => {
+                const title = $('.comic-title', element).text().trim();
+                const image = $('.img-thumbnail', element).attr('data-thumb') || "";
+                const id = $('.comic-img > a', element).first().attr('href').split('/').slice(-2).join('/');
+                const subtitle = $(`.comic-chapter`, element).text().trim();
+                return createMangaTile({
+                    id: id || "",
+                    image: image.replace('150x150', '300x404') || "",
+                    title: createIconText({ text: title }),
+                    subtitleText: createIconText({ text: subtitle }),
+                });
+            });
+
         newUpdated.items = newUpdatedItems;
         sectionCallback(newUpdated);
 
-        //hot
+        // Hot
         request = createRequestObject({
             url: `${DOMAIN}/truyen-hot-nhat/`,
             method: "GET",
         });
-        let hotItems: MangaTile[] = [];
+
         data = await this.requestManager.schedule(request, 1);
         $ = this.cheerio.load(data.data);
-        for (const element of $('li', '.col-md-9 .comic-list-page ul.most-views').toArray()) {
-            let title = $('.super-title > a', element).text().trim();
-            let image = $('.list-left-img', element).attr('src') ?? "";
-            let id = $('.super-title > a', element).first().attr('href').split('/').slice(-2).join('/');
-            hotItems.push(createMangaTile({
-                id: id ?? "",
-                image: image.replace('150x150', '300x404') ?? "",
-                title: createIconText({ text: title }),
-            }))
-        }
+        const hotItems: MangaTile[] = $('li', '.col-md-9 .comic-list-page ul.most-views')
+            .toArray()
+            .map((element) => {
+                const title = $('.super-title > a', element).text().trim();
+                const image = $('.list-left-img', element).attr('src') || "";
+                const id = $('.super-title > a', element).first().attr('href').split('/').slice(-2).join('/');
+                return createMangaTile({
+                    id: id || "",
+                    image: image.replace('150x150', '300x404') || "",
+                    title: createIconText({ text: title }),
+                });
+            });
+
         hot.items = hotItems;
         sectionCallback(hot);
 
-        //view
+        // View
         request = createRequestObject({
             url: `${DOMAIN}/nhieu-xem-nhat/`,
             method: "GET",
         });
-        let viewItems: MangaTile[] = [];
+
         data = await this.requestManager.schedule(request, 1);
         $ = this.cheerio.load(data.data);
-        for (const element of $('li', '.col-md-9 .comic-list-page ul.most-views').toArray()) {
-            let title = $('.super-title > a', element).text().trim();
-            let image = $('.list-left-img', element).attr('src') ?? "";
-            let id = $('.super-title > a', element).first().attr('href').split('/').slice(-2).join('/');
-            // let subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
-            viewItems.push(createMangaTile({
-                id: id ?? "",
-                image: image.replace('150x150', '300x404') ?? "",
-                title: createIconText({ text: title }),
-                // subtitleText: createIconText({ text: subtitle }),
-            }))
-        }
+        const viewItems: MangaTile[] = $('li', '.col-md-9 .comic-list-page ul.most-views')
+            .toArray()
+            .map((element) => {
+                const title = $('.super-title > a', element).text().trim();
+                const image = $('.list-left-img', element).attr('src') || "";
+                const id = $('.super-title > a', element).first().attr('href').split('/').slice(-2).join('/');
+                return createMangaTile({
+                    id: id || "",
+                    image: image.replace('150x150', '300x404') || "",
+                    title: createIconText({ text: title }),
+                });
+            });
+
         view.items = viewItems;
         sectionCallback(view);
     }
 
     async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
-        let page: number = metadata?.page ?? 1;
+        const page: number = metadata?.page ?? 1;
         let url = '';
+
         switch (homepageSectionId) {
             case "new_updated":
                 url = `${DOMAIN}/page/${page}/`;
                 break;
             default:
-                return Promise.resolve(createPagedResults({ results: [] }))
+                return createPagedResults({ results: [] });
         }
 
         const request = createRequestObject({
             url,
-            method
+            method,
         });
 
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        let manga = parseViewMore($);
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
+        const manga = parseViewMore($);
         metadata = { page: page + 1 };
+
         return createPagedResults({
             results: manga,
             metadata,
@@ -260,10 +277,9 @@ export class Vcomycs extends Source {
     }
 
     async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
-        // let page = metadata?.page ?? 1;
         const tags = query.includedTags?.map(tag => tag.id) ?? [];
-        var url = '';
-        var request: any = '';
+        let url = '';
+        let request: any = '';
         if (query.title) {
             url = `${DOMAIN}/wp-admin/admin-ajax.php`;
             request = createRequestObject({
@@ -276,7 +292,7 @@ export class Vcomycs extends Source {
                 headers: {
                     'content-type': 'application/x-www-form-urlencoded'
                 }
-            })
+            });
         } else {
             url = tags[0];
             request = createRequestObject({
@@ -284,54 +300,51 @@ export class Vcomycs extends Source {
                 method: "GET",
             });
         }
-        let data = await this.requestManager.schedule(request, 1);
-        var tiles: any = [];
+
+        const data = await this.requestManager.schedule(request, 1);
+        let tiles: MangaTile[] = [];
+
         if (query.title) {
             const json = (typeof data.data) === 'string' ? JSON.parse(data.data) : data.data;
-            let listItems: MangaTile[] = [];
-            for (const el of json.data) {
-                listItems.push(createMangaTile({
-                    id: el.link,
-                    image: el.img.replace('150x150', '300x404'),
-                    title: createIconText({ text: el.title }),
-                    // subtitleText: createIconText({ text: subtitle }),
-                }));
-            }
-            tiles = listItems;
+            tiles = json.data.map((el: any) => createMangaTile({
+                id: el.link,
+                image: el.img.replace('150x150', '300x404'),
+                title: createIconText({ text: el.title }),
+            }));
         } else {
-            let $ = this.cheerio.load(data.data);
+            const $ = this.cheerio.load(data.data);
             tiles = parseSearch($);
         }
 
-        metadata = undefined;
-
         return createPagedResults({
             results: tiles,
-            metadata
+            metadata: undefined
         });
     }
 
     async getSearchTags(): Promise<TagSection[]> {
         const tags: Tag[] = [];
-        const url = `${DOMAIN}/so-do-trang/`
+        const url = `${DOMAIN}/so-do-trang/`;
         const request = createRequestObject({
-            url: url,
+            url,
             method: "GET",
         });
-        let data = await this.requestManager.schedule(request, 1);
-        let $ = this.cheerio.load(data.data);
-        var genres = $('a', $(".tags").toArray()[0]).toArray()
-        //the loai
-        for (var i in genres) {
-            var genre = genres[i]
+
+        const data = await this.requestManager.schedule(request, 1);
+        const $ = this.cheerio.load(data.data);
+        const genres = $('a', $(".tags").toArray()[0]).toArray();
+
+        for (const genre of genres) {
             const label = $(genre).text().trim();
             const id = $(genre).attr('href');
             if (!id || !label) continue;
-            tags.push({ id: id, label: label });
+            tags.push({ id, label });
         }
+
         const tagSections: TagSection[] = [
             createTagSection({ id: '1', label: 'Thể Loại', tags: tags.map(x => createTag(x)) }),
-        ]
+        ];
+
         return tagSections;
     }
 }
