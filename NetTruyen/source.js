@@ -766,28 +766,59 @@ class Parser {
         return tiles;
     }
     parseTags($) {
-        const tagSections = [];
-        const sections = [
-            { selector: 'div.col-sm-10 > div.row', tags: [] },
-            { selector: 'select.select-minchapter', tags: [] },
-            { selector: '.select-status', tags: [] },
-            { selector: '.select-gender', tags: [] },
-            { selector: '.select-sort', tags: [] },
-        ];
-        for (const section of sections) {
-            for (const tag of $(`option`, section.selector).toArray()) {
-                const label = $(tag).text().trim();
-                const id = `${section.selector}.${$(tag).attr('value')}` || label;
-                if (!id || !label)
-                    continue;
-                section.tags.push({ id, label });
-            }
-            tagSections.push(createTagSection({
-                id: tagSections.length.toString(),
-                label: section.selector,
-                tags: section.tags.map(x => createTag(x))
-            }));
+        var _a, _b, _c, _d, _e;
+        //id tag đéo đc trùng nhau
+        const arrayTags = [];
+        const arrayTags2 = [];
+        const arrayTags3 = [];
+        const arrayTags4 = [];
+        const arrayTags5 = [];
+        //The loai
+        for (const tag of $('div.col-md-3.col-sm-4.col-xs-6.mrb10', 'div.col-sm-10 > div.row').toArray()) {
+            const label = $('div.genre-item', tag).text().trim();
+            const id = (_a = $('div.genre-item > span', tag).attr('data-id')) !== null && _a !== void 0 ? _a : label;
+            if (!id || !label)
+                continue;
+            arrayTags.push({ id: id, label: label });
         }
+        //Số lượng chapter
+        for (const tag of $('option', 'select.select-minchapter').toArray()) {
+            const label = $(tag).text().trim();
+            const id = (_b = 'minchapter.' + $(tag).attr('value')) !== null && _b !== void 0 ? _b : label;
+            if (!id || !label)
+                continue;
+            arrayTags2.push({ id: id, label: label });
+        }
+        //Tình trạng
+        for (const tag of $('option', '.select-status').toArray()) {
+            const label = $(tag).text().trim();
+            const id = (_c = 'status.' + $(tag).attr('value')) !== null && _c !== void 0 ? _c : label;
+            if (!id || !label)
+                continue;
+            arrayTags3.push({ id: id, label: label });
+        }
+        //Dành cho
+        for (const tag of $('option', '.select-gender').toArray()) {
+            const label = $(tag).text().trim();
+            const id = (_d = 'gender.' + $(tag).attr('value')) !== null && _d !== void 0 ? _d : label;
+            if (!id || !label)
+                continue;
+            arrayTags4.push({ id: id, label: label });
+        }
+        //Sắp xếp theo
+        for (const tag of $('option', '.select-sort').toArray()) {
+            const label = $(tag).text().trim();
+            const id = (_e = 'sort.' + $(tag).attr('value')) !== null && _e !== void 0 ? _e : label;
+            if (!id || !label)
+                continue;
+            arrayTags5.push({ id: id, label: label });
+        }
+        const tagSections = [createTagSection({ id: '0', label: 'Thể Loại (Có thể chọn nhiều hơn 1)', tags: arrayTags.map(x => createTag(x)) }),
+            createTagSection({ id: '1', label: 'Số Lượng Chapter (Chỉ chọn 1)', tags: arrayTags2.map(x => createTag(x)) }),
+            createTagSection({ id: '2', label: 'Tình Trạng (Chỉ chọn 1)', tags: arrayTags3.map(x => createTag(x)) }),
+            createTagSection({ id: '3', label: 'Dành Cho (Chỉ chọn 1)', tags: arrayTags4.map(x => createTag(x)) }),
+            createTagSection({ id: '4', label: 'Sắp xếp theo (Chỉ chọn 1)', tags: arrayTags5.map(x => createTag(x)) }),
+        ];
         return tagSections;
     }
     parseFeaturedSection($) {
