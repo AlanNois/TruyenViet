@@ -480,36 +480,32 @@ class NetTruyen extends paperback_extensions_common_1.Source {
             };
             const tags = (_c = (_b = query.includedTags) === null || _b === void 0 ? void 0 : _b.map(tag => tag.id)) !== null && _c !== void 0 ? _c : [];
             const genres = [];
-            tags.map((value) => {
+            for (const value of tags) {
                 if (value.indexOf('.') === -1) {
                     genres.push(value);
                 }
                 else {
-                    switch (value.split(".")[0]) {
+                    const [key, val] = value.split(".");
+                    switch (key) {
                         case 'minchapter':
-                            search.minchapter = (value.split(".")[1]);
+                            search.minchapter = val;
                             break;
                         case 'gender':
-                            search.gender = (value.split(".")[1]);
+                            search.gender = val;
                             break;
                         case 'sort':
-                            search.sort = (value.split(".")[1]);
+                            search.sort = val;
                             break;
                         case 'status':
-                            search.status = (value.split(".")[1]);
+                            search.status = val;
                             break;
                     }
                 }
-            });
-            search.genres = (genres !== null && genres !== void 0 ? genres : []).join(",");
-            const url = `${DOMAIN}`;
-            const request = createRequestObject({
-                url: query.title ? (url + '/tim-truyen') : (url + '/tim-truyen-nang-cao'),
-                method: "GET",
-                param: encodeURI(`?keyword=${(_d = query.title) !== null && _d !== void 0 ? _d : ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`)
-            });
-            const data = yield this.requestManager.schedule(request, 1);
-            let $ = this.cheerio.load(data.data);
+            }
+            search.genres = genres.join(",");
+            const url = `${DOMAIN}${query.title ? '/tim-truyen' : '/tim-truyen-nang-cao'}`;
+            const param = encodeURI(`?keyword=${(_d = query.title) !== null && _d !== void 0 ? _d : ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`);
+            const $ = yield this.fetchData(url + param);
             const tiles = this.parser.parseSearchResults($);
             metadata = !exports.isLastPage($) ? { page: page + 1 } : undefined;
             return createPagedResults({
