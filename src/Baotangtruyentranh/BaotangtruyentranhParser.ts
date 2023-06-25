@@ -15,8 +15,8 @@ export const parseSearch = ($: CheerioStatic): MangaTile[] => {
     const manga: MangaTile[] = [];
     $('.row .item').each((_, element) => {
         const title = $('h3 > a', element).text().trim();
-        const image = $('.image img', element).attr("data-src") ?? "";
-        const id = $('h3 > a', element).attr('href');
+        const image = $('.image img', element).attr("src") ?? "";
+        const id = $('h3 > a', element).attr('href')?.split('/').slice(-2).join('/');
         const chapter = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
             id: id ?? "",
@@ -32,8 +32,8 @@ export const parseViewMore = ($: CheerioStatic): MangaTile[] => {
     const manga: MangaTile[] = [];
     $('.row .item').each((_, element) => {
         const title = $('h3 > a', element).text().trim();
-        const image = $('.image img', element).attr("data-src") ?? "";
-        const id = $('h3 > a', element).attr('href');
+        const image = $('.image img', element).attr("src") ?? "";
+        const id = $('h3 > a', element).attr('href')?.split('/').slice(-2).join('/');
         const chapter = $("ul .chapter > a", element).first().text().trim().replace('Chapter ', 'Ch.') + ' | ' + $("ul .chapter > i", element).first().text().trim();
         manga.push(createMangaTile({
             id: id ?? "",

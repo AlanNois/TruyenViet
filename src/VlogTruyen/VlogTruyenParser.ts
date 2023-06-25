@@ -18,7 +18,7 @@ export const parseSearch = ($: CheerioStatic, query: SearchRequest, tags: string
     for (const element of $('.commic-hover', selector).toArray()) {
         const title = $('.title-commic-tab', element).text().trim();
         const image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-        const id = $('a', element).first().attr('href') ?? title;
+        const id = $('a', element).first().attr('href')?.split('/').pop() ?? title;
         const subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
         manga.push(createMangaTile({
             id: id,
@@ -37,7 +37,7 @@ export const parseViewMore = ($: CheerioStatic): MangaTile[] => {
     for (const element of $('.commic-hover', '#ul-content-pho-bien').toArray()) {
         const title = $('.title-commic-tab', element).text().trim();
         const image = $('.image-commic-tab > img', element).attr('data-src') ?? "";
-        const id = $('a', element).first().attr('href') ?? title;
+        const id = $('a', element).first().attr('href')?.split('/').pop() ?? title;
         const subtitle = $(`.chapter-commic-tab > a`, element).text().trim();
         manga.push(createMangaTile({
             id: id,
