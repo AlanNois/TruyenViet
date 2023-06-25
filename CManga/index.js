@@ -8232,6 +8232,7 @@ class CManga extends paperback_extensions_common_1.Source {
     ;
     getMangaDetails(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(mangaId);
             const request = createRequestObject({
                 url: exports.DOMAIN + mangaId.split("::")[0],
                 method: "GET",
@@ -8270,6 +8271,7 @@ class CManga extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(mangaId);
             const request2 = createRequestObject({
                 url: `${exports.DOMAIN}api/book_chapter?opt1=` + mangaId.split("::")[2],
                 method: "GET",
