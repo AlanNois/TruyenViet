@@ -24,7 +24,7 @@ const method = 'GET'
 const DOMAIN = 'https://vivicomi.info'
 
 export const VcomycsInfo: SourceInfo = {
-    version: '1.1.0',
+    version: '1.1.1',
     name: 'Vcomycs',
     icon: 'icon.png',
     author: 'AlanNois',
