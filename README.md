@@ -10,7 +10,7 @@ https://alannois.github.io/TruyenViet/
 |STT    | Name                      | Source URL                                 |
 | ----- | ------------------------- | ------------------------------------------ |
 |   1   | Blogtruyen                | https://blogtruyen.vn                      |
-|   2   | CManga                    | https://cmangatop.com                      |
+|   2   | CManga                    | https://cmangaah.com                       |
 |   3   | DocTruyen3Q               | https://doctruyen3q.com                    |
 |   4   | GocTruyenTranh            | https://goctruyentranh.com                 |
 |   5   | HentaiCube                | https://hentaicube.net                     |
@@ -23,7 +23,7 @@ https://alannois.github.io/TruyenViet/
 |   12  | MangaXY                   | https://mangaxy.com                        |
 |   13  | ManhuaRock                | https://manhuarock.net                     |
 |   14  | MeDocTruyen               | https://www.medoctruyentranh.net           |
-|   15  | NetTruyen                 | http://www.nettruyenpro.com                |
+|   15  | NetTruyen                 | http://www.nettruyenmax.com                |
 |   16  | NhatTruyen                | http://nhattruyenvip.com                   |
 |   17  | qManga                    | https://qmanga.co                          |
 |   18  | SayHentai                 | https://sayhentai.net                      |
@@ -40,10 +40,10 @@ https://alannois.github.io/TruyenViet/
 |   29  | TruyenVN                  | https://truyenvn.tv                        |
 |   30  | Vcomi                     | https://vcomi.co                           |
 |   31  | Vcomic                    | https://vcomic.net                         |
-|   32  | Vcomycs                   | https://vcomycs.com                        |
+|   32  | Vcomycs                   | https://vivicomi.info                      |
 |   33  | VietComic                 | https://vietcomic.net                      |
 |   34  | VlogTruyen                | https://vlogtruyen.net                     |
 |   35  | Truyendep                 | https://truyendep.net                      |
 |   36  | Truyengihot               | https://truyengihot.net                    |
-|   37  | Baotangtruyentranh        | https://baotangtruyentranhgo.com             |
+|   37  | Baotangtruyentranh        | https://baotangtruyen3.com                 |
 |   38  | TruyenChon                | http://truyenchon.com                      |
