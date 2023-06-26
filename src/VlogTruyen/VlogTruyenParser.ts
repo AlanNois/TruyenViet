@@ -52,7 +52,7 @@ export const parseViewMore = ($: CheerioStatic): MangaTile[] => {
 
 export const isLastPage = ($: CheerioStatic): boolean => {
     const currentPage = Number($("ul.pagination > li.active > span").text().trim());
-    const lastPage = $("ul.pagination > li:last-child > a").text().trim();
+    const lastPage = $("ul.pagination > li:not(.pag-next)").last().find('a').text().trim();
 
     return currentPage >= Number(lastPage);
 };

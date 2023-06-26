@@ -110,13 +110,13 @@ export class Vcomycs extends Source {
         const data = await this.requestManager.schedule(request, 1);
         const $ = this.cheerio.load(data.data);
         const chapters: Chapter[] = [];
-        const el = $("tbody td a");
+        const el = $("tbody tr");
 
         el.each((_, e) => {
-            const id = $(e).attr("href").split('/').slice(-2).join('/');
-            const chapNum = Number($(e).text().trim().match(/Chap.+/)?.[0].split(" ")[1]);
-            const name = $($('span', e)[0]).text().trim();
-            const time = $('tr > td.hidden-xs.hidden-sm', e).text().trim().split('/');
+            const id = $('td a', e).attr("href").split('/').slice(-2).join('/');
+            const chapNum = Number($('td a', e).text().trim().match(/Chap.+/)?.[0].split(" ")[1]);
+            const name = $($('td a span', e)[0]).text().trim();
+            const time = $('td:last-child', e).text().trim().split('/');
             chapters.push(createChapter({
                 id,
                 chapNum,
