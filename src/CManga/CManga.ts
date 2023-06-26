@@ -19,11 +19,12 @@ import {
 
 import { parseSearch, parseViewMore, decodeHTMLEntity, decrypt_data, titleCase, change_alias } from "./CMangaParser"
 
-export const DOMAIN = 'https://cmangaaf.com/'
+export const DOMAIN = 'https://cmangaah.com/'
 const method = 'GET'
+let book_id = '';
 
 export const CMangaInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.1.0',
     name: 'CManga',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -65,32 +66,32 @@ export class CManga extends Source {
 
     async getMangaDetails(mangaId: string): Promise<Manga> {
         const request = createRequestObject({
-            url: DOMAIN + mangaId.split("::")[0],
+            url: DOMAIN + mangaId,
             method: "GET",
         });
         const data = await this.requestManager.schedule(request, 1);
         let $ = this.cheerio.load(data.data);
-        const book_id = $.html().match(/book_id.+"(.+)"/)[1];
-        // const request2 = createRequestObject({
-        //     url:  DOMAIN +"api/book_detail?opt1=" + book_id,
-        //     method: "GET",
-        // });
-        // const data2 = await this.requestManager.schedule(request2, 1);
-        // var json = JSON.parse(decrypt_data(JSON.parse(data2.data)))[0];
-        // let tags: Tag[] = [];
-        let status = $(".status").first().text().indexOf("Đang") != -1 ? 1 : 0;
-        let desc = $("#book_detail").first().text() === '' ? $("#book_more").first().text() : $("#book_detail").first().text();
-        // for (const t of json.tags.split(",")) {
-        //     if (t === '') continue;
-        //     const genre = t;
-        //     const id = genre;
-        //     tags.push(createTag({ label: titleCase(genre), id }));
-        // }
+        book_id = $.html().match(/book_id.+"(.+)"/)[1];
+        const request2 = createRequestObject({
+            url: DOMAIN + "api/book_detail?opt1=" + book_id,
+            method: "GET",
+        });
+        const data2 = await this.requestManager.schedule(request2, 1);
+        var json = JSON.parse(decrypt_data(JSON.parse(data2.data)))[0];
+        let tags: Tag[] = [];
+        let status = json.status.indexOf("Đang") != -1 ? 1 : 0;
+        let desc = json.detail;
+        for (const t of json.tags.split(",")) {
+            if (t === '') continue;
+            const genre = t;
+            const id = genre;
+            tags.push(createTag({ label: titleCase(genre), id }));
+        }
         const image = $(".book_avatar img").first().attr("src");
         const creator = $(".profile a").text() || 'Unknown';
 
         return createManga({
-            id: mangaId + "::" + book_id,
+            id: mangaId,
             author: creator,
             artist: creator,
             desc: decodeHTMLEntity(desc),
@@ -98,40 +99,48 @@ export class CManga extends Source {
             image: DOMAIN + image,
             status,
             hentai: false,
-            // tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
+            tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
         });
 
     }
     async getChapters(mangaId: string): Promise<Chapter[]> {
         const request2 = createRequestObject({
-            url: `${DOMAIN}api/book_chapter?opt1=` + mangaId.split("::")[2],
+            url: `${DOMAIN}api/book_chapter?opt1=${book_id}`,
             method: "GET",
         });
         const data2 = await this.requestManager.schedule(request2, 1);
-        var json = JSON.parse(decrypt_data(JSON.parse(data2.data)));
+        const json = JSON.parse(decrypt_data(JSON.parse(data2.data)));
         const chapters: Chapter[] = [];
+
         for (const obj of json) {
-            const time = obj.last_update.split(' ');
-            const d = time[0].split('-');
-            const t = time[1].split(':');
-            const d2 = d[1] + '/' + d[2] + '/' + d[0];
-            const t2 = t[0] + ":" + t[1];
-            chapters.push(createChapter(<Chapter>{
-                id: DOMAIN + mangaId.split("::")[1] + '/' + change_alias(obj.chapter_name) + '/' + obj.id_chapter,
-                chapNum: parseFloat(obj.chapter_num),
-                name: titleCase(obj.chapter_name) === ('Chapter ' + obj.chapter_num) ? '' : titleCase(obj.chapter_name),
+            const [date, time] = obj.last_update.split(' ');
+            const [year, month, day] = date.split('-');
+            const [hour, minute] = time.split(':');
+            const formattedDate = `${month}/${day}/${year}`;
+            const formattedTime = `${hour}:${minute}`;
+
+            const preid = mangaId.split("-");
+            const chapterId = `${preid.slice(0, preid.length - 1).join('-')}/${change_alias(obj.chapter_name?.split(': ')[0])}/${obj.id_chapter}`;
+            const chapNum = parseFloat(obj.chapter_num);
+            const name = titleCase(obj.chapter_name);
+
+            chapters.push(createChapter({
+                id: chapterId,
+                chapNum: chapNum,
+                name: name,
                 mangaId: mangaId,
                 langCode: LanguageCode.VIETNAMESE,
-                time: new Date(d2 + " " + t2)
+                time: new Date(`${formattedDate} ${formattedTime}`),
             }));
         }
 
         return chapters;
     }
 
+
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
-        const url = `${DOMAIN}${chapterId}`;
-        const chapID = url.split('/').pop();
+        const chapID = chapterId.split('/').pop();
+        console.log(`${DOMAIN}api/chapter_content?opt1=` + chapID);
         const request = createRequestObject({
             url: `${DOMAIN}api/chapter_content?opt1=` + chapID,
             method
@@ -182,13 +191,13 @@ export class CManga extends Source {
             var item = json[i];
             if (!item.name) continue;
             newUpdatedItems.push(createMangaTile({
-                id: item.url + '-' + item.id_book + "::" + item.url,
-                image: DOMAIN + 'assets/tmp/book/avatar/' + item.avatar + '.jpg',
+                id: `${item.url}-${item.id_book}`,
+                image: `${DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
                 title: createIconText({
                     text: titleCase(item.name),
                 }),
                 subtitleText: createIconText({
-                    text: 'Chap ' + item.last_chapter,
+                    text: `Chap ${item.last_chapter}`,
                 }),
             }))
         }
@@ -204,19 +213,18 @@ export class CManga extends Source {
         let newAddItems: MangaTile[] = [];
         data = await this.requestManager.schedule(request, 1);
         json = JSON.parse(decrypt_data(JSON.parse(data.data)));
-        // console.log(json);
 
         for (var i of Object.keys(json)) {
             var item = json[i];
             if (!item.name) continue;
             newAddItems.push(createMangaTile({
-                id: item.url + '-' + item.id_book + "::" + item.url,
-                image: DOMAIN + 'assets/tmp/book/avatar/' + item.avatar + '.jpg',
+                id: `${item.url}-${item.id_book}`,
+                image: `${DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
                 title: createIconText({
                     text: titleCase(item.name),
                 }),
                 subtitleText: createIconText({
-                    text: 'Chap ' + item.last_chapter,
+                    text: `Chap ${item.last_chapter}`,
                 }),
             }))
         }
