@@ -8192,6 +8192,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const CMangaParser_1 = require("./CMangaParser");
 exports.DOMAIN = 'https://cmangaah.com/';
 const method = 'GET';
+let book_id = '';
 exports.CMangaInfo = {
     version: '1.1.0',
     name: 'CManga',
@@ -8232,33 +8233,33 @@ class CManga extends paperback_extensions_common_1.Source {
     ;
     getMangaDetails(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(mangaId);
             const request = createRequestObject({
-                url: exports.DOMAIN + mangaId.split("::")[0],
+                url: exports.DOMAIN + mangaId,
                 method: "GET",
             });
             const data = yield this.requestManager.schedule(request, 1);
             let $ = this.cheerio.load(data.data);
-            const book_id = $.html().match(/book_id.+"(.+)"/)[1];
-            // const request2 = createRequestObject({
-            //     url:  DOMAIN +"api/book_detail?opt1=" + book_id,
-            //     method: "GET",
-            // });
-            // const data2 = await this.requestManager.schedule(request2, 1);
-            // var json = JSON.parse(decrypt_data(JSON.parse(data2.data)))[0];
-            // let tags: Tag[] = [];
-            let status = $(".status").first().text().indexOf("Đang") != -1 ? 1 : 0;
-            let desc = $("#book_detail").first().text() === '' ? $("#book_more").first().text() : $("#book_detail").first().text();
-            // for (const t of json.tags.split(",")) {
-            //     if (t === '') continue;
-            //     const genre = t;
-            //     const id = genre;
-            //     tags.push(createTag({ label: titleCase(genre), id }));
-            // }
+            book_id = $.html().match(/book_id.+"(.+)"/)[1];
+            const request2 = createRequestObject({
+                url: exports.DOMAIN + "api/book_detail?opt1=" + book_id,
+                method: "GET",
+            });
+            const data2 = yield this.requestManager.schedule(request2, 1);
+            var json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)))[0];
+            let tags = [];
+            let status = json.status.indexOf("Đang") != -1 ? 1 : 0;
+            let desc = json.detail;
+            for (const t of json.tags.split(",")) {
+                if (t === '')
+                    continue;
+                const genre = t;
+                const id = genre;
+                tags.push(createTag({ label: CMangaParser_1.titleCase(genre), id }));
+            }
             const image = $(".book_avatar img").first().attr("src");
             const creator = $(".profile a").text() || 'Unknown';
             return createManga({
-                id: mangaId + "::" + book_id,
+                id: mangaId,
                 author: creator,
                 artist: creator,
                 desc: CMangaParser_1.decodeHTMLEntity(desc),
@@ -8266,32 +8267,37 @@ class CManga extends paperback_extensions_common_1.Source {
                 image: exports.DOMAIN + image,
                 status,
                 hentai: false,
+                tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
             });
         });
     }
     getChapters(mangaId) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(mangaId);
             const request2 = createRequestObject({
-                url: `${exports.DOMAIN}api/book_chapter?opt1=` + mangaId.split("::")[2],
+                url: `${exports.DOMAIN}api/book_chapter?opt1=${book_id}`,
                 method: "GET",
             });
             const data2 = yield this.requestManager.schedule(request2, 1);
-            var json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
+            const json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
             const chapters = [];
             for (const obj of json) {
-                const time = obj.last_update.split(' ');
-                const d = time[0].split('-');
-                const t = time[1].split(':');
-                const d2 = d[1] + '/' + d[2] + '/' + d[0];
-                const t2 = t[0] + ":" + t[1];
+                const [date, time] = obj.last_update.split(' ');
+                const [year, month, day] = date.split('-');
+                const [hour, minute] = time.split(':');
+                const formattedDate = `${month}/${day}/${year}`;
+                const formattedTime = `${hour}:${minute}`;
+                const preid = mangaId.split("-");
+                const chapterId = `${preid.slice(0, preid.length - 1).join('-')}/${CMangaParser_1.change_alias((_a = obj.chapter_name) === null || _a === void 0 ? void 0 : _a.split(': ')[0])}/${obj.id_chapter}`;
+                const chapNum = parseFloat(obj.chapter_num);
+                const name = CMangaParser_1.titleCase(obj.chapter_name);
                 chapters.push(createChapter({
-                    id: exports.DOMAIN + mangaId.split("::")[1] + '/' + CMangaParser_1.change_alias(obj.chapter_name) + '/' + obj.id_chapter,
-                    chapNum: parseFloat(obj.chapter_num),
-                    name: CMangaParser_1.titleCase(obj.chapter_name) === ('Chapter ' + obj.chapter_num) ? '' : CMangaParser_1.titleCase(obj.chapter_name),
+                    id: chapterId,
+                    chapNum: chapNum,
+                    name: name,
                     mangaId: mangaId,
                     langCode: paperback_extensions_common_1.LanguageCode.VIETNAMESE,
-                    time: new Date(d2 + " " + t2)
+                    time: new Date(`${formattedDate} ${formattedTime}`),
                 }));
             }
             return chapters;
@@ -8299,8 +8305,8 @@ class CManga extends paperback_extensions_common_1.Source {
     }
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `${exports.DOMAIN}${chapterId}`;
-            const chapID = url.split('/').pop();
+            const chapID = chapterId.split('/').pop();
+            console.log(`${exports.DOMAIN}api/chapter_content?opt1=` + chapID);
             const request = createRequestObject({
                 url: `${exports.DOMAIN}api/chapter_content?opt1=` + chapID,
                 method
@@ -8351,13 +8357,13 @@ class CManga extends paperback_extensions_common_1.Source {
                 if (!item.name)
                     continue;
                 newUpdatedItems.push(createMangaTile({
-                    id: item.url + '-' + item.id_book + "::" + item.url,
-                    image: exports.DOMAIN + 'assets/tmp/book/avatar/' + item.avatar + '.jpg',
+                    id: `${item.url}-${item.id_book}`,
+                    image: `${exports.DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
                     title: createIconText({
                         text: CMangaParser_1.titleCase(item.name),
                     }),
                     subtitleText: createIconText({
-                        text: 'Chap ' + item.last_chapter,
+                        text: `Chap ${item.last_chapter}`,
                     }),
                 }));
             }
@@ -8372,19 +8378,18 @@ class CManga extends paperback_extensions_common_1.Source {
             let newAddItems = [];
             data = yield this.requestManager.schedule(request, 1);
             json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data.data)));
-            // console.log(json);
             for (var i of Object.keys(json)) {
                 var item = json[i];
                 if (!item.name)
                     continue;
                 newAddItems.push(createMangaTile({
-                    id: item.url + '-' + item.id_book + "::" + item.url,
-                    image: exports.DOMAIN + 'assets/tmp/book/avatar/' + item.avatar + '.jpg',
+                    id: `${item.url}-${item.id_book}`,
+                    image: `${exports.DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
                     title: createIconText({
                         text: CMangaParser_1.titleCase(item.name),
                     }),
                     subtitleText: createIconText({
-                        text: 'Chap ' + item.last_chapter,
+                        text: `Chap ${item.last_chapter}`,
                     }),
                 }));
             }
@@ -8569,67 +8574,45 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.change_alias = exports.titleCase = exports.decrypt_data = exports.decodeHTMLEntity = exports.parseViewMore = exports.parseSearch = exports.generateSearch = void 0;
 const CManga_1 = require("./CManga");
 const entities = require("entities"); //Import package for decoding HTML entities
-exports.generateSearch = (query) => {
-    var _a;
-    let keyword = (_a = query.title) !== null && _a !== void 0 ? _a : "";
-    return encodeURI(keyword);
-};
+exports.generateSearch = (query) => { var _a; return encodeURI((_a = query.title) !== null && _a !== void 0 ? _a : ""); };
 exports.parseSearch = (json, search) => {
     const manga = [];
-    // const collectedIds: string[] = [];
-    if (search.top !== '') {
-        for (var i of Object.keys(json[search.top])) {
-            var item = json[search.top][i];
-            if (!item.name)
-                continue;
-            manga.push(createMangaTile({
-                id: item.url + '-' + item.id + "::" + item.url,
-                image: CManga_1.DOMAIN + 'assets/tmp/book/avatar/' + item.avatar + '.jpg',
-                title: createIconText({
-                    text: titleCase(item.name),
-                }),
-                subtitleText: createIconText({
-                    text: Number(item.total_view).toLocaleString() + ' views',
-                }),
-            }));
-        }
-    }
-    else {
-        for (var i of Object.keys(json)) {
-            var item = json[i];
-            if (!item.name)
-                continue;
-            manga.push(createMangaTile({
-                id: item.url + '-' + item.id_book + "::" + item.url,
-                image: CManga_1.DOMAIN + 'assets/tmp/book/avatar/' + item.avatar + '.jpg',
-                title: createIconText({
-                    text: titleCase(item.name),
-                }),
-                subtitleText: createIconText({
-                    text: 'Chap ' + item.last_chapter,
-                }),
-            }));
-        }
+    const getData = (item) => ({
+        id: `${item.url}-${item.id_book}`,
+        image: `${CManga_1.DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
+        title: createIconText({
+            text: titleCase(item.name),
+        }),
+        subtitleText: createIconText({
+            text: search.top !== '' ? `${Number(item.total_view).toLocaleString()} views` : `Chap ${item.last_chapter}`,
+        }),
+    });
+    const itemList = search.top !== '' ? json[search.top] : json;
+    for (const i of Object.keys(itemList)) {
+        const item = itemList[i];
+        if (!item.name)
+            continue;
+        manga.push(createMangaTile(getData(item)));
     }
     return manga;
 };
 exports.parseViewMore = (json) => {
     const manga = [];
-    // const collectedIds: string[] = [];
-    for (var i of Object.keys(json)) {
-        var item = json[i];
+    const getData = (item) => ({
+        id: `${item.url}-${item.id_book}`,
+        image: `${CManga_1.DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
+        title: createIconText({
+            text: titleCase(item.name),
+        }),
+        subtitleText: createIconText({
+            text: `Chap ${item.last_chapter}`,
+        }),
+    });
+    for (const i of Object.keys(json)) {
+        const item = json[i];
         if (!item.name)
             continue;
-        manga.push(createMangaTile({
-            id: item.url + '-' + item.id_book + "::" + item.url,
-            image: CManga_1.DOMAIN + 'assets/tmp/book/avatar/' + item.avatar + '.jpg',
-            title: createIconText({
-                text: titleCase(item.name),
-            }),
-            subtitleText: createIconText({
-                text: 'Chap ' + item.last_chapter,
-            }),
-        }));
+        manga.push(createMangaTile(getData(item)));
     }
     return manga;
 };
@@ -8638,18 +8621,18 @@ exports.decodeHTMLEntity = (str) => {
 };
 function decrypt_data(data) {
     const CryptoJS = require('crypto-js');
-    var parsed = (data);
-    var type = parsed.ciphertext;
-    var score = CryptoJS.enc.Hex.parse(parsed.iv);
-    var lastviewmatrix = CryptoJS.enc.Hex.parse(parsed.salt);
-    var adjustedLevel = CryptoJS.PBKDF2("nettruyenhayvn", lastviewmatrix, {
-        "hasher": CryptoJS.algo.SHA512,
-        "keySize": 64 / 8,
-        "iterations": 999
+    const parsed = data;
+    const type = parsed.ciphertext;
+    const score = CryptoJS.enc.Hex.parse(parsed.iv);
+    const lastviewmatrix = CryptoJS.enc.Hex.parse(parsed.salt);
+    const adjustedLevel = CryptoJS.PBKDF2("nettruyenhayvn", lastviewmatrix, {
+        hasher: CryptoJS.algo.SHA512,
+        keySize: 64 / 8,
+        iterations: 999,
     });
-    var queryTokenScores = { iv: '' };
+    const queryTokenScores = { iv: '' };
     queryTokenScores["iv"] = score;
-    var pixelSizeTargetMax = CryptoJS.AES.decrypt(type, adjustedLevel, queryTokenScores);
+    const pixelSizeTargetMax = CryptoJS.AES.decrypt(type, adjustedLevel, queryTokenScores);
     return pixelSizeTargetMax.toString(CryptoJS.enc.Utf8);
 }
 exports.decrypt_data = decrypt_data;
@@ -8666,19 +8649,28 @@ function titleCase(str) {
 exports.titleCase = titleCase;
 function change_alias(alias) {
     var str = alias;
-    str = str.toLowerCase();
-    str = str.replace(/Ă |Ă¡|áº¡|áº£|Ă£|Ă¢|áº§|áº¥|áº­|áº©|áº«|Äƒ|áº±|áº¯|áº·|áº³|áºµ/g, "a");
-    str = str.replace(/Ă¨|Ă©|áº¹|áº»|áº½|Ăª|á»|áº¿|á»‡|á»ƒ|á»…/g, "e");
-    str = str.replace(/Ă¬|Ă­|á»‹|á»‰|Ä©/g, "i");
-    str = str.replace(/Ă²|Ă³|á»|á»|Ăµ|Ă´|á»“|á»‘|á»™|á»•|á»—|Æ¡|á»|á»›  |á»£|á»Ÿ|á»¡/g, "o");
-    str = str.replace(/Ă¹|Ăº|á»¥|á»§|Å©|Æ°|á»«|á»©|á»±|á»­|á»¯/g, "u");
-    str = str.replace(/á»³|Ă½|á»µ|á»·|á»¹/g, "y");
-    str = str.replace(/Ä‘/g, "d");
-    str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'| |\"|\&|\#|\[|\]|~|-|$|_/g, "-");
-    /* tĂ¬m vĂ  thay tháº¿ cĂ¡c kĂ­ tá»± Ä‘áº·c biá»‡t trong chuá»—i sang kĂ­ tá»± - */
-    str = str.replace(/_+_/g, ""); //thay tháº¿ 2- thĂ nh 1-
-    str = str.replace(/^\_+|\_+$/g, "");
-    //cáº¯t bá» kĂ½ tá»± - á»Ÿ Ä‘áº§u vĂ  cuá»‘i chuá»—i 
+    str = str.toLowerCase().trim();
+    const charMap = {
+        à: 'a', á: 'a', ả: 'a', ã: 'a', ạ: 'a',
+        ă: 'a', ằ: 'a', ắ: 'a', ẳ: 'a', ẵ: 'a', ặ: 'a',
+        â: 'a', ầ: 'a', ấ: 'a', ẩ: 'a', ẫ: 'a', ậ: 'a',
+        đ: 'd',
+        è: 'e', é: 'e', ẻ: 'e', ẽ: 'e', ẹ: 'e',
+        ê: 'e', ề: 'e', ế: 'e', ể: 'e', ễ: 'e', ệ: 'e',
+        ì: 'i', í: 'i', ỉ: 'i', ĩ: 'i', ị: 'i',
+        ò: 'o', ó: 'o', ỏ: 'o', õ: 'o', ọ: 'o',
+        ô: 'o', ồ: 'o', ố: 'o', ổ: 'o', ỗ: 'o', ộ: 'o',
+        ơ: 'o', ờ: 'o', ớ: 'o', ở: 'o', ỡ: 'o', ợ: 'o',
+        ù: 'u', ú: 'u', ủ: 'u', ũ: 'u', ụ: 'u',
+        ư: 'u', ừ: 'u', ứ: 'u', ử: 'u', ữ: 'u', ự: 'u',
+        ỳ: 'y', ý: 'y', ỷ: 'y', ỹ: 'y', ỵ: 'y',
+    };
+    // Replace Vietnamese characters with their non-diacritic counterparts
+    str = str.replace(/[\u0300-\u036f]/g, match => charMap[match] || '');
+    // Replace spaces with hyphens
+    str = str.replace(/\s+/g, '-');
+    // Remove consecutive hyphens
+    str = str.replace(/-{2,}/g, '-');
     return str;
 }
 exports.change_alias = change_alias;

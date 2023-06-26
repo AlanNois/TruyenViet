@@ -8272,13 +8272,13 @@ class Vcomycs extends paperback_extensions_common_1.Source {
             const data = yield this.requestManager.schedule(request, 1);
             const $ = this.cheerio.load(data.data);
             const chapters = [];
-            const el = $("tbody td a");
+            const el = $("tbody tr");
             el.each((_, e) => {
                 var _a;
-                const id = $(e).attr("href").split('/').slice(-2).join('/');
-                const chapNum = Number((_a = $(e).text().trim().match(/Chap.+/)) === null || _a === void 0 ? void 0 : _a[0].split(" ")[1]);
-                const name = $($('span', e)[0]).text().trim();
-                const time = $('tr > td.hidden-xs.hidden-sm', e).text().trim().split('/');
+                const id = $('td a', e).attr("href").split('/').slice(-2).join('/');
+                const chapNum = Number((_a = $('td a', e).text().trim().match(/Chap.+/)) === null || _a === void 0 ? void 0 : _a[0].split(" ")[1]);
+                const name = $($('td a span', e)[0]).text().trim();
+                const time = $('td:last-child', e).text().trim().split('/');
                 chapters.push(createChapter({
                     id,
                     chapNum,

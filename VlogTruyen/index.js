@@ -1355,7 +1355,7 @@ const VlogTruyenParser_1 = require("./VlogTruyenParser");
 const method = 'GET';
 const DOMAIN = 'https://vlogtruyen5.net';
 exports.VlogTruyenInfo = {
-    version: '1.1.2',
+    version: '1.1.3',
     name: 'VlogTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
