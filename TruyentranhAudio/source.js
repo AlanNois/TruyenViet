@@ -378,7 +378,6 @@ exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = v
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://tutientruyen.xyz/';
-const userAgentRandomizer = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`;
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
@@ -666,7 +665,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             url: DOMAIN,
             method: 'GET',
             headers: {
-                'user-agent': userAgentRandomizer,
+                'user-agent': 'Mozilla/5.0',
             },
         });
     }
