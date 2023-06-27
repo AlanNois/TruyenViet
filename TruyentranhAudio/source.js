@@ -378,6 +378,7 @@ exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = v
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://tutientruyen.xyz/';
+const userAgentRandomizer = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1';
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
@@ -660,13 +661,19 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             mangaUpdatesFoundCallback(createMangaUpdates(returnObject));
         });
     }
+    constructHeaders(headers, refererPath) {
+        headers = headers !== null && headers !== void 0 ? headers : {};
+        // if (userAgentRandomizer !== '') {
+        headers['user-agent'] = userAgentRandomizer;
+        // }
+        headers['referer'] = `${DOMAIN}${refererPath !== null && refererPath !== void 0 ? refererPath : ''}`;
+        return headers;
+    }
     getCloudflareBypassRequest() {
         return createRequestObject({
-            url: DOMAIN,
+            url: `${DOMAIN}`,
             method: 'GET',
-            headers: {
-                'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1',
-            },
+            headers: this.constructHeaders()
         });
     }
     CloudFlareError(status) {
