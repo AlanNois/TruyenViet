@@ -665,13 +665,13 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             url: DOMAIN,
             method: 'GET',
             headers: {
-                'user-agent': 'Mozilla/5.0',
+                'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1',
             },
         });
     }
     CloudFlareError(status) {
         if (status == 503 || status == 403) {
-            throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to the homepage of ${TruyentranhAudio.name} and press the cloud icon.`);
+            throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to setting of ${TruyentranhAudio.name} source and press the Cloudflare Bypass.`);
         }
     }
 }
