@@ -428,7 +428,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             }
         });
     }
-    getMangaShareUrl(mangaId) { return `${DOMAIN}truyen-tranh/${mangaId}`; }
+    getMangaShareUrl(mangaId) { return `${DOMAIN}${mangaId}`; }
     ;
     fetchData(url) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -442,21 +442,21 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
     }
     getMangaDetails(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `${DOMAIN}truyen-tranh/${mangaId}`;
+            const url = `${DOMAIN}${mangaId}`;
             const $ = yield this.fetchData(url);
             return this.parser.parseMangaDetails($, mangaId);
         });
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `${DOMAIN}truyen-tranh/${mangaId}`;
+            const url = `${DOMAIN}${mangaId}`;
             const $ = yield this.fetchData(url);
             return this.parser.parseChapterList($, mangaId);
         });
     }
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `${DOMAIN}truyen-tranh/${chapterId}`;
+            const url = `${DOMAIN}${chapterId}`;
             const $ = yield this.fetchData(url);
             const pages = this.parser.parseChapterDetails($);
             return createChapterDetails({
@@ -833,7 +833,7 @@ class Parser {
                 return;
             featuredItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : `${DOMAIN}${image}`,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -844,7 +844,7 @@ class Parser {
         const viewestItems = [];
         $('div.item', 'div.row').slice(0, 20).each((_, manga) => {
             var _a;
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
+            const title = $('figure > figcaption > h3 > a', manga).text().trim();
             const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
