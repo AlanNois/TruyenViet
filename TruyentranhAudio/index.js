@@ -661,24 +661,18 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             mangaUpdatesFoundCallback(createMangaUpdates(returnObject));
         });
     }
-    constructHeaders(headers, refererPath) {
-        headers = headers !== null && headers !== void 0 ? headers : {};
-        if (userAgentRandomizer !== '') {
-            headers['user-agent'] = userAgentRandomizer;
-        }
-        headers['referer'] = `${DOMAIN}${refererPath !== null && refererPath !== void 0 ? refererPath : ''}`;
-        return headers;
-    }
     getCloudflareBypassRequest() {
         return createRequestObject({
             url: DOMAIN,
             method: 'GET',
-            headers: this.constructHeaders()
+            headers: {
+                'user-agent': userAgentRandomizer,
+            },
         });
     }
     CloudFlareError(status) {
         if (status == 503 || status == 403) {
-            throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to the homepage of <${TruyentranhAudio.name}> and press the cloud icon.`);
+            throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to the homepage of ${TruyentranhAudio.name} and press the cloud icon.`);
         }
     }
 }
