@@ -519,7 +519,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             const sections = [
                 createHomeSection({ id: 'featured', title: "Truyện Đề Cử", type: paperback_extensions_common_1.HomeSectionType.featured }),
                 createHomeSection({ id: 'viewest', title: "Truyện Xem Nhiều Nhất", view_more: true }),
-                createHomeSection({ id: 'hot', title: "Truyện Hot Nhất", view_more: true }),
+                // createHomeSection({ id: 'hot', title: "Truyện Hot Nhất", view_more: true }),
                 createHomeSection({ id: 'new_updated', title: "Truyện Mới Cập Nhật", view_more: true }),
                 createHomeSection({ id: 'new_added', title: "Truyện Mới Thêm Gần Đây", view_more: true }),
                 createHomeSection({ id: 'full', title: "Truyện Đã Hoàn Thành", view_more: true }),
