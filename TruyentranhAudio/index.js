@@ -444,7 +444,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `${DOMAIN}${mangaId}`;
             const $ = yield this.fetchData(url);
-            return this.parser.parseMangaDetails($, mangaId);
+            return this.parser.parseMangaDetails($, mangaId, DOMAIN);
         });
     }
     getChapters(mangaId) {
@@ -506,7 +506,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             const url = `${DOMAIN}${query.title ? '/tim-truyen' : '/tim-truyen-nang-cao'}`;
             const param = encodeURI(`?keyword=${(_d = query.title) !== null && _d !== void 0 ? _d : ''}&genres=${search.genres}&gender=${search.gender}&status=${search.status}&minchapter=${search.minchapter}&sort=${search.sort}&page=${page}`);
             const $ = yield this.fetchData(url + param);
-            const tiles = this.parser.parseSearchResults($);
+            const tiles = this.parser.parseSearchResults($, DOMAIN);
             metadata = !exports.isLastPage($) ? { page: page + 1 } : undefined;
             return createPagedResults({
                 results: tiles,
@@ -693,7 +693,7 @@ class Parser {
             return new Date(`${split[1]}/${split[0]}/20${split[2]}`);
         }
     }
-    parseMangaDetails($, mangaId) {
+    parseMangaDetails($, mangaId, DOMAIN) {
         const tags = [];
         $('li.kind > p.col-xs-8 > a').each((_, obj) => {
             var _a, _b;
@@ -702,14 +702,14 @@ class Parser {
             tags.push(createTag({ label, id }));
         });
         const creator = $('ul.list-info > li.author > p.col-xs-8').text();
-        const image = 'http:' + $('div.col-image > img').attr('src');
+        const image = $('div.col-image > img').attr('src');
         return createManga({
             id: mangaId,
             author: creator,
             artist: creator,
             desc: $('div.detail-content > p').text(),
             titles: [$('h1.title-detail').text()],
-            image: image !== null && image !== void 0 ? image : '',
+            image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
             status: $('li.status > p.col-xs-8').text().toLowerCase().includes('hoàn thành') ? 0 : 1,
             rating: parseFloat($('span[itemprop="ratingValue"]').text()),
             hentai: false,
@@ -746,7 +746,7 @@ class Parser {
         });
         return pages;
     }
-    parseSearchResults($) {
+    parseSearchResults($, DOMAIN) {
         const tiles = [];
         $('div.item', 'div.row').each((_, manga) => {
             var _a;
@@ -758,7 +758,7 @@ class Parser {
                 return;
             tiles.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -901,7 +901,7 @@ class Parser {
         const newAddedItems = [];
         $('div.item', 'div.row').slice(0, 20).each((_, manga) => {
             var _a;
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
+            const title = $('figure > figcaption > h3 > a', manga).text().trim();
             const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
@@ -920,7 +920,7 @@ class Parser {
         const fullItems = [];
         $('div.item', 'div.row').slice(0, 20).each((_, manga) => {
             var _a;
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
+            const title = $('figure > figcaption > h3 > a', manga).text().trim();
             const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
