@@ -374,7 +374,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TruyentranhAudio = exports.NetTruyenInfo = exports.isLastPage = void 0;
+exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://tutientruyen.xyz/';
@@ -387,7 +387,7 @@ exports.isLastPage = ($) => {
     }
     return true;
 };
-exports.NetTruyenInfo = {
+exports.TruyentranhAudioInfo = {
     version: '1.2.0',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
