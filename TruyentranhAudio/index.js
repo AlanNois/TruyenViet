@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.TruyentranhAudioInfo = {
-    version: '1.2.0',
+    version: '1.2.1',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -534,9 +534,9 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                     case 'viewest':
                         url = `${DOMAIN}tim-truyen?status=-1&sort=10`;
                         break;
-                    case 'hot':
-                        url = `${DOMAIN}hot`;
-                        break;
+                    // case 'hot':
+                    //     url = `${DOMAIN}hot`;
+                    //     break;
                     case 'new_updated':
                         url = `${DOMAIN}`;
                         break;
@@ -544,7 +544,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                         url = `${DOMAIN}tim-truyen?status=-1&sort=15`;
                         break;
                     case 'full':
-                        url = `${DOMAIN}truyen-full`;
+                        url = `${DOMAIN}tim-truyen/&status=1`;
                         break;
                     default:
                         throw new Error("Invalid homepage section ID");
@@ -552,22 +552,22 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                 const $ = yield this.fetchData(url);
                 switch (section.id) {
                     case 'featured':
-                        section.items = this.parser.parseFeaturedSection($);
+                        section.items = this.parser.parseFeaturedSection($, DOMAIN);
                         break;
                     case 'viewest':
-                        section.items = this.parser.parsePopularSection($);
+                        section.items = this.parser.parsePopularSection($, DOMAIN);
                         break;
-                    case 'hot':
-                        section.items = this.parser.parseHotSection($);
-                        break;
+                    // case 'hot':
+                    //     section.items = this.parser.parseHotSection($);
+                    //     break;
                     case 'new_updated':
-                        section.items = this.parser.parseNewUpdatedSection($);
+                        section.items = this.parser.parseNewUpdatedSection($, DOMAIN);
                         break;
                     case 'new_added':
-                        section.items = this.parser.parseNewAddedSection($);
+                        section.items = this.parser.parseNewAddedSection($, DOMAIN);
                         break;
                     case 'full':
-                        section.items = this.parser.parseFullSection($);
+                        section.items = this.parser.parseFullSection($, DOMAIN);
                         break;
                 }
                 sectionCallback(section);
@@ -585,10 +585,10 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                     param = `?status=-1&sort=10&page=${page}`;
                     url = `${DOMAIN}tim-truyen`;
                     break;
-                case "hot":
-                    param = `?page=${page}`;
-                    url = `${DOMAIN}hot`;
-                    break;
+                // case "hot":
+                //     param = `?page=${page}`;
+                //     url = `${DOMAIN}hot`;
+                //     break;
                 case "new_updated":
                     param = `?page=${page}`;
                     url = DOMAIN;
@@ -599,7 +599,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                     break;
                 case "full":
                     param = `?page=${page}`;
-                    url = `${DOMAIN}truyen-full`;
+                    url = `${DOMAIN}tim-truyen/&status=1`;
                     break;
                 default:
                     throw new Error("Requested to getViewMoreItems for a section ID which doesn't exist");
@@ -821,26 +821,26 @@ class Parser {
         ];
         return tagSections;
     }
-    parseFeaturedSection($) {
+    parseFeaturedSection($, DOMAIN) {
         const featuredItems = [];
         $('div.item', 'div.altcontent1').each((_, manga) => {
             var _a;
             const title = $('.slide-caption > h3 > a', manga).text();
             const id = (_a = $('a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
-            const image = $('a > img.lazyOwl', manga).attr('data-src');
+            const image = $('a > img.lazyOwl', manga).attr('src');
             const subtitle = $('.slide-caption > a', manga).text().trim() + ' - ' + $('.slide-caption > .time', manga).text().trim();
             if (!id || !title)
                 return;
             featuredItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
         });
         return featuredItems;
     }
-    parsePopularSection($) {
+    parsePopularSection($, DOMAIN) {
         const viewestItems = [];
         $('div.item', 'div.row').slice(0, 20).each((_, manga) => {
             var _a;
@@ -852,7 +852,7 @@ class Parser {
                 return;
             viewestItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -878,7 +878,7 @@ class Parser {
         });
         return topWeek;
     }
-    parseNewUpdatedSection($) {
+    parseNewUpdatedSection($, DOMAIN) {
         const newUpdatedItems = [];
         $('div.item', 'div.row').slice(0, 20).each((_, manga) => {
             var _a;
@@ -890,14 +890,14 @@ class Parser {
                 return;
             newUpdatedItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
         });
         return newUpdatedItems;
     }
-    parseNewAddedSection($) {
+    parseNewAddedSection($, DOMAIN) {
         const newAddedItems = [];
         $('div.item', 'div.row').slice(0, 20).each((_, manga) => {
             var _a;
@@ -909,14 +909,14 @@ class Parser {
                 return;
             newAddedItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
         });
         return newAddedItems;
     }
-    parseFullSection($) {
+    parseFullSection($, DOMAIN) {
         const fullItems = [];
         $('div.item', 'div.row').slice(0, 20).each((_, manga) => {
             var _a;
@@ -928,7 +928,7 @@ class Parser {
                 return;
             fullItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
