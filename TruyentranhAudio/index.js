@@ -378,6 +378,7 @@ exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = v
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://tutientruyen.xyz/';
+const userAgentRandomizer = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`;
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
@@ -404,6 +405,10 @@ exports.TruyentranhAudioInfo = {
         {
             text: 'Notifications',
             type: paperback_extensions_common_1.TagType.GREEN
+        },
+        {
+            text: 'Cloudflare',
+            type: paperback_extensions_common_1.TagType.RED
         }
     ]
 };
@@ -437,6 +442,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                 method: "GET",
             });
             const data = yield this.requestManager.schedule(request, 1);
+            this.CloudFlareError(data.status);
             return this.cheerio.load(data.data);
         });
     }
@@ -610,8 +616,9 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                 param,
             });
             const response = yield this.requestManager.schedule(request, 1);
+            this.CloudFlareError(response.status);
             const $ = this.cheerio.load(response.data);
-            const manga = this.parser.parseViewMoreItems($);
+            const manga = this.parser.parseViewMoreItems($, DOMAIN);
             metadata = exports.isLastPage($) ? undefined : { page: page + 1 };
             return createPagedResults({
                 results: manga,
@@ -653,6 +660,26 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             const returnObject = this.parser.parseUpdatedManga(updateManga, time, ids);
             mangaUpdatesFoundCallback(createMangaUpdates(returnObject));
         });
+    }
+    constructHeaders(headers, refererPath) {
+        headers = headers !== null && headers !== void 0 ? headers : {};
+        if (userAgentRandomizer !== '') {
+            headers['user-agent'] = userAgentRandomizer;
+        }
+        headers['referer'] = `${DOMAIN}${refererPath !== null && refererPath !== void 0 ? refererPath : ''}`;
+        return headers;
+    }
+    getCloudflareBypassRequest() {
+        return createRequestObject({
+            url: DOMAIN,
+            method: 'GET',
+            headers: this.constructHeaders()
+        });
+    }
+    CloudFlareError(status) {
+        if (status == 503 || status == 403) {
+            throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to the homepage of <${TruyentranhAudio.name}> and press the cloud icon.`);
+        }
     }
 }
 exports.TruyentranhAudio = TruyentranhAudio;
@@ -935,12 +962,12 @@ class Parser {
         });
         return fullItems;
     }
-    parseViewMoreItems($) {
+    parseViewMoreItems($, DOMAIN) {
         const mangas = [];
         const collectedIds = new Set();
         $('div.item', 'div.row').each((_, manga) => {
             var _a;
-            const title = $('figure.clearfix > figcaption > h3 > a', manga).first().text();
+            const title = $('figure > figcaption > h3 > a', manga).text().trim();
             const id = (_a = $('figure.clearfix > div.image > a', manga).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop();
             const image = $('figure.clearfix > div.image > a > img', manga).first().attr('data-original');
             const subtitle = $("figure.clearfix > figcaption > ul > li.chapter:nth-of-type(1) > a", manga).last().text().trim();
@@ -949,7 +976,7 @@ class Parser {
             if (!collectedIds.has(id)) {
                 mangas.push(createMangaTile({
                     id,
-                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
                     title: createIconText({ text: title }),
                     subtitleText: createIconText({ text: subtitle }),
                 }));
