@@ -516,62 +516,88 @@ class NetTruyen extends paperback_extensions_common_1.Source {
     }
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            const sections = [
-                createHomeSection({ id: 'featured', title: "Truyện Đề Cử", type: paperback_extensions_common_1.HomeSectionType.featured }),
-                createHomeSection({ id: 'viewest', title: "Truyện Xem Nhiều Nhất", view_more: true }),
-                createHomeSection({ id: 'hot', title: "Truyện Hot Nhất", view_more: true }),
-                createHomeSection({ id: 'new_updated', title: "Truyện Mới Cập Nhật", view_more: true }),
-                createHomeSection({ id: 'new_added', title: "Truyện Mới Thêm Gần Đây", view_more: true }),
-                createHomeSection({ id: 'full', title: "Truyện Đã Hoàn Thành", view_more: true }),
-            ];
-            for (const section of sections) {
-                sectionCallback(section);
-                let url;
-                switch (section.id) {
-                    case 'featured':
-                        url = `${DOMAIN}`;
-                        break;
-                    case 'viewest':
-                        url = `${DOMAIN}tim-truyen?status=-1&sort=10`;
-                        break;
-                    case 'hot':
-                        url = `${DOMAIN}hot`;
-                        break;
-                    case 'new_updated':
-                        url = `${DOMAIN}`;
-                        break;
-                    case 'new_added':
-                        url = `${DOMAIN}tim-truyen?status=-1&sort=15`;
-                        break;
-                    case 'full':
-                        url = `${DOMAIN}truyen-full`;
-                        break;
-                    default:
-                        throw new Error("Invalid homepage section ID");
-                }
-                const $ = yield this.fetchData(url);
-                switch (section.id) {
-                    case 'featured':
-                        section.items = this.parser.parseFeaturedSection($);
-                        break;
-                    case 'viewest':
-                        section.items = this.parser.parsePopularSection($);
-                        break;
-                    case 'hot':
-                        section.items = this.parser.parseHotSection($);
-                        break;
-                    case 'new_updated':
-                        section.items = this.parser.parseNewUpdatedSection($);
-                        break;
-                    case 'new_added':
-                        section.items = this.parser.parseNewAddedSection($);
-                        break;
-                    case 'full':
-                        section.items = this.parser.parseFullSection($);
-                        break;
-                }
-                sectionCallback(section);
-            }
+            let featured = createHomeSection({
+                id: 'featured',
+                title: "Truyện Đề Cử",
+                type: paperback_extensions_common_1.HomeSectionType.featured
+            });
+            let viewest = createHomeSection({
+                id: 'viewest',
+                title: "Truyện Xem Nhiều Nhất",
+                view_more: true,
+            });
+            let hot = createHomeSection({
+                id: 'hot',
+                title: "Truyện Hot Nhất",
+                view_more: true,
+            });
+            let newUpdated = createHomeSection({
+                id: 'new_updated',
+                title: "Truyện Mới Cập Nhật",
+                view_more: true,
+            });
+            let newAdded = createHomeSection({
+                id: 'new_added',
+                title: "Truyện Mới Thêm Gần Đây",
+                view_more: true,
+            });
+            //Load empty sections
+            sectionCallback(featured);
+            sectionCallback(viewest);
+            sectionCallback(hot);
+            sectionCallback(newUpdated);
+            sectionCallback(newAdded);
+            ///Get the section data
+            //Featured
+            let url = `${DOMAIN}`;
+            let request = createRequestObject({
+                url: url,
+                method: "GET",
+            });
+            let data = yield this.requestManager.schedule(request, 1);
+            let $ = this.cheerio.load(data.data);
+            featured.items = this.parser.parseFeaturedSection($);
+            sectionCallback(featured);
+            //View
+            url = `${DOMAIN}tim-truyen?status=-1&sort=10`;
+            request = createRequestObject({
+                url: url,
+                method: "GET",
+            });
+            data = yield this.requestManager.schedule(request, 1);
+            $ = this.cheerio.load(data.data);
+            viewest.items = this.parser.parsePopularSection($);
+            sectionCallback(viewest);
+            //Hot
+            url = `${DOMAIN}hot`;
+            request = createRequestObject({
+                url: url,
+                method: "GET",
+            });
+            data = yield this.requestManager.schedule(request, 1);
+            $ = this.cheerio.load(data.data);
+            hot.items = this.parser.parseHotSection($);
+            sectionCallback(hot);
+            //New Updates
+            url = `${DOMAIN}`;
+            request = createRequestObject({
+                url: url,
+                method: "GET",
+            });
+            data = yield this.requestManager.schedule(request, 1);
+            $ = this.cheerio.load(data.data);
+            newUpdated.items = this.parser.parseNewUpdatedSection($);
+            sectionCallback(newUpdated);
+            //New added
+            url = `${DOMAIN}tim-truyen?status=-1&sort=15`;
+            request = createRequestObject({
+                url: url,
+                method: "GET",
+            });
+            data = yield this.requestManager.schedule(request, 1);
+            $ = this.cheerio.load(data.data);
+            newAdded.items = this.parser.parseNewAddedSection($);
+            sectionCallback(newAdded);
         });
     }
     getViewMoreItems(homepageSectionId, metadata) {
