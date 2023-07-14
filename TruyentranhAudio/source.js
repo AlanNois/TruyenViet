@@ -378,7 +378,6 @@ exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = v
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://tutientruyen.xyz/';
-const userAgentRandomizer = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1';
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
@@ -465,6 +464,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             const url = `${DOMAIN}${chapterId}`;
             const $ = yield this.fetchData(url);
             const pages = this.parser.parseChapterDetails($);
+            console.log(pages);
             return createChapterDetails({
                 pages: pages,
                 longStrip: false,
@@ -661,24 +661,9 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             mangaUpdatesFoundCallback(createMangaUpdates(returnObject));
         });
     }
-    constructHeaders(headers, refererPath) {
-        headers = headers !== null && headers !== void 0 ? headers : {};
-        // if (userAgentRandomizer !== '') {
-        headers['user-agent'] = userAgentRandomizer;
-        // }
-        headers['referer'] = `${DOMAIN}${refererPath !== null && refererPath !== void 0 ? refererPath : ''}`;
-        return headers;
-    }
-    getCloudflareBypassRequest() {
-        return createRequestObject({
-            url: `${DOMAIN}`,
-            method: 'GET',
-            headers: this.constructHeaders()
-        });
-    }
     CloudFlareError(status) {
         if (status == 503 || status == 403) {
-            throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to setting of ${TruyentranhAudio.name} source and press the Cloudflare Bypass.`);
+            throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to home page ${TruyentranhAudio.name} source and press the cloud icon.`);
         }
     }
 }
@@ -705,6 +690,9 @@ class Parser {
         }
         else if (timeAgo.includes('ngày')) {
             return new Date(Date.now() - trimmed * 86400000);
+        }
+        else if (timeAgo.includes('tuần')) {
+            return new Date(Date.now() - trimmed * 604800000);
         }
         else if (timeAgo.includes('năm')) {
             return new Date(Date.now() - trimmed * 31556952000);
@@ -736,7 +724,7 @@ class Parser {
             artist: creator,
             desc: $('div.detail-content > p').text(),
             titles: [$('h1.title-detail').text()],
-            image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+            image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
             status: $('li.status > p.col-xs-8').text().toLowerCase().includes('hoàn thành') ? 0 : 1,
             rating: parseFloat($('span[itemprop="ratingValue"]').text()),
             hentai: false,
@@ -747,12 +735,12 @@ class Parser {
         const chapters = [];
         $('div.list-chapter > nav > ul > li.row:not(.heading)').each((_, obj) => {
             const time = $('div.col-xs-4', obj).text();
-            const group = $('div.col-xs-3', obj).text();
+            const group = $('div.col-xs-2', obj).text();
             const name = $('div.chapter a', obj).text();
             const chapNum = parseFloat($('div.chapter a', obj).text().split(' ')[1]);
             const timeFinal = this.convertTime(time);
             chapters.push(createChapter({
-                id: $('div.chapter a', obj).attr('href').split('/').slice(4, 7).join('/'),
+                id: $('div.chapter a', obj).attr('href'),
                 chapNum,
                 name: name.includes(':') ? name.split('Chapter ' + chapNum + ':')[1].trim() : '',
                 mangaId,
@@ -769,7 +757,7 @@ class Parser {
             if (!obj.attribs['data-original'])
                 return;
             const link = obj.attribs['data-original'];
-            pages.push(link.indexOf('http') === -1 ? 'http:' + link : link);
+            pages.push(!link ? "https://i.imgur.com/GYUxEX8.png" : link);
         });
         return pages;
     }
@@ -785,7 +773,7 @@ class Parser {
                 return;
             tiles.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -860,7 +848,7 @@ class Parser {
                 return;
             featuredItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -879,7 +867,7 @@ class Parser {
                 return;
             viewestItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -917,7 +905,7 @@ class Parser {
                 return;
             newUpdatedItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -936,7 +924,7 @@ class Parser {
                 return;
             newAddedItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -955,7 +943,7 @@ class Parser {
                 return;
             fullItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -976,7 +964,7 @@ class Parser {
             if (!collectedIds.has(id)) {
                 mangas.push(createMangaTile({
                     id,
-                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes(DOMAIN) ? image : `${DOMAIN}${image}`,
+                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : image.includes('http') ? image : `${DOMAIN}${image}`,
                     title: createIconText({ text: title }),
                     subtitleText: createIconText({ text: subtitle }),
                 }));

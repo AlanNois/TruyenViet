@@ -1352,7 +1352,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TruyenQQ = exports.TruyenQQInfo = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyenQQParser_1 = require("./TruyenQQParser");
-const DOMAIN = 'http://truyenqqhot.com/';
+const DOMAIN = 'http://truyenqqq.vn/';
 const method = 'GET';
 exports.TruyenQQInfo = {
     version: '1.0.0',
@@ -1384,7 +1384,8 @@ class TruyenQQ extends paperback_extensions_common_1.Source {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), {
-                        'referer': DOMAIN
+                        'referer': DOMAIN,
+                        "user-agent": "Mozilla/5.0"
                     });
                     return request;
                 }),
@@ -1420,7 +1421,7 @@ class TruyenQQ extends paperback_extensions_common_1.Source {
                 creator.push(name);
             }
             status = $('.txt > p:nth-of-type(2)').text().toLowerCase().includes("đang cập nhật") ? 1 : 0;
-            const image = (_b = $('.left > img').attr('src')) !== null && _b !== void 0 ? _b : "";
+            const image = (_b = $('.book_avatar > img').attr('src')) !== null && _b !== void 0 ? _b : "";
             return createManga({
                 id: mangaId,
                 author: creator.join(', '),
@@ -1560,11 +1561,11 @@ class TruyenQQ extends paperback_extensions_common_1.Source {
             let popular = [];
             data = yield this.requestManager.schedule(request, 1);
             $ = this.cheerio.load(data.data);
-            for (let manga of $('li', '.list-stories').toArray().splice(0, 20)) {
-                let title = $(`h3.title-book > a`, manga).text().trim();
-                let subtitle = $(`.episode-book > a`, manga).text().trim();
-                let image = (_d = $(`a > img`, manga).attr("src")) !== null && _d !== void 0 ? _d : "";
-                let id = (_f = (_e = $(`.story-item > a`, manga).attr("href")) === null || _e === void 0 ? void 0 : _e.split("/").pop()) !== null && _f !== void 0 ? _f : title;
+            for (let manga of $('li', '.list_grid').toArray().splice(0, 20)) {
+                let title = $(`.book_name > h3 > a`, manga).text().trim();
+                let subtitle = $(`.last_chapter > a`, manga).text().trim();
+                let image = (_d = $(`.book_avatar > a > img`, manga).attr("src")) !== null && _d !== void 0 ? _d : "";
+                let id = (_f = (_e = $(`.book_avatar > a`, manga).attr("href")) === null || _e === void 0 ? void 0 : _e.split("/").pop()) !== null && _f !== void 0 ? _f : title;
                 // if (!id || !title) continue;
                 popular.push(createMangaTile({
                     id: id,
@@ -1584,11 +1585,11 @@ class TruyenQQ extends paperback_extensions_common_1.Source {
             let newUpdatedItems = [];
             data = yield this.requestManager.schedule(request, 1);
             $ = this.cheerio.load(data.data);
-            for (let obj of $('li', '.latest').toArray().splice(0, 20)) {
-                let title = $(`h3.title-book > a`, obj).text().trim();
-                let subtitle = $(`.episode-book > a`, obj).text().trim();
-                let image = (_g = $(`a > img`, obj).attr("src")) !== null && _g !== void 0 ? _g : "";
-                let id = (_j = (_h = $(`a`, obj).attr("href")) === null || _h === void 0 ? void 0 : _h.split("/").pop()) !== null && _j !== void 0 ? _j : title;
+            for (let obj of $('li', '#main_homepage > div > .list_grid').toArray().splice(0, 20)) {
+                let title = $(`.book_name > h3 > a`, obj).text().trim();
+                let subtitle = $(`.last_chapter > a`, obj).text().trim();
+                let image = (_g = $(`.book_avatar > a > img`, obj).attr("src")) !== null && _g !== void 0 ? _g : "";
+                let id = (_j = (_h = $(`.book_avatar > a`, obj).attr("href")) === null || _h === void 0 ? void 0 : _h.split("/").pop()) !== null && _j !== void 0 ? _j : title;
                 // if (!id || !subtitle) continue;
                 newUpdatedItems.push(createMangaTile({
                     id: id,
@@ -1612,11 +1613,12 @@ class TruyenQQ extends paperback_extensions_common_1.Source {
             let newAddItems = [];
             data = yield this.requestManager.schedule(request, 1);
             $ = this.cheerio.load(data.data);
-            for (let manga of $('li', '.list-stories').toArray().splice(0, 20)) {
-                let title = $(`h3.title-book > a`, manga).text().trim();
-                let subtitle = $(`.episode-book > a`, manga).text().trim();
-                let image = (_k = $(`a > img`, manga).attr("src")) !== null && _k !== void 0 ? _k : "";
-                let id = (_m = (_l = $(`a`, manga).attr("href")) === null || _l === void 0 ? void 0 : _l.split("/").pop()) !== null && _m !== void 0 ? _m : title;
+            for (let manga of $('li', '.list-grid').toArray().splice(0, 20)) {
+                let title = $(`.book_name > h3 > a`, manga).text().trim();
+                let subtitle = $(`.last_chapter > a`, manga).text().trim();
+                let image = (_k = $(`.book_avatar > a > img`, manga).attr("src")) !== null && _k !== void 0 ? _k : "";
+                console.log(image);
+                let id = (_m = (_l = $(`.book_avatar > a`, manga).attr("href")) === null || _l === void 0 ? void 0 : _l.split("/").pop()) !== null && _m !== void 0 ? _m : title;
                 // if (!id || !subtitle) continue;
                 newAddItems.push(createMangaTile({
                     id: id,
@@ -1640,11 +1642,11 @@ class TruyenQQ extends paperback_extensions_common_1.Source {
             let boyItems = [];
             data = yield this.requestManager.schedule(request, 1);
             $ = this.cheerio.load(data.data);
-            for (let manga of $('li', '.list-stories').toArray().splice(0, 12)) {
-                let title = $(`h3.title-book > a`, manga).text().trim();
-                let subtitle = $(`.episode-book > a`, manga).text().trim();
-                let image = (_o = $(`a > img`, manga).attr("src")) !== null && _o !== void 0 ? _o : "";
-                let id = (_q = (_p = $(`a`, manga).attr("href")) === null || _p === void 0 ? void 0 : _p.split("/").pop()) !== null && _q !== void 0 ? _q : title;
+            for (let manga of $('li', '.list-grid').toArray().splice(0, 12)) {
+                let title = $(`.book_name > h3 > a`, manga).text().trim();
+                let subtitle = $(`.last_chapter > a`, manga).text().trim();
+                let image = (_o = $(`.book_avatar > a > img`, manga).attr("src")) !== null && _o !== void 0 ? _o : "";
+                let id = (_q = (_p = $(`.book_avatar > a`, manga).attr("href")) === null || _p === void 0 ? void 0 : _p.split("/").pop()) !== null && _q !== void 0 ? _q : title;
                 // if (!id || !subtitle) continue;
                 boyItems.push(createMangaTile({
                     id: id,
@@ -1668,11 +1670,11 @@ class TruyenQQ extends paperback_extensions_common_1.Source {
             let girlItems = [];
             data = yield this.requestManager.schedule(request, 1);
             $ = this.cheerio.load(data.data);
-            for (let manga of $('li', '.list-stories').toArray().splice(0, 12)) {
-                let title = $(`h3.title-book > a`, manga).text().trim();
-                let subtitle = $(`.episode-book > a`, manga).text().trim();
-                let image = (_r = $(`a > img`, manga).attr("src")) !== null && _r !== void 0 ? _r : "";
-                let id = (_t = (_s = $(`a`, manga).attr("href")) === null || _s === void 0 ? void 0 : _s.split("/").pop()) !== null && _t !== void 0 ? _t : title;
+            for (let manga of $('li', '.list-grid').toArray().splice(0, 12)) {
+                let title = $(`.book_name > h3 > a`, manga).text().trim();
+                let subtitle = $(`.last_chapter > a`, manga).text().trim();
+                let image = (_r = $(`.book_avatar > a > img`, manga).attr("src")) !== null && _r !== void 0 ? _r : "";
+                let id = (_t = (_s = $(`.book_avatar > a`, manga).attr("href")) === null || _s === void 0 ? void 0 : _s.split("/").pop()) !== null && _t !== void 0 ? _t : title;
                 // if (!id || !subtitle) continue;
                 girlItems.push(createMangaTile({
                     id: id,
@@ -1908,11 +1910,11 @@ exports.generateSearch = (query) => {
 exports.parseSearch = ($) => {
     var _a, _b, _c;
     const mangas = [];
-    for (let manga of $('li', '.list-stories').toArray()) {
-        let title = $(`h3.title-book > a`, manga).text().trim();
-        let subtitle = $(`.episode-book > a`, manga).text().trim();
-        let image = (_a = $(`a > img`, manga).attr("src")) !== null && _a !== void 0 ? _a : "";
-        let id = (_c = (_b = $(`a`, manga).attr("href")) === null || _b === void 0 ? void 0 : _b.split("/").pop()) !== null && _c !== void 0 ? _c : title;
+    for (let manga of $('li', '.list-grid').toArray()) {
+        let title = $(`.book_name > h3 > a`, manga).text().trim();
+        let subtitle = $(`.last_chapter > a`, manga).text().trim();
+        let image = (_a = $(`.book_avatar > a > img`, manga).attr("src")) !== null && _a !== void 0 ? _a : "";
+        let id = (_c = (_b = $(`.book_avatar > a`, manga).attr("href")) === null || _b === void 0 ? void 0 : _b.split("/").pop()) !== null && _c !== void 0 ? _c : title;
         if (!id || !title)
             continue;
         mangas.push(createMangaTile({
@@ -1928,11 +1930,11 @@ exports.parseViewMore = ($) => {
     var _a, _b, _c;
     const manga = [];
     const collectedIds = [];
-    for (let obj of $('li', '.list-stories').toArray()) {
-        let title = $(`h3.title-book > a`, obj).text().trim();
-        let subtitle = $(`.episode-book > a`, obj).text().trim();
-        let image = (_a = $(`a > img`, obj).attr("src")) !== null && _a !== void 0 ? _a : "";
-        let id = (_c = (_b = $(`a`, obj).attr("href")) === null || _b === void 0 ? void 0 : _b.split("/").pop()) !== null && _c !== void 0 ? _c : title;
+    for (let obj of $('li', '.list-grid').toArray()) {
+        let title = $(`.book_name > h3 > a`, obj).text().trim();
+        let subtitle = $(`.last_chapter > a`, obj).text().trim();
+        let image = (_a = $(`.book_avatar > a > img`, obj).attr("src")) !== null && _a !== void 0 ? _a : "";
+        let id = (_c = (_b = $(`.book_avatar > a`, obj).attr("href")) === null || _b === void 0 ? void 0 : _b.split("/").pop()) !== null && _c !== void 0 ? _c : title;
         if (!id || !title)
             continue;
         if (!collectedIds.includes(id)) {
