@@ -378,6 +378,7 @@ exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = v
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://tutientruyen.xyz/';
+const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1';
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
@@ -388,7 +389,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.TruyentranhAudioInfo = {
-    version: '1.2.1',
+    version: '1.2.2',
     name: 'TruyentranhAudio',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -665,6 +666,16 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
         if (status == 503 || status == 403) {
             throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to home page ${TruyentranhAudio.name} source and press the cloud icon.`);
         }
+    }
+    getCloudflareBypassRequest() {
+        return createRequestObject({
+            url: DOMAIN,
+            method: 'GET',
+            headers: {
+                referer: `${DOMAIN}/`,
+                'user-agent': userAgent,
+            },
+        });
     }
 }
 exports.TruyentranhAudio = TruyentranhAudio;
