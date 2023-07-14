@@ -388,7 +388,7 @@ exports.isLastPage = ($) => {
     return true;
 };
 exports.NetTruyenInfo = {
-    version: '1.1.1',
+    version: '1.1.2',
     name: 'NetTruyen',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -742,7 +742,7 @@ class Parser {
             if (!obj.attribs['data-original'])
                 return;
             const link = obj.attribs['data-original'];
-            pages.push(link.indexOf('http') === -1 ? 'http:' + link : link);
+            pages.push(link.indexOf('https') === -1 ? 'https:' + link : link);
         });
         return pages;
     }
@@ -758,7 +758,7 @@ class Parser {
                 return;
             tiles.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -833,7 +833,7 @@ class Parser {
                 return;
             featuredItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -852,7 +852,7 @@ class Parser {
                 return;
             viewestItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -871,7 +871,7 @@ class Parser {
                 return;
             topWeek.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -890,7 +890,7 @@ class Parser {
                 return;
             newUpdatedItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -909,7 +909,7 @@ class Parser {
                 return;
             newAddedItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -928,7 +928,7 @@ class Parser {
                 return;
             fullItems.push(createMangaTile({
                 id,
-                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle }),
             }));
@@ -949,7 +949,7 @@ class Parser {
             if (!collectedIds.has(id)) {
                 mangas.push(createMangaTile({
                     id,
-                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'http:' + image,
+                    image: !image ? "https://i.imgur.com/GYUxEX8.png" : 'https:' + image,
                     title: createIconText({ text: title }),
                     subtitleText: createIconText({ text: subtitle }),
                 }));
