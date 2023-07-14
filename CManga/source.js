@@ -8194,7 +8194,7 @@ exports.DOMAIN = 'https://cmangaah.com/';
 const method = 'GET';
 let book_id = '';
 exports.CMangaInfo = {
-    version: '1.1.2',
+    version: '1.1.2.0',
     name: 'CManga',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -8276,13 +8276,13 @@ class CManga extends paperback_extensions_common_1.Source {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             console.log(mangaId);
-            const request2 = createRequestObject({
+            var request2 = createRequestObject({
                 url: `${exports.DOMAIN}api/book_chapter?opt1=${book_id}`,
                 method: "GET",
             });
             let data2 = yield this.requestManager.schedule(request2, 1);
-            var json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
-            const chapters = [];
+            let json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
+            let chapters = [];
             for (const obj of json) {
                 const [date, time] = obj.last_update.split(' ');
                 const [year, month, day] = date.split('-');
