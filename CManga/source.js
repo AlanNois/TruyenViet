@@ -8194,7 +8194,7 @@ exports.DOMAIN = 'https://cmangaah.com/';
 const method = 'GET';
 let book_id = '';
 exports.CMangaInfo = {
-    version: '1.1.0',
+    version: '1.1.1',
     name: 'CManga',
     icon: 'icon.png',
     author: 'AlanNois',
