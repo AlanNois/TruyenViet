@@ -8194,7 +8194,7 @@ exports.DOMAIN = 'https://cmangaah.com/';
 const method = 'GET';
 let book_id = '';
 exports.CMangaInfo = {
-    version: '1.1.1',
+    version: '1.1.2',
     name: 'CManga',
     icon: 'icon.png',
     author: 'AlanNois',
@@ -8281,7 +8281,7 @@ class CManga extends paperback_extensions_common_1.Source {
                 method: "GET",
             });
             let data2 = yield this.requestManager.schedule(request2, 1);
-            let json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
+            var json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
             const chapters = [];
             for (const obj of json) {
                 const [date, time] = obj.last_update.split(' ');
