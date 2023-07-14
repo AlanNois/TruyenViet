@@ -702,7 +702,7 @@ class Parser {
             tags.push(createTag({ label, id }));
         });
         const creator = $('ul.list-info > li.author > p.col-xs-8').text();
-        const image = 'http:' + $('div.col-image > img').attr('src');
+        const image = 'https:' + $('div.col-image > img').attr('src');
         return createManga({
             id: mangaId,
             author: creator,
