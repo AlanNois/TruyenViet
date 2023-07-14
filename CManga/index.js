@@ -8187,9 +8187,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CManga = void 0;
+exports.CManga = exports.CMangaInfo = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const CMangaParser_1 = require("./CMangaParser");
+const DOMAIN = 'https://cmangaah.com/';
+exports.CMangaInfo = {
+    version: '1.1.4',
+    name: 'CManga',
+    icon: 'icon.png',
+    author: 'AlanNois',
+    authorWebsite: 'https://github.com/AlanNois/',
+    description: 'Extension that pulls manga from CManga',
+    websiteBaseURL: `${DOMAIN}`,
+    contentRating: paperback_extensions_common_1.ContentRating.MATURE,
+    sourceTags: [
+        {
+            text: "Recommended",
+            type: paperback_extensions_common_1.TagType.BLUE
+        }
+    ]
+};
 class CManga extends paperback_extensions_common_1.Source {
     constructor() {
         super(...arguments);
@@ -8201,7 +8218,7 @@ class CManga extends paperback_extensions_common_1.Source {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), {
-                        'referer': CManga.DOMAIN
+                        'referer': DOMAIN
                     });
                     return request;
                 }),
@@ -8211,19 +8228,19 @@ class CManga extends paperback_extensions_common_1.Source {
             }
         });
     }
-    getMangaShareUrl(mangaId) { return CManga.DOMAIN + mangaId.split("::")[0]; }
+    getMangaShareUrl(mangaId) { return DOMAIN + mangaId; }
     ;
     getMangaDetails(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: CManga.DOMAIN + mangaId,
+                url: DOMAIN + mangaId,
                 method: CManga.method,
             });
             const data = yield this.requestManager.schedule(request, 1);
             let $ = this.cheerio.load(data.data);
             this.book_id = $.html().match(/book_id.+"(.+)"/)[1];
             const request2 = createRequestObject({
-                url: CManga.DOMAIN + "api/book_detail?opt1=" + this.book_id,
+                url: DOMAIN + "api/book_detail?opt1=" + this.book_id,
                 method: CManga.method,
             });
             const data2 = yield this.requestManager.schedule(request2, 1);
@@ -8246,7 +8263,7 @@ class CManga extends paperback_extensions_common_1.Source {
                 artist: creator,
                 desc: CMangaParser_1.decodeHTMLEntity(desc),
                 titles: [CMangaParser_1.titleCase($("h1").text())],
-                image: CManga.DOMAIN + image,
+                image: DOMAIN + image,
                 status,
                 hentai: false,
                 tags: [createTagSection({ label: "genres", tags: tags, id: '0' })]
@@ -8257,7 +8274,7 @@ class CManga extends paperback_extensions_common_1.Source {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: `${CManga.DOMAIN}api/book_chapter?opt1=${this.book_id}`,
+                url: `${DOMAIN}api/book_chapter?opt1=${this.book_id}`,
                 method: CManga.method,
             });
             const data = yield this.requestManager.schedule(request, 1);
@@ -8289,7 +8306,7 @@ class CManga extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             const chapID = chapterId.split('/').pop();
             const request = createRequestObject({
-                url: `${CManga.DOMAIN}api/chapter_content?opt1=` + chapID,
+                url: `${DOMAIN}api/chapter_content?opt1=` + chapID,
                 method: CManga.method
             });
             const data = yield this.requestManager.schedule(request, 1);
@@ -8325,7 +8342,7 @@ class CManga extends paperback_extensions_common_1.Source {
             ///Get the section data
             //New Updates
             let request = createRequestObject({
-                url: `${CManga.DOMAIN}api/list_item`,
+                url: `${DOMAIN}api/list_item`,
                 method: CManga.method,
                 param: '?page=1&limit=20&sort=new&type=all&tag=&child=off&status=all&num_chapter=0'
             });
@@ -8339,7 +8356,7 @@ class CManga extends paperback_extensions_common_1.Source {
                     continue;
                 newUpdatedItems.push(createMangaTile({
                     id: `${item.url}-${item.id_book}`,
-                    image: `${CManga.DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
+                    image: `${DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
                     title: createIconText({
                         text: CMangaParser_1.titleCase(item.name),
                     }),
@@ -8352,7 +8369,7 @@ class CManga extends paperback_extensions_common_1.Source {
             sectionCallback(newUpdated);
             //New Added
             request = createRequestObject({
-                url: CManga.DOMAIN + "api/list_item",
+                url: DOMAIN + "api/list_item",
                 param: "?page=1&limit=20&sort=new&type=all&tag=Truy%E1%BB%87n%20si%C3%AAu%20hay&child=off&status=all&num_chapter=0",
                 method: CManga.method,
             });
@@ -8365,7 +8382,7 @@ class CManga extends paperback_extensions_common_1.Source {
                     continue;
                 newAddItems.push(createMangaTile({
                     id: `${item.url}-${item.id_book}`,
-                    image: `${CManga.DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
+                    image: `${DOMAIN}assets/tmp/book/avatar/${item.avatar}.jpg`,
                     title: createIconText({
                         text: CMangaParser_1.titleCase(item.name),
                     }),
@@ -8387,11 +8404,11 @@ class CManga extends paperback_extensions_common_1.Source {
             let method = CManga.method;
             switch (homepageSectionId) {
                 case "new_updated":
-                    url = CManga.DOMAIN + "api/list_item";
+                    url = DOMAIN + "api/list_item";
                     param = `?page=${page}&limit=40&sort=new&type=all&tag=&child=off&status=all&num_chapter=0`;
                     break;
                 case "new_added":
-                    url = CManga.DOMAIN + "api/list_item";
+                    url = DOMAIN + "api/list_item";
                     param = `?page=${page}&limit=40&sort=new&type=all&tag=Truy%E1%BB%87n%20si%C3%AAu%20hay&child=off&status=all&num_chapter=0`;
                     break;
                 default:
@@ -8445,8 +8462,8 @@ class CManga extends paperback_extensions_common_1.Source {
                 }
             });
             const request = createRequestObject({
-                url: query.title ? encodeURI(CManga.DOMAIN + 'api/search?opt1=' + (query.title))
-                    : (search.top !== '' ? CManga.DOMAIN + "api/top?data=book_top" : encodeURI(CManga.DOMAIN + `api/list_item?page=${page}&limit=40&sort=${search.sort}&type=all&tag=${search.tag}&child=off&status=${search.status}&num_chapter=${search.num_chapter}`)),
+                url: query.title ? encodeURI(DOMAIN + 'api/search?opt1=' + (query.title))
+                    : (search.top !== '' ? DOMAIN + "api/top?data=book_top" : encodeURI(DOMAIN + `api/list_item?page=${page}&limit=40&sort=${search.sort}&type=all&tag=${search.tag}&child=off&status=${search.status}&num_chapter=${search.num_chapter}`)),
                 method: CManga.method,
             });
             const data = yield this.requestManager.schedule(request, 1);
@@ -8462,7 +8479,7 @@ class CManga extends paperback_extensions_common_1.Source {
     }
     getSearchTags() {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = CManga.DOMAIN;
+            const url = DOMAIN;
             const request = createRequestObject({
                 url: url,
                 method: CManga.method,
@@ -8548,24 +8565,7 @@ class CManga extends paperback_extensions_common_1.Source {
     }
 }
 exports.CManga = CManga;
-CManga.DOMAIN = 'https://cmangaah.com/';
 CManga.method = 'GET';
-CManga.CMangaInfo = {
-    version: '1.1.4',
-    name: 'CManga',
-    icon: 'icon.png',
-    author: 'AlanNois',
-    authorWebsite: 'https://github.com/AlanNois/',
-    description: 'Extension that pulls manga from CManga',
-    websiteBaseURL: CManga.DOMAIN,
-    contentRating: paperback_extensions_common_1.ContentRating.MATURE,
-    sourceTags: [
-        {
-            text: "Recommended",
-            type: paperback_extensions_common_1.TagType.BLUE
-        }
-    ]
-};
 
 },{"./CMangaParser":93,"paperback-extensions-common":48}],93:[function(require,module,exports){
 "use strict";
