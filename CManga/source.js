@@ -8258,6 +8258,7 @@ class CManga extends paperback_extensions_common_1.Source {
             }
             const image = $(".book_avatar img").first().attr("src");
             const creator = $(".profile a").text() || 'Unknown';
+            console.log(mangaId);
             return createManga({
                 id: mangaId,
                 author: creator,
@@ -8274,12 +8275,13 @@ class CManga extends paperback_extensions_common_1.Source {
     getChapters(mangaId) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(mangaId);
             const request2 = createRequestObject({
                 url: `${exports.DOMAIN}api/book_chapter?opt1=${book_id}`,
                 method: "GET",
             });
-            const data2 = yield this.requestManager.schedule(request2, 1);
-            const json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
+            let data2 = yield this.requestManager.schedule(request2, 1);
+            let json = JSON.parse(CMangaParser_1.decrypt_data(JSON.parse(data2.data)));
             const chapters = [];
             for (const obj of json) {
                 const [date, time] = obj.last_update.split(' ');
@@ -8306,7 +8308,7 @@ class CManga extends paperback_extensions_common_1.Source {
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
             const chapID = chapterId.split('/').pop();
-            console.log(`${exports.DOMAIN}api/chapter_content?opt1=` + chapID);
+            // console.log(`${DOMAIN}api/chapter_content?opt1=` + chapID);
             const request = createRequestObject({
                 url: `${exports.DOMAIN}api/chapter_content?opt1=` + chapID,
                 method
