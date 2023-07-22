@@ -378,7 +378,6 @@ exports.TruyentranhAudio = exports.TruyentranhAudioInfo = exports.isLastPage = v
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const TruyentranhAudioParser_1 = require("./TruyentranhAudioParser");
 const DOMAIN = 'https://tutientruyen.xyz/';
-const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1';
 exports.isLastPage = ($) => {
     const current = $('ul.pagination > li.active > a').text();
     let total = $('ul.pagination > li.PagerSSCCells:last-child').text();
@@ -424,6 +423,7 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
                     var _a;
                     request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), {
                         'referer': DOMAIN,
+                        'user-agent': yield this.requestManager.getDefaultUserAgent()
                     });
                     return request;
                 }),
@@ -667,14 +667,17 @@ class TruyentranhAudio extends paperback_extensions_common_1.Source {
             throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to home page ${TruyentranhAudio.name} source and press the cloud icon.`);
         }
     }
-    getCloudflareBypassRequest() {
-        return createRequestObject({
-            url: DOMAIN,
-            method: 'GET',
-            headers: {
-                referer: `${DOMAIN}/`,
-                'user-agent': userAgent,
-            },
+    getCloudflareBypassRequestAsync() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return App.createRequest({
+                url: DOMAIN,
+                method: 'GET',
+                headers: {
+                    'referer': `${DOMAIN}/`,
+                    'origin': `${DOMAIN}/`,
+                    'user-agent': yield this.requestManager.getDefaultUserAgent()
+                }
+            });
         });
     }
 }
